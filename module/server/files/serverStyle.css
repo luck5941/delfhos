@@ -1,0 +1,15 @@
+body {
+	margin: 0;
+	color: red;
+}
+section {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: sans-serif;
+	height: 100vh;
+	flex-direction: column;
+}
+h1 {
+	font-size: 24pt;
+}

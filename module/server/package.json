@@ -1,0 +1,17 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "A little server build width node-http",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "server",
+    "http",
+    "fastdevelop"
+  ],
+  "files": ["forbidden.html", "serverStyle.css"],
+  "author": "Lucas Elvira",
+  "license": "ISC"
+}
