@@ -3,16 +3,17 @@
 alert("something")
 /*
 var Whatch =  require('./../../../commonModules/watcher');*/
-var mainScope = {};
-// var mainScopeWatch = new Whatch(mainScope);
+var desktopScope = {};
+// var desktopScopeWatch = new Whatch(desktopScope);
 /*variables globales*/
-mainScope.body = $('body'),
-mainScope.input = $('input'),
-mainScope.menu = $('#contentMenu'),
-mainScope.menu_open = false,
-mainScope.options = $('.options'),
-mainScope.modal = $('#modal');
-
+desktopScope.body = $('body'),
+desktopScope.input = $('input'),
+desktopScope.menu = $('#contentMenu'),
+desktopScope.menu_open = false,
+desktopScope.options = $('.options'),
+desktopScope.modal = $('#modal');
+desktopScope.contentMenuConstruct = {"desktop": {"Cambiar la img": "desktopScope.changeImg"}}
+desktopScope.contentMenu = new ContentMenu(desktopScope.contentMenuConstruct);
 /*modules externos*/
 var external = {}
 
@@ -22,15 +23,15 @@ external.changeImg = (args) => {
 };
 
 /*metodos locales*/
-mainScope.openMenu = (x, y) => {
+desktopScope.openMenu = (x, y) => {
 	/*
 	 *Esta funcion se encarga de mostrar el menún de acciones,
 	 *ya definido en el dom.
 	 *int x, y -> Las coordenadas que en que se tiene que crear
 	*/	
-	menu.css({"display": "block", "top": `${y}px`, "left": `${x}px`});
+	desktopScope.menu.css({"display": "block", "top": `${y}px`, "left": `${x}px`});
 };
-mainScope.openModal = () => {
+desktopScope.openModal = () => {
 	/*
 	 *Función encargada de mostrar el modal en la pantalla
 	*/	
@@ -39,7 +40,7 @@ mainScope.openModal = () => {
 
 
 /*metodos locales llamados por eventos*/
-mainScope.cliked = (e) => {
+desktopScope.cliked = (e) => {
 	/*
 	 *Se encarga de registrar los clicks que tiene lugar en el escritorio.
 	 *Si es con el derecho, llama a openMenu, en caso de ser con el izquierdo
@@ -48,13 +49,13 @@ mainScope.cliked = (e) => {
 	*/	
 	var	x = e.offsetX,
 		y = e.offsetY;	
-	return (e.which === 1) ? menu.removeAttr('style') : (e.which === 3) ? openMenu(x, y) : null;
+	return (e.which === 1) ? desktopScope.menu.removeAttr('style') : (e.which === 3) ? desktopScope.openMenu(x, y) : null;
 };
-mainScope.changeImg = ()=>{	
+desktopScope.changeImg = ()=>{	
 	console.log("aquí no!")
 }
 /*control de eventos*/
-body.on('mousedown', cliked);
-$(options).on('mousedown', openModal);
-$(input[1]).on('mousedown', changeImg);
+desktopScope.body.on('mousedown', desktopScope.cliked);
+$(desktopScope.options).on('mousedown', desktopScope.openModal);
+$(desktopScope.input[1]).on('mousedown', desktopScope.changeImg);
 var comunication = new remoteevent.Client(external);

@@ -1,0 +1,11 @@
+{
+  "name": "localevent",
+  "version": "1.0.0",
+  "description": "A module that make a intermediate lader between the front-end and back-end lader, allow a not direct comunication",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "lucaselvira96@gmail.com",
+  "license": "ISC"
+}

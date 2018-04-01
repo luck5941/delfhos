@@ -1,5 +1,3 @@
-
-
 function SERVER(modules) {
 	const http = require('http');
 	const fs = require('fs');
@@ -21,7 +19,7 @@ function SERVER(modules) {
 			req_save = { "url": "", "date": "", "ip": "", "code": "" },
 			uri = req.url,
 			path = '';
-		this.__createWin()
+		//this.__createWin()
 		uri = url.parse(uri);		
 		path = (uri.path.search(/^\//)) ? `${uri.path}index.html` : uri.path;
 		req_save['url'] = req.url;
@@ -31,7 +29,9 @@ function SERVER(modules) {
 			let l = new LoadApp(__dirname+"/../desktop/", "../../commonModules/config.json", "desktop");
 			let m = l.secuence();
 			m.then((d)=>{
-				let html = this.base.replace(`<${path.slice(1)}></${path.slice(1)}>`, d.text).replace("#{css}", d.css).replace("#{js}", d.js);
+				d.css = this.lib.css + d.css;
+				d.js = this.lib.js + d.js;
+				let html = this.base.replace(`<${path.slice(1)}></${path.slice(1)}>`, `<${path.slice(1)}>${d.html}</${path.slice(1)}>`).replace("#{css}", d.css).replace("#{js}", d.js);				
 				return this._sendFile(res, html, ["200", this.mime_types["html"]])
 			});
 		}
@@ -63,18 +63,19 @@ function SERVER(modules) {
 			extPat = /\#\{(\w*)\}/,
 			ext = '',
 			rsc = {};
-		fs.readFile(file, 'utf-8', (e, bufferFile)=>{			
+		fs.readFile(file, 'utf-8', (e, bufferFile)=>{
 			let pat = `[\\"\\']((\\/?\\.{2})*(\\/?[\\w-\\.]*)*)[\\"\\'"]`,
 				paterns = [`<link.*href=${pat}>`, `<script.*src=${pat}></script>`],
 				path = '';
 			for (let i in paterns) {
 				let p = new RegExp(paterns[i]);
-				while((path = p.exec(bufferFile)) != null){					
+				while((path = p.exec(bufferFile)) != null){
 					let content = fs.readFileSync(`${__dirname}/../../${path[1]}`, 'utf-8'),
 						ext = path[1].split(".").slice(-1);
 					if (!rsc[ext]) rsc[ext] = '';					
 					rsc[ext] += content.replace(/[\n\t\r]*module\.exports\s?=\s?\w*;?[\n\t\r]*$/, '');
-					bufferFile = (bufferFile.search(`#{${ext}}`) == -1) ? bufferFile.replace(path[0], `#{${ext}}`) : bufferFile.replace(path[0], ``)
+					//bufferFile = (bufferFile.search(`#{${ext}}`) == -1) ? bufferFile.replace(path[0], `#{${ext}}`) : bufferFile.replace(path[0], ``)
+					bufferFile = bufferFile.replace(path[0], '');
 				}
 			}
 			
@@ -82,12 +83,16 @@ function SERVER(modules) {
 		});
 		while (!html){await sleep(1);}		
 		for (let e in rsc){
-			let replaceStr = '';
+			/*let replaceStr = '';
 			if (e == "css")
 				replaceStr = `<style>${rsc[e]}</style>`;
-			else if (e == "js")
+			else if (e == "js"){
+				console.log(rsc[e].length);
 				replaceStr = `<script type="text/javascript">${rsc[e]}</script>`;
+			}
 			html = html.replace(`#{${e}}`, replaceStr);
+			*/
+			this.lib[e] += rsc[e];
 		}		
 		this.base = html;
 		return html;
@@ -96,7 +101,8 @@ function SERVER(modules) {
 	this.init = () => {		
 		fs.exists('logs', (e) => { if (!e) fs.mkdir('logs', () => {}); });
 		fs.exists('public', (e) => { if (!e) fs.mkdir('public', () => {}); });
-	}
+		this.__createWin();
+	};
 
 	this.up = (port = this.port, listen = true) => (listen) ? http.createServer(this._server).listen(port): http.createServer(this._server);
 }

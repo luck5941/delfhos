@@ -1,0 +1,68 @@
+
+{"fileSystem":
+    {
+        "pluggins": [
+        {
+            "name": "selectfile",
+            "dependencies": ["whatcher"],
+            "difference_between_front_and_back": true,
+            "load_default": false,
+            "style": ["index"],
+            "at_init": false,
+            "external_path": false,
+            "exec": true,
+            "place": "both"
+        },
+        {
+            "name": "commonStyle.ContentMenu",
+            "dependences": false,
+            "difference_between_front_and_back": false,
+            "load_default": true,
+            "style": ["style"],
+            "at_init": true,
+            "external_path": "../../commonModules/",
+            "exec": false,
+            "place": "front_end"
+        },
+        {
+            "name": "commonStyle.Modal",
+            "dependences": false,
+            "difference_between_front_and_back": true,
+            "load_default": true,
+            "style": ["style"],
+            "at_init": true,
+            "external_path": "../../commonModules/",
+            "exec": false,
+            "place": "both"
+        }],
+        "style": false,
+        "open_width": []
+    },
+    "desktop": {
+        "pluggins": [        {
+            "name": "contextmenu",
+            "dependences": false,
+            "difference_between_front_and_back": false,
+            "load_default": true,
+            "style": ["style"],
+            "at_init": true,
+            "external_path": "../../../commonModules/",
+            "exec": false,
+            "place": "front_end"
+        },
+        {
+            "name": "commonStyle.Modal",
+            "dependences": false,
+            "difference_between_front_and_back": true,
+            "load_default": false,
+            "style": ["style"],
+            "at_init": true,
+            "external_path": "../../../commonModules/",
+            "exec": false,
+            "place": "both"
+        }],
+        "style": ["css/desktop.css"],
+        "script": ["js/main.js"]
+    }
+
+}

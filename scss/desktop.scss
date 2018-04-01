@@ -1,0 +1,23 @@
+@import './style.scss';
+desktop {
+	background-color: $color1;
+	background-image: url('%backgroundUri%');
+	background-repeat: no-repeat;
+	background-size: cover;
+	margin: 0;
+	height: 100vh;
+	width: 100%;
+	font-family: $font;	
+	display: block;
+	#modal {
+		display: none;;
+		position: absolute;
+		top: 20vh;
+		left: 45vw;
+		width: 20vw;
+		background-color: white;
+	}
+	.shadow {
+		box-shadow: 5px 5px 5px;
+	}
+}

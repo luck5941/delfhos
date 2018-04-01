@@ -1,17 +1,17 @@
-body {
-  background-color: #63ccff;
-  background-image: url("/home/lucas/Imágenes/background1.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
+* {
   margin: 0;
-  height: 100vh;
-  width: 100%;
-  font-family: sans-serif; }
-  body title-bar {
-    -webkit-app-region: drag;
-    width: 100%;
-    height: 20vh;
-    background-color: red; }
+  padding: 0; }
+
+* {
+  margin: 0;
+  padding: 0; }
+
+img {
+  width: 100%; }
+
+body {
+  font-family: sans-serif;
+  overflow: hidden; }
   body #contentMenu {
     display: none;
     position: absolute;
@@ -33,14 +33,39 @@ body {
         body #contentMenu nav ul li:hover {
           background-color: #006db3;
           color: #fff; }
+  body .shadow {
+    box-shadow: 5px 5px 5px; }
   body #modal {
+    position: absolute;
+    width: 20vw;
+    left: 40vh;
+    top: 20vh;
+    max-height: 20vh;
+    background-color: #d3d3d3;
+    overflow: auto; }
+    body #modal .header {
+      color: brown;
+      width: 100%;
+      height: 20%; }
+
+desktop {
+  background-color: #63ccff;
+  background-image: url("%backgroundUri%");
+  background-repeat: no-repeat;
+  background-size: cover;
+  margin: 0;
+  height: 100vh;
+  width: 100%;
+  font-family: sans-serif;
+  display: block; }
+  desktop #modal {
     display: none;
     position: absolute;
     top: 20vh;
     left: 45vw;
     width: 20vw;
     background-color: white; }
-  body .shadow {
+  desktop .shadow {
     box-shadow: 5px 5px 5px; }
 
-/*# sourceMappingURL=style.css.map */
+/*# sourceMappingURL=desktop.css.map */

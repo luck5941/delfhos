@@ -1,0 +1,21 @@
+{
+	"lucas":{
+		"age":21,
+		"deskop-image":"/home/lucas/Imágenes/background2.jpg",
+		"default_program": {
+			"file system": {
+				"name": "fileSystem",
+				"image": false
+			}
+		},
+		"plugins": {
+			"fileSystem": [
+				{
+					"name": "selectFile",
+					"dependencies": ["whatcher"],
+					"difference_between_front_and_back": true
+				}
+			]
+		}
+	}
+}
