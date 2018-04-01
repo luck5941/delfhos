@@ -1,19 +1,17 @@
-'use strict'
-/*librerias*/
 
-console.log("0 fallos")
-/*var EventClient = require('./../../../commonModules/localEvent').Client;
-var $ = require('./../../../commonModules/jquery');
+'use strict'
+alert("something")
+/*
 var Whatch =  require('./../../../commonModules/watcher');*/
 var mainScope = {};
 // var mainScopeWatch = new Whatch(mainScope);
 /*variables globales*/
-var body = $('body'),
-	input = $('input'),
-	menu = $('#contentMenu'),
-	menu_open = false,
-	options = $('.options'),
-	modal = $('#modal');
+mainScope.body = $('body'),
+mainScope.input = $('input'),
+mainScope.menu = $('#contentMenu'),
+mainScope.menu_open = false,
+mainScope.options = $('.options'),
+mainScope.modal = $('#modal');
 
 /*modules externos*/
 var external = {}
@@ -24,7 +22,7 @@ external.changeImg = (args) => {
 };
 
 /*metodos locales*/
-var openMenu = (x, y) => {
+mainScope.openMenu = (x, y) => {
 	/*
 	 *Esta funcion se encarga de mostrar el menún de acciones,
 	 *ya definido en el dom.
@@ -32,7 +30,7 @@ var openMenu = (x, y) => {
 	*/	
 	menu.css({"display": "block", "top": `${y}px`, "left": `${x}px`});
 };
-var openModal = () => {
+mainScope.openModal = () => {
 	/*
 	 *Función encargada de mostrar el modal en la pantalla
 	*/	
@@ -41,7 +39,7 @@ var openModal = () => {
 
 
 /*metodos locales llamados por eventos*/
-var cliked = (e) => {
+mainScope.cliked = (e) => {
 	/*
 	 *Se encarga de registrar los clicks que tiene lugar en el escritorio.
 	 *Si es con el derecho, llama a openMenu, en caso de ser con el izquierdo
@@ -52,12 +50,11 @@ var cliked = (e) => {
 		y = e.offsetY;	
 	return (e.which === 1) ? menu.removeAttr('style') : (e.which === 3) ? openMenu(x, y) : null;
 };
-var changeImg = ()=>{	
+mainScope.changeImg = ()=>{	
 	console.log("aquí no!")
 }
 /*control de eventos*/
 body.on('mousedown', cliked);
 $(options).on('mousedown', openModal);
 $(input[1]).on('mousedown', changeImg);
-var comunication = new EventClient(external);
-
+var comunication = new remoteevent.Client(external);
