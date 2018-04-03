@@ -1,0 +1,14 @@
+.sass-cache/
+package-lock.json
+./dist/public/css/main.css.map
+./dist/css/lib/main.css.map
+.buffer
+./dist/public/css/main.css
+toDel.js
+prueba*
+/dev/scss/style.scss.map
+./.buffer
+/node_modules/selectfile/index.css.map
+/dist/public/html/
+regex.*
+dist/external/properties/css/style.css.map

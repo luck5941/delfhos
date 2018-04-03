@@ -23,6 +23,11 @@ function COMUNICATION(){
 			console.log(modules.login)
 			modules.login[data[1]](data[0]);
 		});
+		socket.on('ipc', (data) => {
+			console.log("data vale:")
+			console.log(data);
+			modules[data.slice(-1)[0]][data[1]](data[0]);
+		});
 	});
 };
 module.exports = COMUNICATION

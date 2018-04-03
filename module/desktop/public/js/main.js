@@ -29,7 +29,7 @@ desktopScope.openModal = (e) => {
 	/*
 	 *Función encargada de mostrar el modal en la pantalla
 	*/	
-//	comunication.send('openApps', 'changeImg', ['fileSystem', 'selectfile']);
+	comunication.send('ipc', ['fileSystem', 'selectfile'], 'openApps', 'changeImg','server' );
 	console.log("Quieren abrir un programa");
 };
 /*metodos locales llamados por eventos*/

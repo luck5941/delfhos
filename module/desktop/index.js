@@ -16,9 +16,10 @@ function DESKTOP(){
 	function sleep(ms) {return new Promise(resolve => setTimeout(resolve, ms));}
 
 	/*Declaración de las funciones globales*/
-	var external = {};
-	/*external.openApps =  (args) => {
-		var response,
+	this.openApps =  (args) => {
+		console.log("open apps dice:");
+		console.log(args);
+	/*	var response,
 			action;
 		let p = exec(`electron ${appsPath}${args[0]} ${args[1]}`, (err, stdout, stderr) => {
 			
@@ -29,7 +30,8 @@ function DESKTOP(){
 		p.on('close', ()=>{
 			comunication.send(win, action[0], action[1])
 		});	
-	};*/
+	*/
+	};
 
 
 	/*metodos locales*/

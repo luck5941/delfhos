@@ -89,6 +89,11 @@ function SERVER(modules) {
 		this.base = html;
 		return html;
 	};
+	this.openApps = (args)=> {
+		console.log("desde el server");
+		console.log(args);
+	};
+		
 
 	this.init = () => {		
 		fs.exists('logs', (e) => { if (!e) fs.mkdir('logs', () => {}); });

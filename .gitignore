@@ -3,3 +3,4 @@ logs/
 *.map
 node_modules/
 module/*/public/css/*.css
+package-lock.json

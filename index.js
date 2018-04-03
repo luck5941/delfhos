@@ -21,6 +21,7 @@ global.modules = {}
 
 for (let o in routes)
 	modules[o.slice(1)] = new routes[o];
+modules["server"] = s;
 /*
 ddbb.newCollection('users');
 ddbb.newCollection('chats');
