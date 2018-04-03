@@ -12,11 +12,11 @@ function SERVER() {
             str = '';
         req_save = { "url": "", "date": "", "ip": "", "code": "" },
             path = req.url.split('/'),
-            files = '';
+            files = '';        
         path = (path[path.length - 1] == '') ? path.join('/') + 'index.html' : path.join('/');
         req_save['url'] = req.url;
         req_save["date"] = `${d.getFullYear()}/${d.getMonth()}/${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
-        req_save["ip"] = req.connection.remoteAddress.split(":")[req.connection.remoteAddress.split(":").length - 1];
+        req_save["ip"] = req.connection.remoteAddress.split(":")[req.connection.remoteAddress.split(":").length - 1];        
         file = __dirname + '/public' + path;
         if (fs.existsSync(file))
             fs.readFile(file, (e, d) => {

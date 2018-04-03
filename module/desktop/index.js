@@ -106,6 +106,7 @@ function DESKTOP(){
 		}
 		return toReturn;
 	};
+	
 	/*ejecución de funciones inicales*/
 
 	//loadConfig();

@@ -63,6 +63,11 @@
         }],
         "style": ["css/desktop.css"],
         "script": ["js/main.js"]
+    },
+    "login": {
+        "pluggins": [],
+        "style": [],
+        "script": ["js/main.js"]
     }
 
 }

@@ -18,15 +18,15 @@ function SERVER(modules) {
 			str = '',
 			req_save = { "url": "", "date": "", "ip": "", "code": "" },
 			uri = req.url,
-			path = '';
-		//this.__createWin()
+			path = '';		
 		uri = url.parse(uri);		
 		path = (uri.path.search(/^\//)) ? `${uri.path}index.html` : uri.path;
 		req_save['url'] = req.url;
 		req_save["date"] = `${d.getFullYear()}/${d.getMonth()}/${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
 		req_save["ip"] = req.connection.remoteAddress.split(":")[req.connection.remoteAddress.split(":").length - 1];
-		if (this.modules[path]){			
-			let l = new LoadApp(__dirname+"/../desktop/", "../../commonModules/config.json", "desktop");
+		str = `${req_save["ip"]};${req_save["date"]};${req_save['url']}`
+		if (this.modules[path]){		
+			let l  = new LoadApp(`${__dirname}/..${path}/`, "../../commonModules/config.json", path.slice(1));
 			let m = l.secuence();
 			m.then((d)=>{
 				d.css = this.lib.css + d.css;
@@ -38,6 +38,7 @@ function SERVER(modules) {
 		else {
 			req_save["code"] = '403';
 			fs.readFile(this.forbidden, (e, d) => this._sendFile(res, d, [req_save["code"], this.mime_types["html"]]));
+			str +=";"+req_save["code"];
 			fs.appendFile("logs/serverLogs", str + '\n', function(e) {
 				if (e) throw e;
 			});
@@ -83,15 +84,6 @@ function SERVER(modules) {
 		});
 		while (!html){await sleep(1);}		
 		for (let e in rsc){
-			/*let replaceStr = '';
-			if (e == "css")
-				replaceStr = `<style>${rsc[e]}</style>`;
-			else if (e == "js"){
-				console.log(rsc[e].length);
-				replaceStr = `<script type="text/javascript">${rsc[e]}</script>`;
-			}
-			html = html.replace(`#{${e}}`, replaceStr);
-			*/
 			this.lib[e] += rsc[e];
 		}		
 		this.base = html;

@@ -6,13 +6,16 @@
 	<style type="text/css">#{css}</style>
 </head>
 <body oncontextmenu="return false">
+    <login></login>
     <desktop></desktop> 
-	<fileSytme></fileSytme>	
+    <fileSytme></fileSytme>	
     <script type="text/javascript" src="/external/jquery.js"></script>
     <script type="text/javascript" src="/node_modules/socket.io-client/dist/socket.io.js"></script>
-    <script type="text/javascript" src="/commonModules/remoteEvent/index.js"></script>
-    <script tyepe="text/javascript">
+    <script type="text/javascript" src="/commonModules/remoteEvent/client.js"></script>
+    <script type="text/javascript">
     #{js}
+
+var comunication = new Client(external);
     </script>
 </body>
 </html>
