@@ -31,11 +31,10 @@ var loadApp = function(path, configPath, name, toLoad = []) {
 	this.toReplace = {'js':{jsInit:"", middle: "", jsEnd: ""}, 'css':"", 'html':""}
 	this.loadExternal = (css, where = 'css', place="middle") => {
 		for (let s of css){
-			console.log(s)
 			let filePath = `${this.path}public/${s}`;
 			filePath = this.__getJumpBack(filePath);
 			fs.readFile(filePath, 'utf-8', (e, d) =>{
-				if (e) return console.log(e)
+				if (e) return console.error(e)
 				if (where === 'css')
 					this.toReplace[where] += d;
 				else{
@@ -69,16 +68,18 @@ var loadApp = function(path, configPath, name, toLoad = []) {
 			if (o["difference_between_front_and_back"]) {
 				name_fr = (o["difference_between_front_and_back"] === true) ? "Render" : "{ " + o["difference_between_front_and_back"][1] + "}";
 				name_bk = (o["difference_between_front_and_back"] === true) ? "Main" : o["difference_between_front_and_back"][0];
-				// console.log(`${o["name"].split(".").slice(-1)}_${name_bk}`)
 				this[where] += `const ${o["name"].split(".").slice(-1)}_${name_fr} = require('${module[0]}')${module[1]}.${name_fr};`;
 				try { this.bcknd[`${o["name"].split(".").slice(-1)}_${name_bk}`] = (module[1]) ? require(module[0])[module[1].slice(1)][name_bk] : require(module[0])[name_bk]; } catch (e) { findIt = false; }
 				if (!findIt) {
 					try { this.bcknd[`${o["name"].split(".").slice(-1)}_${name_bk}`] = (module[1]) ? require("../" + module[0])[module[1].slice(1)][name_bk] : require("../" + module[0])[name_bk]; } catch (e) { console.error(`el módulo o libreria ${o["name"]} no se ha encontrado. Por favor, contacte con el adminsitrador del sistema`); }
 				}
+			this.ready[2]++;
 			} else {
 				if (o["place"].indexOf("f") !== -1) uri[where].push(module[0]+"/index.js");
-				else if (o["place"].indexOf("b" !== -1)) this.bcknd[module[1]] = require(module[0])[module[1]];
-				console.log(uri);
+				else if (o["place"].indexOf("b" !== -1)){
+					this.bcknd[module[1]] = require(module[0])[module[1]];
+					this.ready[2]++;
+				}
 			}
 			if (o["exec"] && (o["place"].indexOf("f") !== -1 || o["difference_between_front_and_back"]))
 				this[where] += `${o["name"].split(".").slice(-1)}_${name_fr}()`
@@ -125,7 +126,7 @@ var loadApp = function(path, configPath, name, toLoad = []) {
 		 * Esta carpeta debería ser eliminada cuando la app se cierre
 		 */      
 		fs.readdir(src, (err, dir) => { 
-			if (err) console.log(err)
+			if (err) console.error(err)
 			for (let i = 0; i < dir.length; i++) {
 				if (fs.lstatSync(src + dir[i]).isFile()) {
 					let ext = dir[i].split(".").splice(-1)[0];

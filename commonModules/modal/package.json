@@ -1,0 +1,12 @@
+{
+  "name": "modal",
+  "version": "1.0.0",
+  "description": "A library that has the style and the method that generate the elements that have in common more than one app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "sass style.scss style.css"
+  },
+  "author": "lucaselvira96@gmail.com",
+  "license": "ISC"
+}

@@ -1,8 +1,5 @@
 'use strict';
 /*librerias*/
-var EventClient = require('./../../commonModules/localEvent').Client;
-var $ = require('./../../commonModules/jquery');
-#{jsInit}
 /*Variables globales*/
 let contentMenuConstruct = {
 	".folder": {
@@ -303,6 +300,5 @@ $('body')
 .on('keydown', mainScope.pressKey)
 .on('keyup', mainScope.keyUp)
 .on('keydown', '[contenteditable="true"]', mainScope.aceptName);
-var comunication = new EventClient(external);
-comunication.send('initialLoad', 'drawFiles', '');
-#{jsEnd}
+console.log("fin script");
+$(document).ready(()=> comunication.send('initialLoad', 'drawFiles', ''));

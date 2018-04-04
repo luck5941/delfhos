@@ -31,6 +31,7 @@ function SERVER(modules) {
 			m.then((d)=>{
 				d.css = this.lib.css + d.css;
 				d.js = this.lib.js + d.js;
+				console.log(`${path.slice(1)}`);
 				let html = this.base.replace(`<${path.slice(1)}></${path.slice(1)}>`, `<${path.slice(1)}>${d.html}</${path.slice(1)}>`).replace("#{css}", d.css).replace("#{js}", d.js);				
 				return this._sendFile(res, html, ["200", this.mime_types["html"]])
 			});

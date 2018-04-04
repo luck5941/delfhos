@@ -1,5 +1,6 @@
 
-{"fileSystem":
+{
+    "filesystem":
     {
         "pluggins": [
         {
@@ -14,32 +15,6 @@
             "place": "both"
         },
         {
-            "name": "commonStyle.ContentMenu",
-            "dependences": false,
-            "difference_between_front_and_back": false,
-            "load_default": true,
-            "style": ["style"],
-            "at_init": true,
-            "external_path": "../../commonModules/",
-            "exec": false,
-            "place": "front_end"
-        },
-        {
-            "name": "commonStyle.Modal",
-            "dependences": false,
-            "difference_between_front_and_back": true,
-            "load_default": true,
-            "style": ["style"],
-            "at_init": true,
-            "external_path": "../../commonModules/",
-            "exec": false,
-            "place": "both"
-        }],
-        "style": false,
-        "open_width": []
-    },
-    "desktop": {
-        "pluggins": [        {
             "name": "contextmenu",
             "dependences": false,
             "difference_between_front_and_back": false,
@@ -51,15 +26,42 @@
             "place": "front_end"
         },
         {
-            "name": "commonStyle.Modal",
+            "name": "modal",
             "dependences": false,
-            "difference_between_front_and_back": true,
-            "load_default": false,
+            "difference_between_front_and_back": false,
+            "load_default": true,
+            "style": [],
+            "at_init": false,
+            "external_path": "../../commonModules/",
+            "exec": false,
+            "place": "back_end"
+        }],
+        "style": ["css/filesystem.css"],
+        "script": ["js/main.js"]
+    },
+    "desktop": {
+        "pluggins": [
+            {
+            "name": "contextmenu",
+            "dependences": false,
+            "difference_between_front_and_back": false,
+            "load_default": true,
             "style": ["style"],
             "at_init": true,
             "external_path": "../../../commonModules/",
             "exec": false,
-            "place": "both"
+            "place": "front_end"
+        },
+        {
+            "name": "modal",
+            "dependences": false,
+            "difference_between_front_and_back": false,
+            "load_default": true,
+            "style": [],
+            "at_init": true,
+            "external_path": "../../commonModules/",
+            "exec": false,
+            "place": "back_end"
         }],
         "style": ["css/desktop.css"],
         "script": ["js/main.js"]
