@@ -2,8 +2,7 @@ function SERVER(modules) {
 	const http = require('http');
 	const fs = require('fs');
 	const url = require('url');
-	const LoadApp = require("../../commonModules/loadapp")
-	function sleep(ms) {return new Promise(resolve => setTimeout(resolve, ms));}
+	let sleep = (ms) => {return new Promise(resolve => setTimeout(resolve, ms));}
 	this.mime_types = { 'js': 'text/javascript', 'json': 'application/json', 'html': 'text/html', 'css': 'text/css', 'jpg': 'image/jpg', 'png': 'image/png', 'gif': 'image/gif' };
 	this.logs = 'logs';
 	this.port = 8080;
@@ -20,13 +19,13 @@ function SERVER(modules) {
 			uri = req.url,
 			path = '';		
 		uri = url.parse(uri);		
-		path = (uri.path.search(/^\//)) ? `${uri.path}index.html` : uri.path;
+		path = (uri.path === '/') ? '/desktop' : uri.path;
 		req_save['url'] = req.url;
 		req_save["date"] = `${d.getFullYear()}/${d.getMonth()}/${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
 		req_save["ip"] = req.connection.remoteAddress.split(":")[req.connection.remoteAddress.split(":").length - 1];
 		str = `${req_save["ip"]};${req_save["date"]};${req_save['url']}`
 		if (this.modules[path]){		
-			let l  = new LoadApp(`${__dirname}/..${path}/`, "../../commonModules/config.json", path.slice(1));
+			let l  = new global.modules["LoadApp"](`${__dirname}/..${path}/`, path.slice(1));
 			let m = l.secuence();
 			m.then((d)=>{
 				d.css = this.lib.css + d.css;
@@ -51,8 +50,8 @@ function SERVER(modules) {
 			res.writeHead(headers[0], headers[1]);
 			res.end(content);
 		}
-		catch (e){			
-			content.then((d)=>{res.writeHead(headers[0], headers[1]);res.end(d);})
+		catch (e){
+			content.then((d)=>{res.writeHead(headers[0], headers[1]);res.end(d);});
 		}
 	};
 

@@ -1,5 +1,5 @@
 'use strict';
-function modal() {
+function modal(html = '', app = []) {
 	/*
 	 *Modulo encargado de solicitar y organizar el el contenido html necesario para la
 	 *generación de un "programa" nuevo
@@ -11,18 +11,15 @@ function modal() {
 	 *  o pluggins extras que no se cargan por defecto, pero si en esta ocasión. 
 	*/
 	let sleep = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
-	this.openApps = (args, socket) => {
-		console.log("modal");
-		console.log(args[0]);
-		console.log(`${__dirname}../../module/${args[0]}/`);
-		let l  = new modules["LoadApp"](`${__dirname}/../../module/${args[0]}/`, args[0]);
-		let m = l.secuence();
-		m.then((a) => {this.send(a, socket);});
+	let toLoad = (typeof html === 'string') ? html : app;
+	this.openApps(args) => {
+		console.log("en el modal");
+		console.log(args);
+		console.log(modules);
+		let l  = new modules["LoadApp"](`${__dirname}/../${toLoad}/`, toLoad);
+		m = l.secuence();
+		m.then((a) => {console.log(a);});
 
-	};
-	this.send = (a, socket) => {
-		console.log("se deberia enviar ahora")
-		socket.emit('modal', a); 
 	};
 };
 module.exports = modal;

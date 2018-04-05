@@ -1,4 +1,3 @@
-
 'use strict'
 /*
 var Whatch =  require('./../../../commonModules/watcher');*/
@@ -29,7 +28,7 @@ desktopScope.openModal = (e) => {
 	/*
 	 *Función encargada de mostrar el modal en la pantalla
 	*/	
-	comunication.send('ipc', ['fileSystem', 'selectfile'], 'openApps', 'changeImg','server' );
+	comunication.send('ipc', ['filesystem', 'selectfile'], 'openApps', 'changeImg','modal' );
 	console.log("Quieren abrir un programa");
 };
 /*metodos locales llamados por eventos*/

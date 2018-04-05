@@ -4,6 +4,9 @@ function Client(win) {
 	socket.on('event', function(args) {
 		win[args[0]](args[1]);
 	});
+	socket.on('modal', function(args) {
+		modalScope.generate(args);
+	});
 	this.send = function(event, args, funt1, context, who) {
     		/*
 		 * función encarga de gestionar como enviar los datos y a donde

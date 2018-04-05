@@ -3,6 +3,8 @@
 const server = require('./module/server');
 const Communication  = require('./commonModules/communication');
 const Database = require('./commonModules/mongoDB');
+const LoadApp = require("./commonModules/loadapp");
+const Modal = require("./commonModules/modal");
 //Modulos
 const Desktop = require('./module/desktop');
 const Login = require('./module/login');
@@ -23,3 +25,6 @@ global.modules = {}
 for (let o in routes)
 	modules[o.slice(1)] = new routes[o];
 modules["server"] = s;
+modules["LoadApp"] = LoadApp 
+let m = new Modal(); 
+modules["modal"] = m;

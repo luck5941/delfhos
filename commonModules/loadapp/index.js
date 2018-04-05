@@ -1,4 +1,4 @@
-var loadApp = function(path, configPath, name, toLoad = []) {
+var loadApp = function(path, name, toLoad = []) {
 	/*
 	 * Esta libreria se encarga:
 	 * -Cargar el fichero de cofiguración
@@ -158,8 +158,7 @@ var loadApp = function(path, configPath, name, toLoad = []) {
 		}
 	}
 	this.path = this.__getJumpBack(path);
-	this.configPath = this.path + "/" + configPath;
-	//this.pathToLoad = this.__getJumpBack(`${this.path}/../.buffer`);
+	this.configPath = this.path + "/../../commonModules/config.json";
 	//constructor
 	this.secuence = async () => {
 		//llammamos a __copyInBuffer
