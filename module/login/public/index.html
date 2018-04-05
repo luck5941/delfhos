@@ -1,5 +1,14 @@
-<form action="someplace" method="post">
-	<input name="user" placeholder="Tu nombe de usuario o correo"><br>
-	<input type="password" placeholder="Contraseña"><br>
-	<input type="submit" >
+<h1> Sing up</h1>
+<p id="root">{{message}}</p>
+<form action="someplace" method="post" id="newUser">
+	<input name="user" placeholder="El nick con el que quieres que te conozca"><br>
+	<input name="mail" type="email" placeholder="mail@example.com"><br>
+	<input type="password" name="passwd" placeholder="Contraseña"><br>
+	<input type="submit">
+</form>
+<h1> Login</h1>
+<form action "someplace" method="post" id="login">
+	<input name="user" placeholder="El nick con el que quieres que te conozca"><br>
+	<input type="password" name="passwd" placeholder="Contraseña"><br>
+	<input type="submit">
 </form>

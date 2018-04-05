@@ -19,13 +19,24 @@ function COMUNICATION(){
 		// console.log("se conecta con la ip:")
 		// console.log(socket.handshake.address)
 		socket.on('form', (data) => {
-			console.log(data[1])
-			console.log(modules.login)
-			modules.login[data[1]](data[0]);
+			console.log(data);
+			let toSend = [data[0], data[3], data[4]]
+			modules[data[1]][data[2]](toSend, socket);
 		});
 		socket.on('ipc', (data) => {
+			console.log("se le pasa el socket a "+data.slice(-1));
+			cosnole.log("en la función "+ data[1]);
 			modules[data.slice(-1)[0]][data[1]](data[0], socket);
 		});
 	});
+	this.send = (args, context,funct, socket) => {
+		console.log(args);
+		//console.log(context);
+		//console.log(funct);
+		let parameters = [args, context, funct]
+		console.log("parameters")
+		console.log(parameters)
+		socket.emit('event', parameters);	
+	}
 };
 module.exports = COMUNICATION

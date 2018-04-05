@@ -26,5 +26,6 @@ for (let o in routes)
 	modules[o.slice(1)] = new routes[o];
 modules["server"] = s;
 modules["LoadApp"] = LoadApp 
+modules["communication"] = communication; 
 let m = new Modal(); 
 modules["modal"] = m;

@@ -17,6 +17,8 @@ function mongoDB(bbdd_name) {
 		});
 	};
 	this.insert = (obj)=> {
+		console.log("obj en insert")
+		console.log(obj)
 		if (typeof(obj) === 'string') obj = JSON.parse(obj);
 		for (let o in obj){
 			let method = Array.isArray(obj[o]) ? "insertMany":"insertOne";
@@ -24,9 +26,14 @@ function mongoDB(bbdd_name) {
 		}
 	};
 	this.query = (obj) => {
+		console.log("obj vale en mongoDB:")
+		console.log(obj)
 		if (typeof(obj) === 'string') obj = JSON.parse(obj);
-		let collection = Objects.keys(obj)[0];
-		console.log(this.conn.collection(collection).find(obj[collection]));
+		let collection = Object.keys(obj)[0];
+		console.log("se pregunta por ");
+		console.log(obj[collection]);
+		let answer = this.conn.collection(collection).find(obj[collection]).toArray();
+		return answer;
 	};
 	this.exit = () => {
 		this.db.close();

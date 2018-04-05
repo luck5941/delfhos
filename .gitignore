@@ -4,4 +4,4 @@ logs/
 node_modules/
 module/*/public/css/*.css
 package-lock.json
-./logs
+files/
