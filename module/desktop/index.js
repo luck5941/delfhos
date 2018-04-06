@@ -1,21 +1,10 @@
 'use strict';
 function DESKTOP(){	
-	/*Importación de módulos */
-	const fs = require('fs')
-	const url = require('url');
-	
 	/*modulos propios*/
 	var EventServer = require(process.env.PWD+'/commonModules/remoteEvent');
 	EventServer = EventServer.Server
 	/*Variables globales*/
-	var configFile = __dirname + '/../../commonModules/config.json',
-		appsPath = __dirname + '/../../',
-		json = {},
-		user = 'lucas'; //Esto se deberá cambiar más adelante
-
 	function sleep(ms) {return new Promise(resolve => setTimeout(resolve, ms));}
-	
-
 	var updatebackgroundImg = () =>{	
 		let bkgrUri = json['deskop_image'];
 		fs.readFile(__dirname+'/public/css/style.css', 'utf8', (err, data) => {
@@ -24,6 +13,20 @@ function DESKTOP(){
 				if (err) return console.log(err);
 			});
 		});
+	};
+	/* metodos publicos */
+	this.customize = async (obj, ip) => {
+		/*function encargafa de determinar si hay que cambiar algo del
+		 *texto que se va a enviar al usuario
+		 *antes de que este sea enviado
+		 * obj {key:String} Contiene todo el texto
+		*/
+		console.log(Object.keys(session[ip]))
+		console.log(ip)
+		let path = await  ddbb.query({user: {'user': session[ip].user}}, {"_id": 0, "wallPaper": 1});
+		path = path[0].wallPaper;
+		obj.css = obj.css.replace('%backgroundUri%', path)
+		return obj;
 	};
 }
 module.exports = DESKTOP;

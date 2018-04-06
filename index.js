@@ -29,3 +29,5 @@ modules["LoadApp"] = LoadApp
 modules["communication"] = communication; 
 let m = new Modal(); 
 modules["modal"] = m;
+
+global.session = {};

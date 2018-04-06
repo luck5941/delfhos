@@ -19,7 +19,6 @@ function COMUNICATION(){
 		// console.log("se conecta con la ip:")
 		// console.log(socket.handshake.address)
 		socket.on('form', (data) => {
-			console.log(data);
 			let toSend = [data[0], data[3], data[4]]
 			modules[data[1]][data[2]](toSend, socket);
 		});
@@ -30,12 +29,7 @@ function COMUNICATION(){
 		});
 	});
 	this.send = (args, context,funct, socket) => {
-		console.log(args);
-		//console.log(context);
-		//console.log(funct);
 		let parameters = [args, context, funct]
-		console.log("parameters")
-		console.log(parameters)
 		socket.emit('event', parameters);	
 	}
 };

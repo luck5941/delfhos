@@ -2,7 +2,9 @@ function SERVER(modules) {
 	const http = require('http');
 	const fs = require('fs');
 	const url = require('url');
-	let sleep = (ms) => {return new Promise(resolve => setTimeout(resolve, ms));}
+	let sleep = (ms) => {return new Promise(resolve => setTimeout(resolve, ms));},
+		req_save = { "url": "", "date": "", "ip": "", "code": "" },
+		str = '';
 	this.mime_types = { 'js': 'text/javascript', 'json': 'application/json', 'html': 'text/html', 'css': 'text/css', 'jpg': 'image/jpg', 'png': 'image/png', 'gif': 'image/gif' };
 	this.logs = 'logs';
 	this.port = 8080;
@@ -14,8 +16,6 @@ function SERVER(modules) {
 	this.lib = {css: "", js: ""}
 	this._server = (req, res) => {
 		var d = new Date(),
-			str = '',
-			req_save = { "url": "", "date": "", "ip": "", "code": "" },
 			uri = req.url,
 			path = '';		
 		uri = url.parse(uri);		
@@ -24,33 +24,61 @@ function SERVER(modules) {
 		req_save["date"] = `${d.getFullYear()}/${d.getMonth()}/${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
 		req_save["ip"] = req.connection.remoteAddress.split(":")[req.connection.remoteAddress.split(":").length - 1];
 		str = `${req_save["ip"]};${req_save["date"]};${req_save['url']}`
-		if (this.modules[path]){		
+		if (this.modules[path]){
+			if (path !== '/login')
+				if (!session[req_save["ip"]])
+					return this.redirect(res,'login' );
+				else if (!session[req_save["ip"]]["register"])
+					return this.redirect(res, 'login');
+					//path = '/login';
 			let l  = new global.modules["LoadApp"](`${__dirname}/..${path}/`, path.slice(1));
 			let m = l.secuence();
 			m.then((d)=>{
-				d.css = this.lib.css + d.css;
-				d.js = this.lib.js + d.js;
-				console.log(`${path.slice(1)}`);
-				let html = this.base.replace(`<${path.slice(1)}></${path.slice(1)}>`, `<${path.slice(1)}>${d.html}</${path.slice(1)}>`).replace("#{css}", d.css).replace("#{js}", d.js);				
-				return this._sendFile(res, html, ["200", this.mime_types["html"]])
+				let customize = Object.keys(global.modules[path.slice(1)]).indexOf('customize') !=-1 ? true: false;
+				if (customize){
+					console.log("que si que se configura");
+					let p = global.modules[path.slice(1)].customize(d, req_save["ip"]);
+					return p.then((d) => {
+						console.log("es aqui?");
+						d.css = this.lib.css + d.css;
+						d.js = this.lib.js + d.js;
+						let html = this.base.replace(`<${path.slice(1)}></${path.slice(1)}>`, `<${path.slice(1)}>${d.html}</${path.slice(1)}>`).replace("#{css}", d.css).replace("#{js}", d.js);	
+						return this._sendFile(res, html, ["200", this.mime_types["html"]])
+					});
+				}
+				else{ 
+					console.log("que no que se configura");
+					d.css = this.lib.css + d.css;
+					d.js = this.lib.js + d.js;
+					let html = this.base.replace(`<${path.slice(1)}></${path.slice(1)}>`, `<${path.slice(1)}>${d.html}</${path.slice(1)}>`).replace("#{css}", d.css).replace("#{js}", d.js);	
+					return this._sendFile(res, html, ["200", this.mime_types["html"]])
+				}
 			});
+			if (!session[req_save["ip"]]){ 
+				session[req_save["ip"]] = {};
+				session[req_save["ip"]]["res"] =res; 
+				console.log("sesión creada para la ip: " + req_save["ip"])
+			}
 		}
-		else {
-			req_save["code"] = '403';
-			fs.readFile(this.forbidden, (e, d) => this._sendFile(res, d, [req_save["code"], this.mime_types["html"]]));
-			str +=";"+req_save["code"];
-			fs.appendFile("logs/serverLogs", str + '\n', function(e) {
-				if (e) throw e;
-			});
+		else if (path.search(/^(\/?\w*)*\.\w*$/) !== -1){
+			console.log("coincide con: "+ path)
+			path = __dirname+"/../../files"+path
+			let ext = path.split('.').slice(-1)[0];
+			console.log(path)
+			fs.readFile(path, (e, d) => e ? this.forbiddenFunct(res) : this._sendFile(res, d, ["200", this.mime_types[ext]]));
 		}
+		else this.forbiddenFunct(res);
 	}
 
 	this._sendFile = (res, content, headers) => {
+		console.log(content);
 		try{
+			console.log(headers);
 			res.writeHead(headers[0], headers[1]);
 			res.end(content);
 		}
 		catch (e){
+			console.log(e);
 			content.then((d)=>{res.writeHead(headers[0], headers[1]);res.end(d);});
 		}
 	};
@@ -82,18 +110,35 @@ function SERVER(modules) {
 			
 			html = bufferFile
 		});
-		while (!html){await sleep(1);}		
+		while (!html){await sleep(1);}
 		for (let e in rsc){
 			this.lib[e] += rsc[e];
 		}		
 		this.base = html;
 		return html;
 	};
-	this.openApps = (args)=> {
-		console.log("desde el server");
-		console.log(args);
+	this.redirect = (res,place) => {
+		/*
+		 * función encargada de redirigir al usuario a una página determinada
+		 * place: String -> url a la que se le redirige al usuario
+		*/
+		req_save["code"] = '307';
+		str +=";"+req_save["code"];
+		fs.appendFile("logs/serverLogs", str + '\n', function(e) {
+			if (e) throw e;
+		});
+		res.writeHead(307,{'Location': place, 'Content-Type': 'multipart/form-data'});
+		res.end();
 	};
-		
+
+	this.forbiddenFunct = (res)=> {
+		req_save["code"] = '403';
+		fs.readFile(this.forbidden, (e, d) => this._sendFile(res, d, [req_save["code"], this.mime_types["html"]]));
+		str +=";"+req_save["code"];
+		fs.appendFile("logs/serverLogs", str + '\n', function(e) {
+			if (e) throw e;
+		});
+	}
 
 	this.init = () => {		
 		fs.exists('logs', (e) => { if (!e) fs.mkdir('logs', () => {}); });

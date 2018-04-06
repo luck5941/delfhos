@@ -25,14 +25,10 @@ function mongoDB(bbdd_name) {
 			this.conn.collection(o)[method](obj[o], (e) => (e) ?console.error(e) :null);
 		}
 	};
-	this.query = (obj) => {
-		console.log("obj vale en mongoDB:")
-		console.log(obj)
+	this.query = (obj, field = {}) => {
 		if (typeof(obj) === 'string') obj = JSON.parse(obj);
 		let collection = Object.keys(obj)[0];
-		console.log("se pregunta por ");
-		console.log(obj[collection]);
-		let answer = this.conn.collection(collection).find(obj[collection]).toArray();
+		let answer = this.conn.collection(collection).find(obj[collection], field).toArray();
 		return answer;
 	};
 	this.exit = () => {
