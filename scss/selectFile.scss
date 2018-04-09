@@ -1,11 +1,12 @@
-@import './../../../commonModules/commonstyle/vars.scss';
-main{
-	height: 100 - $menuHeight - $footerHeight;
-}
-ul.frecuentFile {
-	height: 100 - $menuHeight - $footerHeight;
-}
-footer{
+@import './vars.scss';
+filesystem{
+	main{
+		height: 90 - $menuHeight - $footerHeight;
+	}
+	ul.frecuentFile {
+		height: 90 - $menuHeight - $footerHeight;
+	}
+	footer{
 		width: 100%;
 		height: $footerHeight;
 		float: left;
@@ -29,3 +30,5 @@ footer{
 			}
 		}
 	}
+
+}

@@ -31,9 +31,6 @@ var loadApp = function(path, name, toLoad = []) {
 			let filePath = `${this.path}public/${s}`;
 			filePath = this.__getJumpBack(filePath);
 			let loadFile = (e, d) => {
-				if (filePath === '/home/lucas/Documentos/universidad/TFG/aplicacion/web/commonModules/selectfile/index.css')
-					console.log(d);
-				console.log(filePath);
 				if (e) return console.error(e)
 				if (where === 'css')
 					this.toReplace[where] += d;
@@ -43,18 +40,14 @@ var loadApp = function(path, name, toLoad = []) {
 				this.ready[2]++;
 				if (this.config){
 					let cond = (this.ready[2] === this.config[this.ProgramName].style.length + this.config[this.ProgramName].script.length+this.loadderPlugins);
-					console.log(`thisready: ${this.ready[2]} total: ${this.config[this.ProgramName].style.length + this.config[this.ProgramName].script.length+this.loadderPlugins}`);
 					if (this.ready[0] && this.ready[1] && cond) {
-						console.log("loadEsternal termina");
 						this.__updateFiles();
 					}
 				}
 			};
 			fs.lstat(filePath, (e, d) => {
-				console.log("filePath before change "+filePath);
 				if (e){
 					filePath = filePath.replace('public/', '');
-					console.log("filePath after change "+filePath);
 				}
 				fs.readFile(filePath, 'utf-8',loadFile);
 			});
@@ -70,8 +63,8 @@ var loadApp = function(path, name, toLoad = []) {
 		 */
 		let module, path, where, name_fr, name_bk, findIt = true, uri ={ jsInit: [], jsEnd:[]};
 		for (let o of obj) {
-			if (!o["load_default"] && this.toLoad.indexOf(o["name"]) === -1) continue;
 			if (this.loadderPlugins == 1000) this.loadderPlugins = 0;
+			if (!o["load_default"] && this.toLoad.indexOf(o["name"]) === -1) continue;
 			this.loadderPlugins++;
 			path = (o["external_path"]) ? o["external_path"] : "";
 			module = o["name"].split(".");
@@ -80,7 +73,6 @@ var loadApp = function(path, name, toLoad = []) {
 			module[0] = path + module[0].toLowerCase();
 			where = (o["at_init"]) ? "jsInit" : "jsEnd";
 			if (o["difference_between_front_and_back"]) {
-				console.log(`tiene ${o.style.length} archivos de css`);
 				if (o["place"].search(/^bo/) !== -1) this.loadderPlugins = this.loadderPlugins   + 1;
 				if (o["place"].search(/^f|^bo/) !== -1) uri[where].push(module[0]+"/client.js");
 				if (o["place"].search(/^ba|^bo/) !== -1){ 
@@ -98,7 +90,6 @@ var loadApp = function(path, name, toLoad = []) {
 						}
 						catch (e) {
 							console.error(`el módulo o libreria ${o["name"]} no se ha encontrado. Por favor, contacte con el adminsitrador del sistema`);
-							console.log(`Y tampoco en la ruta ${__dirname}/${search}`);
 						}
 					this.ready[2]++;
 				}
@@ -171,7 +162,6 @@ var loadApp = function(path, name, toLoad = []) {
 			this.ready[0] = true;
 			let cond = (this.ready[2] === this.config[this.ProgramName].style.length + this.config[this.ProgramName].script.length+this.loadderPlugins);
 			if (this.ready[0] && this.ready[1] && cond) {
-				console.log("copyInBuffer termina");
 				this.__updateFiles();
 			}
 		});
@@ -217,7 +207,6 @@ var loadApp = function(path, name, toLoad = []) {
 			//Si ya han terminado ambos metodos asyncronicos, se llama  this.update
 			let cond = (this.ready[2] === this.config[this.ProgramName].style.length + this.config[this.ProgramName].script.length+this.loadderPlugins);
 			if (this.ready[0] && this.ready[1] && cond) {
-				console.log("secuence termina");
 				this.__updateFiles();
 			}
 		});

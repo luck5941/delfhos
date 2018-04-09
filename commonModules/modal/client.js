@@ -1,6 +1,5 @@
 let modalScope = {};
 modalScope.generate = ( data , place = '') => {
-	console.log("entra en generate");
 	let scr = document.createElement('script'),
 		style = document.createElement('style');
 	scr.innerHTML = data.js;

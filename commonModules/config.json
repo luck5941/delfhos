@@ -7,7 +7,7 @@
             "dependencies": ["whatcher"],
             "difference_between_front_and_back": true,
             "load_default": false,
-            "style": ["index.css"],
+            "style": ["selectfile.css"],
             "at_init": false,
             "external_path": "../../../commonModules/",
             "exec": true,

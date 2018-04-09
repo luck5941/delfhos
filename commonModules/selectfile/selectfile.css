@@ -1,0 +1,29 @@
+* {
+  margin: 0;
+  padding: 0; }
+
+filesystem main {
+  height: 75%; }
+filesystem ul.frecuentFile {
+  height: 75%; }
+filesystem footer {
+  width: 100%;
+  height: 10%;
+  float: left; }
+filesystem footer form {
+  width: 100%;
+  height: 100%;
+  float: left;
+  display: flex;
+  justify-content: center;
+  align-items: center; }
+filesystem footer form input, filesystem footer form p {
+  flex-basis: 0;
+  flex-grow: 3;
+  margin: 0 5%; }
+filesystem footer form input[type="submit"] {
+  flex-grow: 1; }
+filesystem footer form p {
+  flex-grow: 1; }
+
+/*# sourceMappingURL=selectfile.css.map */
