@@ -24,7 +24,9 @@ function COMUNICATION(){
 		});
 		socket.on('ipc', (data) => {
 			console.log("se le pasa el socket a "+data.slice(-1));
-			cosnole.log("en la función "+ data[1]);
+			console.log("en la función "+ data[1]);
+			console.log(data[0]);
+			console.log("-----------------");
 			modules[data.slice(-1)[0]][data[1]](data[0], socket);
 		});
 	});

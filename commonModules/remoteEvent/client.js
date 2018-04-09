@@ -22,7 +22,7 @@ function Client() {
 		console.log(context);
 		let parameters = [args, where, funt1, context];
 		if (who) parameters.push(who);
-		console.log(parameters);
+		console.log(args);
 		socket.emit(event, parameters);
 	};
 };

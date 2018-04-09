@@ -12,10 +12,7 @@ function modal() {
 	*/
 	let sleep = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 	this.openApps = (args, socket) => {
-		console.log("modal");
-		console.log(args[0]);
-		console.log(`${__dirname}../../module/${args[0]}/`);
-		let l  = new modules["LoadApp"](`${__dirname}/../../module/${args[0]}/`, args[0]);
+		let l  = new modules["LoadApp"](`${__dirname}/../../module/${args[0]}/`, args[0], [args[1]]);
 		let m = l.secuence();
 		m.then((a) => {this.send(a, socket);});
 

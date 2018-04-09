@@ -1,4 +1,3 @@
-
 {
     "filesystem":
     {
@@ -8,9 +7,9 @@
             "dependencies": ["whatcher"],
             "difference_between_front_and_back": true,
             "load_default": false,
-            "style": ["index"],
+            "style": ["index.css"],
             "at_init": false,
-            "external_path": false,
+            "external_path": "../../../commonModules/",
             "exec": true,
             "place": "both"
         },
@@ -18,7 +17,7 @@
             "name": "contextmenu",
             "dependences": false,
             "difference_between_front_and_back": false,
-            "load_default": true,
+            "load_default": false,
             "style": ["style"],
             "at_init": true,
             "external_path": "../../../commonModules/",
@@ -29,7 +28,7 @@
             "name": "modal",
             "dependences": false,
             "difference_between_front_and_back": false,
-            "load_default": true,
+            "load_default": false,
             "style": [],
             "at_init": false,
             "external_path": "../../commonModules/",
@@ -46,7 +45,7 @@
             "dependences": false,
             "difference_between_front_and_back": false,
             "load_default": true,
-            "style": ["style"],
+            "style": [],
             "at_init": true,
             "external_path": "../../../commonModules/",
             "exec": false,

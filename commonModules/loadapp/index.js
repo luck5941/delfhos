@@ -11,14 +11,11 @@ var loadApp = function(path, name, toLoad = []) {
 	 *  orifinales.
 	 */
 	const fs = require('fs');
-
-	function sleep(ms) {
-		return new Promise(resolve => setTimeout(resolve, ms));
-	}
+	function sleep(ms) {return new Promise(resolve => setTimeout(resolve, ms));}
 	this.homeDir = '';
 	this.config = {};
 	this.ready = [false, false, 0];
-	this.loadderPlugins = 0;
+	this.loadderPlugins = 1000;
 	this.end = false;
 	this.ProgramName = name;
 	this.css = '';
@@ -33,17 +30,33 @@ var loadApp = function(path, name, toLoad = []) {
 		for (let s of css){
 			let filePath = `${this.path}public/${s}`;
 			filePath = this.__getJumpBack(filePath);
-			fs.readFile(filePath, 'utf-8', (e, d) =>{
+			let loadFile = (e, d) => {
+				if (filePath === '/home/lucas/Documentos/universidad/TFG/aplicacion/web/commonModules/selectfile/index.css')
+					console.log(d);
+				console.log(filePath);
 				if (e) return console.error(e)
 				if (where === 'css')
 					this.toReplace[where] += d;
-				else{
+				else if (where === 'js'){
 					this.toReplace[where][place] += d.replace(/[\n\t\r]*module\.exports\s?=\s?\w*;?[\n\t\r]*$/, '');					
 				}
 				this.ready[2]++;
-				if (this.ready[0] && this.ready[1] && this.ready[2] === (this.config[this.ProgramName].style.length + this.config[this.ProgramName].script.length+this.loadderPlugins)) {
-					this.__updateFiles();
+				if (this.config){
+					let cond = (this.ready[2] === this.config[this.ProgramName].style.length + this.config[this.ProgramName].script.length+this.loadderPlugins);
+					console.log(`thisready: ${this.ready[2]} total: ${this.config[this.ProgramName].style.length + this.config[this.ProgramName].script.length+this.loadderPlugins}`);
+					if (this.ready[0] && this.ready[1] && cond) {
+						console.log("loadEsternal termina");
+						this.__updateFiles();
+					}
 				}
+			};
+			fs.lstat(filePath, (e, d) => {
+				console.log("filePath before change "+filePath);
+				if (e){
+					filePath = filePath.replace('public/', '');
+					console.log("filePath after change "+filePath);
+				}
+				fs.readFile(filePath, 'utf-8',loadFile);
 			});
 		}
 	};
@@ -58,6 +71,7 @@ var loadApp = function(path, name, toLoad = []) {
 		let module, path, where, name_fr, name_bk, findIt = true, uri ={ jsInit: [], jsEnd:[]};
 		for (let o of obj) {
 			if (!o["load_default"] && this.toLoad.indexOf(o["name"]) === -1) continue;
+			if (this.loadderPlugins == 1000) this.loadderPlugins = 0;
 			this.loadderPlugins++;
 			path = (o["external_path"]) ? o["external_path"] : "";
 			module = o["name"].split(".");
@@ -66,26 +80,43 @@ var loadApp = function(path, name, toLoad = []) {
 			module[0] = path + module[0].toLowerCase();
 			where = (o["at_init"]) ? "jsInit" : "jsEnd";
 			if (o["difference_between_front_and_back"]) {
-				name_fr = (o["difference_between_front_and_back"] === true) ? "Render" : "{ " + o["difference_between_front_and_back"][1] + "}";
-				name_bk = (o["difference_between_front_and_back"] === true) ? "Main" : o["difference_between_front_and_back"][0];
-				this[where] += `const ${o["name"].split(".").slice(-1)}_${name_fr} = require('${module[0]}')${module[1]}.${name_fr};`;
-				try { this.bcknd[`${o["name"].split(".").slice(-1)}_${name_bk}`] = (module[1]) ? require(module[0])[module[1].slice(1)][name_bk] : require(module[0])[name_bk]; } catch (e) { findIt = false; }
-				if (!findIt) {
-					try { this.bcknd[`${o["name"].split(".").slice(-1)}_${name_bk}`] = (module[1]) ? require("../" + module[0])[module[1].slice(1)][name_bk] : require("../" + module[0])[name_bk]; } catch (e) { console.error(`el módulo o libreria ${o["name"]} no se ha encontrado. Por favor, contacte con el adminsitrador del sistema`); }
+				console.log(`tiene ${o.style.length} archivos de css`);
+				if (o["place"].search(/^bo/) !== -1) this.loadderPlugins = this.loadderPlugins   + 1;
+				if (o["place"].search(/^f|^bo/) !== -1) uri[where].push(module[0]+"/client.js");
+				if (o["place"].search(/^ba|^bo/) !== -1){ 
+					let name = `${o["name"].split(".").slice(-1)}_${name_bk}`;
+					try {
+						this.bcknd[name] = (module[1]) ? require(module[0])[module[1].slice(1)][name_bk] : require(module[0])[name_bk];
+					}
+					catch (e) {
+						findIt = false;
+					}
+					if (!findIt) {
+						let search = module[0].split("/").slice(1).join("/");
+						try {
+							this.bcknd[name] = (module[1]) ? require(search)[module[1].slice(1)][name_bk] : require(search)[name_bk];
+						}
+						catch (e) {
+							console.error(`el módulo o libreria ${o["name"]} no se ha encontrado. Por favor, contacte con el adminsitrador del sistema`);
+							console.log(`Y tampoco en la ruta ${__dirname}/${search}`);
+						}
+					this.ready[2]++;
 				}
-			this.ready[2]++;
+			}
 			} else {
-				if (o["place"].indexOf("f") !== -1) uri[where].push(module[0]+"/index.js");
-				else if (o["place"].indexOf("b" !== -1)){
+				if (o["place"].indexOf("f") !== -1) uri[where].push(module[0]+"/client.js");
+				else if (o["place"].indexOf("ba" !== -1)){
 					this.bcknd[module[1]] = require(module[0])[module[1]];
 					this.ready[2]++;
 				}
 			}
 			if (o["exec"] && (o["place"].indexOf("f") !== -1 || o["difference_between_front_and_back"]))
 				this[where] += `${o["name"].split(".").slice(-1)}_${name_fr}()`
-			if (o["style"]) {
+			if (o["style"].length >0) {
+				this.loadderPlugins += o["style"].length
 				let cssPath = (o["external_path"]) ? `${module[0]}/` : `../node_modules/${o["name"].toLowerCase()}/`
-				//this.loadExternal(o["style"], cssPath);
+				let css = this.updatePath(o.style, cssPath, 'before');
+				this.loadExternal(css,'css' );
 			}
 		}	
 		this.loadExternal(uri["jsInit"], 'js', "jsInit")
@@ -124,7 +155,7 @@ var loadApp = function(path, name, toLoad = []) {
 		 * que al cargar los elemementos en los que se permite la
 		 * personalización del usuario, nunca afecte al archivo origen
 		 * Esta carpeta debería ser eliminada cuando la app se cierre
-		 */      
+		 */ 
 		fs.readdir(src, (err, dir) => { 
 			if (err) console.error(err)
 			for (let i = 0; i < dir.length; i++) {
@@ -138,7 +169,9 @@ var loadApp = function(path, name, toLoad = []) {
 
 			}
 			this.ready[0] = true;
-			if (this.ready[0] && this.ready[1] && this.ready[2] === (config[this.ProgramName].style.length + config[this.programName].script.length)) {
+			let cond = (this.ready[2] === this.config[this.ProgramName].style.length + this.config[this.ProgramName].script.length+this.loadderPlugins);
+			if (this.ready[0] && this.ready[1] && cond) {
+				console.log("copyInBuffer termina");
 				this.__updateFiles();
 			}
 		});
@@ -161,16 +194,14 @@ var loadApp = function(path, name, toLoad = []) {
 	this.configPath = this.path + "/../../commonModules/config.json";
 	//constructor
 	this.secuence = async () => {
-		//llammamos a __copyInBuffer
-		let config	
-		this.__copyInBuffer(this.path + "/public/");
-		//leemos el fichero de configuración
 		fs.readFile(this.configPath, 'utf-8', (err, data) => {
 			if (err) return (err.errno !== -2) ? console.error(err.errno) : console.log(err);
 			let filesToReplace = ['index.html', 'index.js'],
-				scope = {css: "", js: ""};        
+				scope = {css: "", js: ""},
+				config = {};
 			config = JSON.parse(data);
 			this.config = config;
+			this.__copyInBuffer(this.path + "/public/");
 			if (config[this.ProgramName]) {
 				//Cargamos los css personales de haberlos			
 				if (config[this.ProgramName]["style"])
@@ -179,11 +210,14 @@ var loadApp = function(path, name, toLoad = []) {
 					this.loadExternal(config[this.ProgramName]["script"], 'js');
 				//Después se mira si tiene algún plugin y si lo tiene que cargar
 				if (config[this.ProgramName]["pluggins"].length >= 1) this.__loadPlugins(config[this.ProgramName]["pluggins"]);
+				else this.loadderPlugins = 0;
 
 			}
 			this.ready[1] = true;
-			//Si ya han terminado ambos metodos asyncronicos, se llama  this.update            
-			if (this.ready[0] && this.ready[1] && this.ready[2] === (config[this.ProgramName].style.length + config[this.ProgramName].script.length)) {
+			//Si ya han terminado ambos metodos asyncronicos, se llama  this.update
+			let cond = (this.ready[2] === this.config[this.ProgramName].style.length + this.config[this.ProgramName].script.length+this.loadderPlugins);
+			if (this.ready[0] && this.ready[1] && cond) {
+				console.log("secuence termina");
 				this.__updateFiles();
 			}
 		});
@@ -191,6 +225,23 @@ var loadApp = function(path, name, toLoad = []) {
 			await sleep(1);
 		}
 		return this.toReplace;
+	};
+	this.updatePath = (arr, str, place='before') => {
+		/*
+		 *Función encargada de actualizar la ruta a los archivos dentro de un array.
+		 *arr: [String] -> Contiene la lista de archivos a actualizar
+		 *str: String -> Que es lo que hay que añadir a todos los strng
+		 *before: String -> Donde se añade, si antes o después del string
+		 *devuelve el array actualizado
+		*/
+		let newArr = [],
+			before = '',
+			after = '';
+		if (place.search('b') != -1) before = str;
+		else after = str
+		for (let a of arr)
+			newArr.push(`${before}${a}${after}`);
+		return newArr;
 	};
 
 }

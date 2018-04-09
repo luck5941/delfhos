@@ -16,20 +16,32 @@ external.changeImg = (args) => {
 };
 
 /*metodos locales*/
-desktopScope.openMenu = (x, y) => {
-	/*
-	 *Esta funcion se encarga de mostrar el menún de acciones,
-	 *ya definido en el dom.
-	 *int x, y -> Las coordenadas que en que se tiene que crear
-	*/	
-	desktopScope.menu.css({"display": "block", "top": `${y}px`, "left": `${x}px`});
-};
 desktopScope.openModal = (e) => {
 	/*
 	 *Función encargada de mostrar el modal en la pantalla
-	*/	
-	comunication.send('ipc', ['filesystem', 'selectfile'], 'openApps', 'changeImg','modal' );
+	*/
+	let txt = e.currentTarget.innerHTML.toLowerCase(),
+		args = [];
+	console.log(txt);
+	switch (txt){
+		case 'filesystem':
+			args = ['filesystem'];
+			break;
+		case 'cambiar la img':
+			args ['filesystem', 'selectfile']; 
+			break;
+		default:
+			console.log("something went bad");
+	}
+	comunication.send('ipc', args, 'openApps', 'changeImg','modal' );
 	console.log("Quieren abrir un programa");
+};
+desktopScope.changeImg = () => {
+	/*
+	 *Función encargada de mostrar llamar al filesystem con la intención de poder cambiar la img de fondo
+	*/
+	comunication.send('ipc', ['filesystem', 'selectfile'], 'openApps', 'changeImg','modal' );
+	console.log("Quieren cambiar la img");
 };
 /*metodos locales llamados por eventos*/
 /*control de eventos*/

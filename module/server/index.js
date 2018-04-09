@@ -36,10 +36,8 @@ function SERVER(modules) {
 			m.then((d)=>{
 				let customize = Object.keys(global.modules[path.slice(1)]).indexOf('customize') !=-1 ? true: false;
 				if (customize){
-					console.log("que si que se configura");
 					let p = global.modules[path.slice(1)].customize(d, req_save["ip"]);
 					return p.then((d) => {
-						console.log("es aqui?");
 						d.css = this.lib.css + d.css;
 						d.js = this.lib.js + d.js;
 						let html = this.base.replace(`<${path.slice(1)}></${path.slice(1)}>`, `<${path.slice(1)}>${d.html}</${path.slice(1)}>`).replace("#{css}", d.css).replace("#{js}", d.js);	
@@ -47,7 +45,6 @@ function SERVER(modules) {
 					});
 				}
 				else{ 
-					console.log("que no que se configura");
 					d.css = this.lib.css + d.css;
 					d.js = this.lib.js + d.js;
 					let html = this.base.replace(`<${path.slice(1)}></${path.slice(1)}>`, `<${path.slice(1)}>${d.html}</${path.slice(1)}>`).replace("#{css}", d.css).replace("#{js}", d.js);	
@@ -61,24 +58,19 @@ function SERVER(modules) {
 			}
 		}
 		else if (path.search(/^(\/?\w*)*\.\w*$/) !== -1){
-			console.log("coincide con: "+ path)
 			path = __dirname+"/../../files"+path
 			let ext = path.split('.').slice(-1)[0];
-			console.log(path)
 			fs.readFile(path, (e, d) => e ? this.forbiddenFunct(res) : this._sendFile(res, d, ["200", this.mime_types[ext]]));
 		}
 		else this.forbiddenFunct(res);
 	}
 
 	this._sendFile = (res, content, headers) => {
-		console.log(content);
 		try{
-			console.log(headers);
 			res.writeHead(headers[0], headers[1]);
 			res.end(content);
 		}
 		catch (e){
-			console.log(e);
 			content.then((d)=>{res.writeHead(headers[0], headers[1]);res.end(d);});
 		}
 	};

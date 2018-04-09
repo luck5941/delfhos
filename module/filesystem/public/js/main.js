@@ -302,3 +302,4 @@ $('body')
 .on('keydown', '[contenteditable="true"]', mainScope.aceptName);
 console.log("fin script");
 $(document).ready(()=> comunication.send('initialLoad', 'drawFiles', ''));
+alert("se ejecuta filesystem");
