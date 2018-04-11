@@ -22,7 +22,7 @@ function mongoDB(bbdd_name) {
 		if (typeof(obj) === 'string') obj = JSON.parse(obj);
 		for (let o in obj){
 			let method = Array.isArray(obj[o]) ? "insertMany":"insertOne";
-			this.conn.collection(o)[method](obj[o], (e) => (e) ?console.error(e) :null);
+			this.conn.collection(o)[method](obj[o], (e) => (e) ? console.error(e) : null);
 		}
 	};
 	this.query = (obj, field = {}) => {

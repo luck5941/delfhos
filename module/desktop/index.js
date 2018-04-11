@@ -1,5 +1,6 @@
 'use strict';
-function DESKTOP(){	
+function DESKTOP(ip){	
+	this.ip = ip;
 	/*modulos propios*/
 	var EventServer = require(process.env.PWD+'/commonModules/remoteEvent');
 	EventServer = EventServer.Server

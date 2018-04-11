@@ -19,8 +19,11 @@ function COMUNICATION(){
 		// console.log("se conecta con la ip:")
 		// console.log(socket.handshake.address)
 		socket.on('form', (data) => {
-			let toSend = [data[0], data[3], data[4]]
-			modules[data[1]][data[2]](toSend, socket);
+			let ip = socket.handshake.address.split(":").slice(-1)[0],
+				toSend = [data[0], data[3], data[4]],
+			 	instanceName = `${ip}_${data[1]}`;
+			console.log(instances);
+			instances[instanceName].slice(-1)[0][data[2]](toSend, socket);
 		});
 		socket.on('ipc', (data) => {
 			console.log("se le pasa el socket a "+data.slice(-1));

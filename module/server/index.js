@@ -22,7 +22,7 @@ function SERVER(modules) {
 		path = (uri.path === '/') ? '/desktop' : uri.path;
 		req_save['url'] = req.url;
 		req_save["date"] = `${d.getFullYear()}/${d.getMonth()}/${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
-		req_save["ip"] = req.connection.remoteAddress.split(":")[req.connection.remoteAddress.split(":").length - 1];
+		req_save["ip"] = req.connection.remoteAddress.split(":").slice(-1)[0];
 		str = `${req_save["ip"]};${req_save["date"]};${req_save['url']}`
 		if (this.modules[path]){
 			if (path !== '/login')
@@ -30,13 +30,17 @@ function SERVER(modules) {
 					return this.redirect(res,'login' );
 				else if (!session[req_save["ip"]]["register"])
 					return this.redirect(res, 'login');
-					//path = '/login';
 			let l  = new global.modules["LoadApp"](`${__dirname}/..${path}/`, path.slice(1));
+			let instanceName = `${req_save['ip']}_${path.slice(1)}`;
+			if (!instances[instanceName]) instances[instanceName] = [];
+			let obj = global.modules[path.slice(1)];
+			global["instances"][instanceName].push(new obj(req_save["ip"])); 
 			let m = l.secuence();
 			m.then((d)=>{
-				let customize = Object.keys(global.modules[path.slice(1)]).indexOf('customize') !=-1 ? true: false;
+				let moduleInstance = global["instances"][instanceName].slice(-1)[0];
+				let customize = (Object.keys(moduleInstance).indexOf('customize') !=-1);
 				if (customize){
-					let p = global.modules[path.slice(1)].customize(d, req_save["ip"]);
+					let p = moduleInstance.customize(d, req_save["ip"]);
 					return p.then((d) => {
 						d.css = this.lib.css + d.css;
 						d.js = this.lib.js + d.js;

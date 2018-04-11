@@ -12,7 +12,12 @@ function modal() {
 	*/
 	let sleep = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 	this.openApps = (args, socket) => {
+		let ip = socket.handshake.address.split(":").slice(-1)[0];
 		let l  = new modules["LoadApp"](`${__dirname}/../../module/${args[0]}/`, args[0], [args[1]]);
+		let instanceName = `${ip}_${args[0]}`;
+		if (!instances[instanceName]) instances[instanceName] = [];
+		let obj = global.modules[args[0]];
+		global["instances"][instanceName].push(new obj(ip)); 
 		let m = l.secuence();
 		m.then((a) => {this.send(a, socket);});
 

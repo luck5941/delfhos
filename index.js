@@ -20,14 +20,14 @@ ddbb.init();
 global.app = s.up();
 var communication = new Communication();
 app.listen(s.port);
-global.modules = {}
-
+global.modules = {};
 for (let o in routes)
-	modules[o.slice(1)] = new routes[o];
+	global.modules[o.slice(1)] = routes[o];
 modules["server"] = s;
 modules["LoadApp"] = LoadApp 
 modules["communication"] = communication; 
 let m = new Modal(); 
 modules["modal"] = m;
 
+global.instances =  {};
 global.session = {};
