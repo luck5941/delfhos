@@ -3,7 +3,7 @@ function Client() {
 	var socket = io('http://192.168.1.9:8080');
 	socket.on('event', function(args) {
 		//win[args[0]](args[1]);
-		console.log(args);
+		console.log("------------------------>" + args.join(", "));
 		window[args[1]][args[2]](args[0])
 	});
 	socket.on('modal', function(args) {
@@ -23,7 +23,7 @@ function Client() {
 		console.log(context);
 		let parameters = [args, where, funt1, context];
 		if (who) parameters.push(who);
-		console.log(parameters);
+		console.log("------------------------>" + parameters.join(", "));
 		socket.emit(event, parameters);
 	};
 };

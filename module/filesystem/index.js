@@ -5,15 +5,11 @@ function FILESYSTEM(ip) {
 	const EventServer = require(process.env.PWD + '/commonModules/remoteEvent');	
 	this.ip = ip;
 	/*Variables globales*/
-	var currentPath,
-		dirList,
-		currentFiles,
-		homeName = "Carpeta personal",
-		stringFile = "",
-		pathToLoad,
-		homeDir,
-		trashPath = '',
-		modal;
+	this.currentPath = '';
+	this.homeName = "Carpeta personal";
+	this.homeDir;
+	this.trashPath = '';
+	this.modal;
 	/*metodos locales*/
 	var copyRecursive = (files, src, dst) => {
 		/*
@@ -26,7 +22,7 @@ function FILESYSTEM(ip) {
 		for (let f of files) {
 			if (fs.lstatSync(f).isFile()) {
 				name = renameOneFile(`${dst}`, f.split("/").slice(-1)[0]);
-				fs.createReadStream(f).pipe(fs.createWriteStream(`${name}`));
+				fs.createReadStream(`${f}`).pipe(fs.createWriteStream(`${name}`));
 			} else if (fs.lstatSync(f).isDirectory()) {
 				fs.mkdir(`${dst}${f}`, '0544', (e) => {
 					if (e) return console.error(e);
@@ -174,76 +170,75 @@ function FILESYSTEM(ip) {
 
 	var loadFiles, changeDir, move, copy, initialLoad, rename, remove, getProperties, updateName, prepareToChangeName, changePermissions;
 
-	loadFiles = (dir = '', socket) => {
-		console.log("loadFiles");
-		currentPath = (dir !== '') ? (currentPath + dir[0] + '/') : currentPath;
-		currentFiles = { dir: [], fil: [] };
-		var listDir = fs.readdirSync(currentPath);
+	this.loadFiles = loadFiles = (dir = '', socket) => {
+		this.currentPath = (dir !== '') ? (this.currentPath + dir[0] + '/') : this.currentPath;
+		let currentFiles = { dir: [], fil: [] };
+		console.log("en loadFiles currentPath vale: " + this.currentPath);
+		var listDir = fs.readdirSync(this.currentPath);
 		for (let i of listDir) {
 			if (i.search(/^\./) !== -1)
 				continue;
-			else if (fs.lstatSync(`${currentPath}/${i}`).isDirectory())
+			else if (fs.lstatSync(`${this.currentPath}/${i}`).isDirectory())
 				currentFiles['dir'].push(i);
-			else if (fs.lstatSync(`${currentPath}/${i}`).isFile())
+			else if (fs.lstatSync(`${this.currentPath}/${i}`).isFile())
 				currentFiles['fil'].push(i);
 		};
-		/*let list = currentFiles;
-			str = '';
-
-		for (var i in list['dir'])
-			str += `<li class="folder"><img src="media/folder.jpg" draggable="true" /><p>${list['dir'][i]}</p></li>`;
-		for (i in list['fil'])
-			str += `<li class="file"><img src="media/file.jpg" draggable="true" /><p>${list['fil'][i]}</p></li>`;*/
-		console.log(currentFiles)
 		if (socket)
-			modules.communication.send([str], 'mainScope', 'drawFiles', socket);
+			modules.communication.send([currentFiles], 'mainScope', 'drawFiles', socket);
 		else 
-		return [currentFiles];
+			return [currentFiles];
 	};
 
-	changeDir = (name) => {
-		let path = currentPath.split('/'),
+	this.changeDir = changeDir = (name, socket) => {
+		let path = this.currentPath.split('/'),
 			arr;
-		currentPath = (name[0] !== homeName) ? path.slice(0, path.indexOf(name[0]) + 1).join("/") + '/' : homeDir;
-		arr = (name != homeName) ? path.slice(1, path.indexOf(name[0]) + 1) : [];		
-		return [loadFiles()[0], arr];
+		this.currentPath = (name[0] !==	this.homeName) ? path.slice(0, path.indexOf(name[0]) + 1).join("/") + '/' : this.homeDir;
+		console.log("en changeDir currentPath vale: " + this.currentPath);
+		arr = (name != this.homeName) ? path.slice(1, path.indexOf(name[0]) + 1) : [];		
+		modules.communication.send([loadFiles()[0], arr], name[1], name[2], socket);
 	};
 
-	move = (paths) => {
-		let files = paths[0],
-			dst = (paths[1] !== 'trash') ? paths[1] : trashPath,
+	this.move = move = (paths, socket) => {
+		let files = paths[0][0],
+			dst = (paths[0][1] !== 'trash') ? paths[0][1] : trashPath,
 			name = '';
+
+		dst = this.homeDir.slice(0,-1)+ dst;
 		for (let i = 0; i < files.length; i++) {
 			name = renameOneFile(dst, files[i].split("/").slice(-1)[0]);
-			fs.rename(files[i], name, (err) => { if (err) console.error(err); });
+			fs.rename(this.homeDir.slice(0,-1)+files[i], name, (err) => { if (err) console.error(err); });
 		}
-		return [loadFiles()[0]];
+		modules.communication.send([loadFiles()[0]], paths[1], paths[2], socket);
 	};
-	copy = (files) => {
-		let dst = files[1],
-			src = files[0];
-		copyRecursive(src, currentPath, dst);
-		return [loadFiles()[0]];
+	this.copy = copy = (files) => {
+		/*
+		 *metodo encargado de preparar para copiar la lista de archivos que se solicite al destino en cuestion
+		*/
+		let dst = this.homeDir+"/"+files[0][1],
+			src_cp = files[0][0],
+			src = [];
+		for (let f of src_cp)
+			src.push(this.homeDir.slice(0,-1) +f);
+		copyRecursive(src, this.currentPath, dst);
 	};
-	this.initialLoad = (option, socket) => {
+	this.initialLoad = initialLoad = (option, socket) => {
 		/*
 		 * función encargada de generar el estado inical desde el que se llama, inicializando todas
 		 * las variables que necesiten obtener datos más complejos y no sean generales para todas las
 		 * instancias como puede ser la carpeta personal del usuario
-		*/		
-		//homeDir = (!homeDir) ? l.homeDir : homeDir;
+		*/
 		let userName = session[this.ip].user;
-		let homeDir = `files/users/${userName}`;
-		//pathToLoad = l.pathToLoad;
-		trashPath = `${homeDir}.local/share/Trash/files/`;
+		this.homeDir = `files/users/${userName}/`;
+		this.trashPath = `${this.homeDir}.local/share/Trash/files/`;
 		switch (option) {
 			case 'image':
-				currentPath = homeDir + 'Imágenes';
+				this.currentPath = this.homeDir + 'Imágenes';
 				break;
 			default:
-				currentPath = homeDir;
-		}		
-		modules.communication.send([loadFiles()[0], currentPath.split("/").slice(1)], 'mainScope', 'drawFiles', socket);
+				this.currentPath = this.homeDir;
+		}
+		let toSend = [loadFiles()[0], this.currentPath.replace(this.homeDir, '').split("/")];
+		modules.communication.send(toSend, option[1], option[2], socket);
 	};
 	rename = (fls) => {
 		/*
@@ -260,15 +255,15 @@ function FILESYSTEM(ip) {
 			newNames,
 			names = [];
 		if (files.length === 1) {
-			name = renameOneFile(currentPath, name);
-			fs.rename(`${currentPath}/${files[0]}`, name, (err) => { if (err) console.error(err) });
+			name = renameOneFile(this.currentPath, name);
+			fs.rename(`${this.currentPath}/${files[0]}`, name, (err) => { if (err) console.error(err) });
 			return [loadFiles()[0]];
 		}
 		newName = separateName(name);
 		newNames = generateStringNewName(files, newName, extMod);
 		for (let i = 0; i < files.length; i++) {
-			name = renameOneFile(currentPath, newNames[i]);
-			fs.rename(`${currentPath}/${files[i]}`, name, (err) => { if (err) console.error(err) })
+			name = renameOneFile(this.currentPath, newNames[i]);
+			fs.rename(`${this.currentPath}/${files[i]}`, name, (err) => { if (err) console.error(err) })
 		}
 		return [loadFiles()[0]];
 	};
@@ -282,7 +277,7 @@ function FILESYSTEM(ip) {
 			//Pantalla 1
 			let ownGroup = readcsv([s.uid, s.gid, '\\d{4}', '\\d{4}']);
 			data.name = files[0].split("/").slice(-1)[0];
-			data.path = currentPath;
+			data.path = this.currentPath;
 			data.size = s.size.toString();
 			//Pantalla 2
 			data.lastView = formatDate(s.atime);
@@ -291,7 +286,7 @@ function FILESYSTEM(ip) {
 			//pantalla 3
 			data.type = getFileInfo(s.mode.toString(8))[0];
 			data.permission = getFileInfo(s.mode.toString(8))[1].split("");
-			data.pathFile = currentPath + files[0];
+			data.pathFile = this.currentPath + files[0];
 			data.own = ownGroup[0];
 			data.group = ownGroup[1];
 			data.owns = ownGroup[2];
@@ -311,14 +306,14 @@ function FILESYSTEM(ip) {
 		 * file[1] -> contiene el nombre del archivo viejo
 		 * file[2] -> contiene el nombre nuevo del archivo
 		 */
-		let path = currentPath,
+		let path = this.currentPath,
 			fls = [
 				[file[1]], file[2], false
 			],
 			toReturn;
-		currentPath = file[0];
+		this.currentPath = file[0];
 		toReturn = rename(fls);
-		currentPath = path;
+		this.currentPath = path;
 		return toReturn;
 	};
 

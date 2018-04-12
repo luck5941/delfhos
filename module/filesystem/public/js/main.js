@@ -36,6 +36,7 @@ mainScope.vue = new Vue({el: 'filesystem', data: mainScope.vueData});
 mainScope.drawFiles = (args) => {
 	/*Lista los archivos y carpetas que hay en ese direcorio*/	
 	console.log("draw files");
+	console.log(args)
 	let str = args[0];
 	for (let p in args[0])
 		mainScope.vueData[p] = args[0][p]
@@ -45,8 +46,10 @@ mainScope.drawFiles = (args) => {
 	if (args.length >=2){
 		str = '<li class="track">Carpeta personal</li>';
 		let path = args[1];
-		mainScope.currentPath = "/"+path.join("/");
-		mainScope.currentPath = (mainScope.currentPath.search(/^\//) !== -1) ? mainScope.currentPath + "/" :mainScope.currentPath 
+		console.log("path vale: " + path)
+		mainScope.currentPath = path.join("/");
+		mainScope.currentPath = (mainScope.currentPath.search(/\/$/) !== -1) ? mainScope.currentPath : mainScope.currentPath +"/"; 
+		console.log(mainScope.currentPath);
 		for (var i=2; i< path.length;i++)
 			str +=`<li class="track">${path[i]}</li>`;
 		$('.topBar').html(str);
@@ -115,8 +118,10 @@ mainScope.getName = (src) => {
 	
 	let toCopy = [];
 	for (let f in src)
-		for (let i = 0; i<src[f].length; i++)
+		for (let i = 0; i<src[f].length; i++){
 			toCopy.push(mainScope.currentPath+$(src[f][i]).find("p").html());
+			console.log(mainScope.currentPath);
+		}
 	return toCopy;
 };
 mainScope.sentTo = (dst, src = mainScope.selected)=> {
@@ -126,9 +131,10 @@ mainScope.sentTo = (dst, src = mainScope.selected)=> {
 	 * src:[String] Rutas de los archivs que se quieren mover
 	 * src:Object Nombres de los archivos y carpetas que se van a mover (Deber tratarse sólo la primera opción)
 	*/
-	let toCopy = [],acction = (mainScope.isCopping) ? "copy" : "move";
+	let toCopy = [],
+		action = (mainScope.isCopping) ? "copy" : "move";
 	toCopy = (!Array.isArray(src)) ? mainScope.getName(src) : src;
-	comunication.send(acction, 'drawFiles', [toCopy, dst]);
+	comunication.send('event', [toCopy, dst], 'filesystem', action, 'mainScope', 'drawFiles');
 };
 mainScope.prepareToCopy = () => {
 	mainScope.toCopy = mainScope.getName(mainScope.selected)
@@ -163,6 +169,7 @@ mainScope.goInto = (e)=> {
 	 *funcion encarga de mandar el evento necesario que determina que
 	 *carpeta quieren abrir
 	*/
+	console.log("goInto");
 	let name = '';
 	try{
 		name = $(e.currentTarget).find('p').html();
@@ -170,10 +177,11 @@ mainScope.goInto = (e)=> {
 		name = mainScope.selected['folder'];
 		name = name[name.length-1].find("p").html();
 	}
+	console.log(name);
 	mainScope.currentPath += name + "/";
 	$('.topBar').append(`<li class="track">${name}</li>`);	
 	mainScope.selected = {"file": [], "folder": []};
-	comunication.send('loadFiles', 'drawFiles', [name]);
+	comunication.send('event', [name], 'filesystem', 'loadFiles');
 };
 mainScope.goFolderTopBar = (e)=>{
 	/*
@@ -182,7 +190,7 @@ mainScope.goFolderTopBar = (e)=>{
 	*/
 	e.stopPropagation();
 	let name = $(e.currentTarget).html();
-	comunication.send('changeDir', 'drawFiles', [name]);
+	comunication.send('event', name, 'filesystem', 'changeDir', 'mainScope', 'drawFiles');
 };
 mainScope.showName = (e)=> {
 	/*mostrar el texto completo de la carpeta  o archivo*/
@@ -305,4 +313,4 @@ $('body')
 .on('keydown', mainScope.pressKey)
 .on('keyup', mainScope.keyUp)
 .on('keydown', '[contenteditable="true"]', mainScope.aceptName);
-$(document).ready(()=> comunication.send('event', [''], 'filesystem', 'initialLoad'));
+$(document).ready(()=> comunication.send('event', [''], 'filesystem', 'initialLoad', 'mainScope', 'drawFiles'));

@@ -6,3 +6,4 @@ module/*/public/css/*.css
 package-lock.json
 files/
 notas
+*.py
