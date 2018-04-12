@@ -22,20 +22,25 @@ let contentMenuConstruct = {
 };
 const contentMenu = new ContentMenu(contentMenuConstruct);
 var mainScope = {};
-mainScope.ctrlPress = false,
-mainScope.isCopping = false,
-mainScope.selected = {"file": [], "folder": []},
-mainScope.toCopy = {"file": [], "folder": []},
-mainScope.mapKey = {}
-mainScope.currentPath = ''
+mainScope.ctrlPress = false;
+mainScope.isCopping = false;
+mainScope.selected = {"file": [], "folder": []};
+mainScope.toCopy = {"file": [], "folder": []};
+mainScope.mapKey = {};
+mainScope.currentPath = '';
+mainScope.vueData = {dir: [], fil: []};
+mainScope.vue = new Vue({el: 'filesystem', data: mainScope.vueData});
 
 /*modulos externos*/
-var external = {};
 
-external.drawFiles = (args) => {
+mainScope.drawFiles = (args) => {
 	/*Lista los archivos y carpetas que hay en ese direcorio*/	
+	console.log("draw files");
 	let str = args[0];
-	$('main ul').html(str);
+	for (let p in args[0])
+		mainScope.vueData[p] = args[0][p]
+	console.log(mainScope.vueData)
+	//$('main ul').html(str);
 	/*Cambia el menú de navegación */
 	if (args.length >=2){
 		str = '<li class="track">Carpeta personal</li>';
@@ -47,7 +52,7 @@ external.drawFiles = (args) => {
 		$('.topBar').html(str);
 	}
 };
-external.changeName = (name) => {
+mainScope.changeName = (name) => {
 	if (mainScope.selected["file"].length >0) 
 		$(mainScope.selected["file"][0]).find('p').text(name)
 	else if (mainScope.selected["folder"].length >0) 
@@ -300,4 +305,4 @@ $('body')
 .on('keydown', mainScope.pressKey)
 .on('keyup', mainScope.keyUp)
 .on('keydown', '[contenteditable="true"]', mainScope.aceptName);
-$(document).ready(()=> comunication.send('initialLoad', 'drawFiles', ''));
+$(document).ready(()=> comunication.send('event', [''], 'filesystem', 'initialLoad'));

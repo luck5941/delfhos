@@ -8,5 +8,14 @@
     <li>Imágenes</li>
 </ul>
 <main>
-    <ul class="elements"></ul>
+    <ul class="elements">
+        <li v-for="folder in dir" class="folder">
+            <img src="common/images/folder.jpg" alt="folder icon" draggable="true">
+            <p>{{folder}}</p>
+        </li>
+        <li v-for="file in fil" class="file">
+            <img src="common/images/file.jpg" alt="file icon" draggable="true">
+            <p>{{file}}</p>
+        </li>
+    </ul>
 </main>

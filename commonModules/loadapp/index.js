@@ -12,7 +12,6 @@ var loadApp = function(path, name, toLoad = []) {
 	 */
 	const fs = require('fs');
 	function sleep(ms) {return new Promise(resolve => setTimeout(resolve, ms));}
-	this.homeDir = '';
 	this.config = {};
 	this.ready = [false, false, 0];
 	this.loadderPlugins = 1000;

@@ -18,7 +18,7 @@ loginScope.sendForm = (e) => {
 	for (let i of input)
 		if ($(i).attr('type') !== 'submit')
 			formObj[$(i).attr('name')] = $(i).val()
-	comunication.send('form', formObj, 'login', method, 'loginScope', 'loginFunct')
+	comunication.send('event', formObj, 'login', method, 'loginScope', 'loginFunct')
 };
 
 loginScope.form.on('submit', loginScope.sendForm);

@@ -17,8 +17,6 @@ function mongoDB(bbdd_name) {
 		});
 	};
 	this.insert = (obj)=> {
-		console.log("obj en insert")
-		console.log(obj)
 		if (typeof(obj) === 'string') obj = JSON.parse(obj);
 		for (let o in obj){
 			let method = Array.isArray(obj[o]) ? "insertMany":"insertOne";

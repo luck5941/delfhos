@@ -2,9 +2,11 @@ function FORM() {
 	/*
 	 *Modulo encargado de gestionar todas las entradas con el formulario
 	*/
+	const fs = require('fs');
 	this.newUser = (data) => {
-		data.wallPaper = 'common/images/fsociety.jpg';
+		data[0].wallPaper = 'common/images/fsociety.jpg';
 		ddbb.insert({user: data[0]});
+		fs.mkdir(`files/users/${data[0].user}`, (e) => (e) ? console.error(e) : null);
 	};
 	this.login = (data, socket) => {
 		let response = ddbb.query({user: data[0]});

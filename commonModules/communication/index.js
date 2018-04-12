@@ -16,26 +16,28 @@ function COMUNICATION(){
 	let connected = [];
 	io.on('connection', (socket) => {
 		connected.push(socket);
-		// console.log("se conecta con la ip:")
-		// console.log(socket.handshake.address)
-		socket.on('form', (data) => {
+		socket.on('event', (data) => {
 			let ip = socket.handshake.address.split(":").slice(-1)[0],
 				toSend = [data[0], data[3], data[4]],
 			 	instanceName = `${ip}_${data[1]}`;
-			console.log(instances);
 			instances[instanceName].slice(-1)[0][data[2]](toSend, socket);
 		});
-		socket.on('ipc', (data) => {
-			console.log("se le pasa el socket a "+data.slice(-1));
-			console.log("en la función "+ data[1]);
-			console.log(data[0]);
-			console.log("-----------------");
+		socket.on('modal', (data) => {
 			modules[data.slice(-1)[0]][data[1]](data[0], socket);
 		});
 	});
 	this.send = (args, context,funct, socket) => {
-		let parameters = [args, context, funct]
-		socket.emit('event', parameters);	
+		/*
+		 * función encargada de enviar datos al cliente  
+		 * args: [any] Parametros que se envian a la función en cuestión
+		 * context: String -> equivale al objeto que contiene la función a ejecutar
+		 * funct: string -> La función que se debe ejecutar
+		 * socket: Object -> el objeto con el que se permite el transpaso de información
+		 * de un terminal a otro.
+		*/
+		
+		let parameters = [args, context, funct];
+		socket.emit('event', parameters);
 	}
 };
 module.exports = COMUNICATION

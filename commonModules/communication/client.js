@@ -19,10 +19,11 @@ function Client() {
 		 * context:String -> callback de respuesta (debe de estar dentro del objeto external)
 		 * who: string -> quien debe ejecutar el callback
     		*/
+		console.log("entra en client send");
 		console.log(context);
 		let parameters = [args, where, funt1, context];
 		if (who) parameters.push(who);
-		console.log(args);
+		console.log(parameters);
 		socket.emit(event, parameters);
 	};
 };

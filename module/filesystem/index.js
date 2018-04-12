@@ -1,9 +1,9 @@
 'use strict';
 /*Importación de módulos */
-function FILESYSTEM() {
+function FILESYSTEM(ip) {
 	const fs = require('fs');
-	const EventServer = require(process.env.PWD + '/commonModules/remoteEvent');
-	console.log("se inicia");
+	const EventServer = require(process.env.PWD + '/commonModules/remoteEvent');	
+	this.ip = ip;
 	/*Variables globales*/
 	var currentPath,
 		dirList,
@@ -23,7 +23,6 @@ function FILESYSTEM() {
 		 * dst: String -> La ruta de la carpeta en la que se deben copiar
 		 */
 		let name = '';
-
 		for (let f of files) {
 			if (fs.lstatSync(f).isFile()) {
 				name = renameOneFile(`${dst}`, f.split("/").slice(-1)[0]);
@@ -36,6 +35,7 @@ function FILESYSTEM() {
 			}
 		}
 	};
+
 	var renameOneFile = (path, newName) => {
 		/*
 		 * Función encargada de devolver el nombre del archivo en el nuevo directorio,
@@ -174,7 +174,7 @@ function FILESYSTEM() {
 
 	var loadFiles, changeDir, move, copy, initialLoad, rename, remove, getProperties, updateName, prepareToChangeName, changePermissions;
 
-	loadFiles = (dir = '') => {
+	loadFiles = (dir = '', socket) => {
 		console.log("loadFiles");
 		currentPath = (dir !== '') ? (currentPath + dir[0] + '/') : currentPath;
 		currentFiles = { dir: [], fil: [] };
@@ -187,20 +187,25 @@ function FILESYSTEM() {
 			else if (fs.lstatSync(`${currentPath}/${i}`).isFile())
 				currentFiles['fil'].push(i);
 		};
-		let list = currentFiles,
+		/*let list = currentFiles;
 			str = '';
+
 		for (var i in list['dir'])
 			str += `<li class="folder"><img src="media/folder.jpg" draggable="true" /><p>${list['dir'][i]}</p></li>`;
 		for (i in list['fil'])
-			str += `<li class="file"><img src="media/file.jpg" draggable="true" /><p>${list['fil'][i]}</p></li>`;
-		return [str];
+			str += `<li class="file"><img src="media/file.jpg" draggable="true" /><p>${list['fil'][i]}</p></li>`;*/
+		console.log(currentFiles)
+		if (socket)
+			modules.communication.send([str], 'mainScope', 'drawFiles', socket);
+		else 
+		return [currentFiles];
 	};
 
 	changeDir = (name) => {
 		let path = currentPath.split('/'),
 			arr;
 		currentPath = (name[0] !== homeName) ? path.slice(0, path.indexOf(name[0]) + 1).join("/") + '/' : homeDir;
-		arr = (name != homeName) ? path.slice(1, path.indexOf(name[0]) + 1) : [];
+		arr = (name != homeName) ? path.slice(1, path.indexOf(name[0]) + 1) : [];		
 		return [loadFiles()[0], arr];
 	};
 
@@ -220,9 +225,16 @@ function FILESYSTEM() {
 		copyRecursive(src, currentPath, dst);
 		return [loadFiles()[0]];
 	};
-	initialLoad = (option) => {
-		homeDir = (!homeDir) ? l.homeDir : homeDir;
-		pathToLoad = l.pathToLoad;
+	this.initialLoad = (option, socket) => {
+		/*
+		 * función encargada de generar el estado inical desde el que se llama, inicializando todas
+		 * las variables que necesiten obtener datos más complejos y no sean generales para todas las
+		 * instancias como puede ser la carpeta personal del usuario
+		*/		
+		//homeDir = (!homeDir) ? l.homeDir : homeDir;
+		let userName = session[this.ip].user;
+		let homeDir = `files/users/${userName}`;
+		//pathToLoad = l.pathToLoad;
 		trashPath = `${homeDir}.local/share/Trash/files/`;
 		switch (option) {
 			case 'image':
@@ -230,8 +242,8 @@ function FILESYSTEM() {
 				break;
 			default:
 				currentPath = homeDir;
-		}
-		return [loadFiles()[0], currentPath.split("/").slice(1)];
+		}		
+		modules.communication.send([loadFiles()[0], currentPath.split("/").slice(1)], 'mainScope', 'drawFiles', socket);
 	};
 	rename = (fls) => {
 		/*
@@ -290,6 +302,7 @@ function FILESYSTEM() {
 
 	updateName = (name) => comunication.send(win, 'changeName', name);
 
+
 	prepareToChangeName = (file) => {
 		/*
 		 * Esta función se encarga de preparar el cambio de nombre en el sistema
@@ -319,14 +332,6 @@ function FILESYSTEM() {
 	*/
 		fs.chmod(`${file[0]}${file[1]}`, file[2], (e) => (e) ? console.error(e) : null);
 	};
-	this.init = () => {
-		/*
-		 * función encargada de generar el estado inical desde el que se llama, inicializando todas
-		 * las variables que necesiten obtener datos más complejos y no sean generales para todas las
-		 * instancias como puede ser la carpeta personal del usuario
-		*/
-		
-	}
 }
 
 module.exports = FILESYSTEM;

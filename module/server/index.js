@@ -62,7 +62,8 @@ function SERVER(modules) {
 			}
 		}
 		else if (path.search(/^(\/?\w*)*\.\w*$/) !== -1){
-			path = __dirname+"/../../files"+path
+			path = __dirname+"/../../files"+path;
+			console.log(path)
 			let ext = path.split('.').slice(-1)[0];
 			fs.readFile(path, (e, d) => e ? this.forbiddenFunct(res) : this._sendFile(res, d, ["200", this.mime_types[ext]]));
 		}

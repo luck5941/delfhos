@@ -33,7 +33,7 @@ desktopScope.openModal = (e) => {
 		default:
 			console.log("something went bad");
 	}
-	comunication.send('ipc', args, 'openApps', 'changeImg','modal' );
+	comunication.send('modal', args, 'openApps', 'changeImg','modal' );
 	console.log("Quieren abrir un programa");
 };
 desktopScope.changeImg = () => {
