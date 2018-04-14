@@ -8,7 +8,7 @@ function DESKTOP(ip){
 	function sleep(ms) {return new Promise(resolve => setTimeout(resolve, ms));}
 	var updatebackgroundImg = () =>{	
 		let bkgrUri = json['deskop_image'];
-		fs.readFile(__dirname+'/public/css/style.css', 'utf8', (err, data) => {
+		fs.readFile(__dirname+'/public/css/style.css', 'utf-8', (err, data) => {
 			data = data.replace('%backgroundUri%', bkgrUri);
 			fs.writeFile(__dirname+'/public/css/style_tmp.css', data, (err) => {
 				if (err) return console.log(err);
@@ -26,6 +26,13 @@ function DESKTOP(ip){
 		path = path[0].wallPaper;
 		obj.css = obj.css.replace('%backgroundUri%', path)
 		return obj;
+	};
+	this.upgradeWallPaper = (data, socket) => {
+		let ip = socket.handshake.address.split(":").slice(-1)[0],
+			user = session[ip].user,
+			path =`users/${user}${data[0][0]}`;
+		ddbb.update({user: {user: user}}, {wallPaper: path});
+		modules.communication.send([path], data[1], data[2], socket);
 	};
 }
 module.exports = DESKTOP;

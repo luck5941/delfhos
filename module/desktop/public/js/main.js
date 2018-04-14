@@ -36,6 +36,13 @@ desktopScope.changeImg = () => {
 	*/
 	comunication.send('modal', ['filesystem', 'selectfile'], 'openApps', 'changeImg','modal' );
 };
+desktopScope.updateImg = (uri) => {
+	uri = `url("${uri[0]}")`
+	$('desktop').css({"background-image": uri})
+	selecFileScope = undefined;
+	mainScope = undefined;
+	$('filesystem').addClass("minify").html("");
+}
 /*metodos locales llamados por eventos*/
 /*control de eventos*/
 desktopScope.programs.on('click',desktopScope.openModal);

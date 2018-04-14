@@ -31,7 +31,7 @@ var loadApp = function(path, name, toLoad = []) {
 			filePath = this.__getJumpBack(filePath);
 			let loadFile = (e, d) => {
 				if (e) return console.error(e)
-				if (where === 'css')
+				if (where === 'css' || where === 'html')
 					this.toReplace[where] += d;
 				else if (where === 'js'){
 					this.toReplace[where][place] += d.replace(/[\n\t\r]*module\.exports\s?=\s?\w*;?[\n\t\r]*$/, '');					
@@ -108,6 +108,13 @@ var loadApp = function(path, name, toLoad = []) {
 				let css = this.updatePath(o.style, cssPath, 'before');
 				this.loadExternal(css,'css' );
 			}
+			if (o["hipperText"]){
+				this.loadderPlugins++;
+				let path = (o["external_path"]) ? `${module[0]}/` : `../node_modules/${o["name"].toLowerCase()}/`
+				let file = this.updatePath([o.hipperText], path, 'before');
+				this.loadExternal(file,'html' );
+			}
+
 		}	
 		this.loadExternal(uri["jsInit"], 'js', "jsInit")
 		this.loadExternal(uri["jsEnd"], 'js', "jsEnd")
@@ -120,7 +127,7 @@ var loadApp = function(path, name, toLoad = []) {
 		let f = this.path+'public/index.html',
 			data = fs.readFileSync(f, 'utf-8'),
 			js = `${this.toReplace.js.jsInit}\n${this.toReplace.js.middle}\n${this.toReplace.js.jsEnd}`;
-			this.toReplace["html"] = data;
+			this.toReplace["html"] = data + this.toReplace["html"];
 			this.toReplace["js"] = js;			
 			this.end = true;
 			return this.toReplace;
@@ -164,10 +171,7 @@ var loadApp = function(path, name, toLoad = []) {
 				this.__updateFiles();
 			}
 		});
-
 	};
-	
-	
 	this.loadModules = async function(obj, scope) {
 		while (true) {
 			if (this.ready[0] && this.ready[1]) {

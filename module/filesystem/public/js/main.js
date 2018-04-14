@@ -1,5 +1,4 @@
 'use strict';
-/*librerias*/
 /*Variables globales*/
 var mainScope = {};
 mainScope.contentMenuConstruct = {
@@ -28,31 +27,22 @@ mainScope.selected = {"file": [], "folder": []};
 mainScope.toCopy = {"file": [], "folder": []};
 mainScope.mapKey = {};
 mainScope.currentPath = '';
-mainScope.vueData = {dir: [], fil: []};
+mainScope.vueData = {dir: [], fil: [], currentPath:[]};
 mainScope.vue = new Vue({el: 'filesystem', data: mainScope.vueData});
 
 /*modulos externos*/
 
 mainScope.drawFiles = (args) => {
 	/*Lista los archivos y carpetas que hay en ese direcorio*/	
-	console.log("draw files");
-	console.log(args)
 	let str = args[0];
 	for (let p in args[0])
 		mainScope.vueData[p] = args[0][p]
-	console.log(mainScope.vueData)
-	//$('main ul').html(str);
 	/*Cambia el menú de navegación */
 	if (args.length >=2){
-		str = '<li class="track">Carpeta personal</li>';
 		let path = args[1];
-		console.log("path vale: " + path)
+		mainScope.vueData.currentPath = path;
 		mainScope.currentPath = path.join("/");
 		mainScope.currentPath = (mainScope.currentPath.search(/\/$/) !== -1) ? mainScope.currentPath : mainScope.currentPath +"/"; 
-		console.log(mainScope.currentPath);
-		for (var i=2; i< path.length;i++)
-			str +=`<li class="track">${path[i]}</li>`;
-		$('.topBar').html(str);
 	}
 };
 mainScope.changeName = (name) => {
@@ -120,7 +110,6 @@ mainScope.getName = (src) => {
 	for (let f in src)
 		for (let i = 0; i<src[f].length; i++){
 			toCopy.push(mainScope.currentPath+$(src[f][i]).find("p").html());
-			console.log(mainScope.currentPath);
 		}
 	return toCopy;
 };
@@ -170,7 +159,6 @@ mainScope.goInto = (e)=> {
 	 *funcion encarga de mandar el evento necesario que determina que
 	 *carpeta quieren abrir
 	*/
-	console.log("goInto");
 	let name = '';
 	try{
 		name = $(e.currentTarget).find('p').html();
@@ -178,9 +166,8 @@ mainScope.goInto = (e)=> {
 		name = mainScope.selected['folder'];
 		name = name[name.length-1].find("p").html();
 	}
-	console.log(name);
 	mainScope.currentPath += name + "/";
-	$('.topBar').append(`<li class="track">${name}</li>`);	
+	mainScope.vueData.currentPath = mainScope.currentPath.split("/");
 	mainScope.selected = {"file": [], "folder": []};
 	comunication.send('event', [name], 'filesystem', 'loadFiles');
 };

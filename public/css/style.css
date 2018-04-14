@@ -35,6 +35,12 @@ body {
           color: #fff; }
   body .shadow {
     box-shadow: 5px 5px 5px; }
+  body .minify {
+    width: 0px;
+    height: 0px;
+    top: 100vh;
+    left: 50vw;
+    transition-duration: .75s; }
   body #modal {
     position: absolute;
     width: 20vw;

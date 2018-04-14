@@ -32,8 +32,7 @@ function modal() {
 		readFiles = (() => {
 			/*
 			 * Este método se encarga de crear una copia del archivo que se solicita, en /tmp con el html modificado
-			 */
-			console.log("empieza a la función readFile");
+			 */			
 			var scripts = { js: [], css: [] },
 				finalFile, flags = 0,
 				scriptsContents = { js: "", css: "" };
@@ -114,17 +113,13 @@ function modal() {
 			/*
 			 *Encargado de generar un único archivo con la base del resto
 			 */
-			console.log("entra en la función writeFile y ready vale: "+ this.ready);
 			let toReplace = {
 				"content": content,
 				"js": src.js,
 				"css": src.css
 			};
 			file = replace(toReplace, total);
-			this.ready++;
-			console.log("ready[write modal]: " + this.ready);
-			/*fs.writeFile("/tmp/modal.html", file, (e) => { this.ready++;
-				console.log("ready[write modal]: " + ready) });*/
+			this.ready++;			
 		},
 		searchResource = (file) => {
 			/*
@@ -143,7 +138,7 @@ function modal() {
 				}
 				file = file.replace(m[1], path + m[1])
 			};
-			return file /*.replace(/\n|\t/g, '');*/
+			return file;
 		};
 	}
 	this.createModal = async function(obj) {
@@ -164,11 +159,7 @@ function modal() {
 			});
 		});
 		while (this.ready!==3){await sleep(5);}              
-		console.log("Voy a crear la ventana para el archivo: " + name)
-		/*let win = new this.BrowserWindow({ width: 400, height: 300, frame: false });
-		win.loadURL("file:///tmp/"+name);
-		win.webContents.openDevTools();
-		win.on('closed', () => { win = null });*/
+		console.log("Voy a crear la ventana para el archivo: " + name)		
 	};
 };
 module.exports = modal;

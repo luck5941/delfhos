@@ -4,14 +4,15 @@
         "pluggins": [
         {
             "name": "selectfile",
-            "dependencies": ["whatcher"],
-            "difference_between_front_and_back": true,
+            "dependencies": false,
+            "difference_between_front_and_back": false,
             "load_default": false,
             "style": ["selectfile.css"],
             "at_init": false,
             "external_path": "../../../commonModules/",
             "exec": true,
-            "place": "both"
+            "place": "front_end",
+	    "hipperText": "selectfile.html"
         },
         {
             "name": "contextmenu",
