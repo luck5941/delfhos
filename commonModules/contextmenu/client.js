@@ -1,9 +1,8 @@
 'use strict';
-var ContentMenu = function(Obj = { 'body': { "opt1": "", "opt2": "realFun" } }) {
-	console.log("contentMenu")
+function ContextMenu() {
 	var body = $('body'),
 		menu = {};
-
+	this.menu = menu = {};
 	var openMenu = (x, y, t) => {
 		/*
 		 *Esta funcion se encarga de mostrar el menún de acciones,
@@ -11,8 +10,11 @@ var ContentMenu = function(Obj = { 'body': { "opt1": "", "opt2": "realFun" } }) 
 		 *int x, y -> Las coordenadas que en que se tiene que crear
 		 */
 		if (!t) return null;
-		$('body').prepend(menu[t]);
-		$("#contentMenu").css({ "display": "block", "top": `${y}px`, "left": `${x}px` });
+		menuVue.options = menu[t];
+		menuVue.style = { "display": "block", "top": `${y}px`, "left": `${x}px` };
+		console.log(menuVue.options.length);
+		//$('body').append(menu[t]);
+		//$("#contentMenu").css({ "display": "block", "top": `${y}px`, "left": `${x}px` });
 	};
 	var cliked = (e) => {
 		/*
@@ -24,7 +26,7 @@ var ContentMenu = function(Obj = { 'body': { "opt1": "", "opt2": "realFun" } }) 
 		e.stopPropagation();		
 		switch (e.which) {
 			case 1:
-				return $("#contentMenu").remove();
+				return menuVue.style.display ="none";
 				break;
 			case 2:
 				return null;
@@ -35,7 +37,6 @@ var ContentMenu = function(Obj = { 'body': { "opt1": "", "opt2": "realFun" } }) 
 						let property = t.match(/\W/);
 						let join = (property) ? property[0] : "";
 						let search = (join === ".") ? "className" : (join === "#") ? "id" : "localName";
-						console.log(t)
 						if (join + e.currentTarget[search].replace(' ', join).indexOf(t) !== -1)
 							return t;
 					}
@@ -47,13 +48,18 @@ var ContentMenu = function(Obj = { 'body': { "opt1": "", "opt2": "realFun" } }) 
 
 	this.updateMenu = (obj = Obj) => {
 		for (let t in obj) {
-			menu[t] = '<div id="contentMenu" class=shadow><nav><ul>';
-			for (let o in obj[t])
-				menu[t] += `<li class="options" onClick="${obj[t][o]}()">${o}</li>`;
-			menu[t] += '</ul></nav></div>';
+			menu[t] = [];
+			for (let o in obj[t]){
+				let func = obj[t][o].split(".");
+				menu[t].push({txt: o, func: `${t}_func_${func[1]}`});
+				method[`${t}_func_${func[1]}`] = window[func[0]][func[1]];
+			}
 		}
+		for (let o in obj) 	
+			body.on('mousedown', o, cliked);
 	};
-	this.updateMenu();	
-	for (let o in Obj) 	
-		body.on('mousedown', o, cliked);
 };
+let contextMenu =  new ContextMenu();
+menuVue = {options: {}, style:{}},
+method = {};
+contextMenuVue = new Vue({el: '#contextMenu', data: menuVue, methods: {d:(data) => {method[data](); menuVue.style.display = "none"; console.log(menuVue);}}});

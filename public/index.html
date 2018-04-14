@@ -3,12 +3,19 @@
 <head>
 	<title>Oraculo</title>
 	<meta charset="UTF-8">
+	<link rel="stylesheet" type="text/css" href="/public/css/style.css">
 	<style type="text/css">#{css}</style>
 </head>
 <body oncontextmenu="return false">
     <login></login>
     <desktop></desktop> 
     <filesystem></filesystem>	
+	<div id="contextMenu" class="shadow" v-bind:style="style">
+		<nav> <ul>
+			<li v-for="option in options"><span @click="d(option.func)">{{option.txt}}</span></li>
+			<!--<li v-for="option in options" onclick="{{option.func}}()">{{option.txt}}</li>-->
+		</ul></nav>
+	</div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://vuejs.org/js/vue.js"></script>
     <script type="text/javascript" src="/node_modules/socket.io-client/dist/socket.io.js"></script>

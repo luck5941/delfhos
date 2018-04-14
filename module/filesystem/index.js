@@ -200,7 +200,7 @@ function FILESYSTEM(ip) {
 
 	this.move = move = (paths, socket) => {
 		let files = paths[0][0],
-			dst = (paths[0][1] !== 'trash') ? paths[0][1] : trashPath,
+			dst = (paths[0][1] !== 'trash') ? paths[0][1] : this.trashPath,
 			name = '';
 
 		dst = this.homeDir.slice(0,-1)+ dst;
@@ -229,7 +229,7 @@ function FILESYSTEM(ip) {
 		*/
 		let userName = session[this.ip].user;
 		this.homeDir = `files/users/${userName}/`;
-		this.trashPath = `${this.homeDir}.local/share/Trash/files/`;
+		this.trashPath = `/.trash/`;
 		switch (option) {
 			case 'image':
 				this.currentPath = this.homeDir + 'Imágenes';
@@ -240,20 +240,22 @@ function FILESYSTEM(ip) {
 		let toSend = [loadFiles()[0], this.currentPath.replace(this.homeDir, '').split("/")];
 		modules.communication.send(toSend, option[1], option[2], socket);
 	};
-	rename = (fls) => {
+	this.rename = rename = (fls) => {
 		/*
 		 *Función encargada de cambiar el nombre de los archivos
-		 *fls: [mix]
+		 *fls: [any]
 		 *fls[0]: [String] -> Contiene la lista de archivos que se quiere renombrar
 		 *fls[1]: String -> El nuevo nombre del archivo.
 		 *fls[2]: Bool -> Si la ext se ha modificado
 		 */
-		let files = fls[0],
-			name = fls[1],
-			extMod = fls[2],
+		console.log(fls)
+		let files = fls[0][0],
+			name = fls[0][1],
+			extMod = fls[0][2],
 			newName,
 			newNames,
 			names = [];
+		console.log(files)
 		if (files.length === 1) {
 			name = renameOneFile(this.currentPath, name);
 			fs.rename(`${this.currentPath}/${files[0]}`, name, (err) => { if (err) console.error(err) });
@@ -269,14 +271,15 @@ function FILESYSTEM(ip) {
 	};
 	remove = (files) => removeRecursive(files);
 
-	getProperties = (files) => {
-		modal = new l.bcknd.Modal_Main(__dirname + '/external/properties/index.html');
+	this.getProperties = getProperties = (files) => {
+		//modal = new l.bcknd.Modal_Main(__dirname + '/external/properties/index.html');
+		global.modules.modal.loadModal(`${__dirname}/external/properties/index.html`);
 		let data = {};
-		fs.lstat(files[0], (e, s) => {
+		fs.lstat(this.homeDir + files[0][0], (e, s) => {
 			if (e) return console.log(e)
 			//Pantalla 1
-			let ownGroup = readcsv([s.uid, s.gid, '\\d{4}', '\\d{4}']);
-			data.name = files[0].split("/").slice(-1)[0];
+			//let ownGroup = readcsv([s.uid, s.gid, '\\d{4}', '\\d{4}']);
+			data.name = files[0][0].split("/").slice(-1)[0];
 			data.path = this.currentPath;
 			data.size = s.size.toString();
 			//Pantalla 2
@@ -287,11 +290,11 @@ function FILESYSTEM(ip) {
 			data.type = getFileInfo(s.mode.toString(8))[0];
 			data.permission = getFileInfo(s.mode.toString(8))[1].split("");
 			data.pathFile = this.currentPath + files[0];
-			data.own = ownGroup[0];
-			data.group = ownGroup[1];
-			data.owns = ownGroup[2];
-			data.groups = ownGroup[3];
-			modal.createModal.call(this, data);
+			//data.own = ownGroup[0];
+			//data.group = ownGroup[1];
+			//data.owns = ownGroup[2];
+			//data.groups = ownGroup[3];
+			global.modules.modal.createModal.call(this, data)
 		});
 	};
 

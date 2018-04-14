@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "sass --watch scss/style.scss:public/css/style.css",
     "build_desktop": "sass --watch scss/desktop.scss:module/desktop/public/css/desktop.css",
     "build_filesystem": "sass --watch scss/filesystem.scss:module/filesystem/public/css/filesystem.css"
   },

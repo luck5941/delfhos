@@ -6,14 +6,10 @@ var desktopScope = {};
 /*variables globales*/
 desktopScope.programs = $('desktop #downBar li');
 desktopScope.contentMenuConstruct = {"desktop": {"Cambiar la img": "desktopScope.changeImg"}}
-desktopScope.contentMenu = new ContentMenu(desktopScope.contentMenuConstruct);
+//desktopScope.contentMenu = new ContentMenu(desktopScope.contentMenuConstruct);
 /*modules externos*/
 var external = {}
 
-external.changeImg = (args) => {
-	if (args)
-	body.css('background-image', `url(${args})`);
-};
 
 /*metodos locales*/
 desktopScope.openModal = (e) => {
@@ -22,7 +18,6 @@ desktopScope.openModal = (e) => {
 	*/
 	let txt = e.currentTarget.innerHTML.toLowerCase(),
 		args = [];
-	console.log(txt);
 	switch (txt){
 		case 'filesystem':
 			args = ['filesystem'];
@@ -34,16 +29,14 @@ desktopScope.openModal = (e) => {
 			console.log("something went bad");
 	}
 	comunication.send('modal', args, 'openApps', 'changeImg','modal' );
-	console.log("Quieren abrir un programa");
 };
 desktopScope.changeImg = () => {
 	/*
 	 *Función encargada de mostrar llamar al filesystem con la intención de poder cambiar la img de fondo
 	*/
-	comunication.send('ipc', ['filesystem', 'selectfile'], 'openApps', 'changeImg','modal' );
-	console.log("Quieren cambiar la img");
+	comunication.send('modal', ['filesystem', 'selectfile'], 'openApps', 'changeImg','modal' );
 };
 /*metodos locales llamados por eventos*/
 /*control de eventos*/
 desktopScope.programs.on('click',desktopScope.openModal);
- 
+contextMenu.updateMenu(desktopScope.contentMenuConstruct);

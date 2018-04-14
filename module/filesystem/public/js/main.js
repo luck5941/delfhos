@@ -1,7 +1,8 @@
 'use strict';
 /*librerias*/
 /*Variables globales*/
-let contentMenuConstruct = {
+var mainScope = {};
+mainScope.contentMenuConstruct = {
 	".folder": {
 		"Abrir": "mainScope.goInto",
 		"Enviar a la papelera de reciclaje": "mainScope.sentToTrush",
@@ -20,8 +21,7 @@ let contentMenuConstruct = {
 		"Propiedades": "mainScope.askForProperties"
 	}
 };
-const contentMenu = new ContentMenu(contentMenuConstruct);
-var mainScope = {};
+contextMenu.updateMenu(mainScope.contentMenuConstruct);
 mainScope.ctrlPress = false;
 mainScope.isCopping = false;
 mainScope.selected = {"file": [], "folder": []};
@@ -105,7 +105,7 @@ mainScope.evalKeyMap = () =>{
 		mainScope.remove();
 	else if (mainScope.mapKey[46]) //press supr
 		mainScope.sentToTrush();
-	else if (mainScope.mapKey[17] && mainScope.mapKey[73]) // press cntrl + i
+	else if (/*mainScope.mapKey[17] &&*/ mainScope.mapKey[73]) // press cntrl + i
 		mainScope.askForProperties();
 };
 mainScope.getName = (src) => {
@@ -156,11 +156,12 @@ mainScope.sentToTrush = () => {
 mainScope.remove = () => {
 	mainScope.prepareToCut();
 	let toDel = mainScope.toCopy;
-	comunication.send('remove', 'drawFiles', toDel);	
+	comunication.send('event',null , 'filesystem','remove' , 'mainScope', 'drawFiles');
 };
 mainScope.askForProperties = () => {
 	let names = mainScope.getName(mainScope.selected)
-	comunication.send('getProperties', null, names)
+	comunication.send('event',names , 'filesystem','getProperties' , 'mainScope', null);
+	//comunication.send('getProperties', null, names)
 };
 
 /*metodos locales llamados por eventos*/
@@ -283,7 +284,7 @@ mainScope.aceptName = (e) => {
 	ext.push((ext1.length >=2)? ext1.slice(-1)[0]:'');
 	ext.push((ext2.length >=2)? ext2.slice(-1)[0]:'');
 	extMode = (ext[0] == ext[1]) ? false : ext[0];	
-	comunication.send('rename', 'drawFiles', [toRename, name, extMode]);
+	comunication.send('event', [toRename, name, extMode], 'filesystem', 'rename', 'mainScope', 'drawFiles');
 };
 mainScope.pressKey = (e)=> {
 	mainScope.ctrlPress = (e.keyCode === 17) ? true : false;

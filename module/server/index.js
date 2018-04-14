@@ -98,7 +98,6 @@ function SERVER(modules) {
 						ext = path[1].split(".").slice(-1);
 					if (!rsc[ext]) rsc[ext] = '';					
 					rsc[ext] += content.replace(/[\n\t\r]*module\.exports\s?=\s?\w*;?[\n\t\r]*$/, '');
-					//bufferFile = (bufferFile.search(`#{${ext}}`) == -1) ? bufferFile.replace(path[0], `#{${ext}}`) : bufferFile.replace(path[0], ``)
 					bufferFile = bufferFile.replace(path[0], '');
 				}
 			}
