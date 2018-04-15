@@ -188,7 +188,7 @@ var loadApp = function(path, name, toLoad = []) {
 	//constructor
 	this.secuence = async () => {
 		fs.readFile(this.configPath, 'utf-8', (err, data) => {
-			if (err) return (err.errno !== -2) ? console.error(err.errno) : console.log(err);
+			if (err) return (err.errno !== -2) ? console.error(err.errno) : console.error(err);
 			let filesToReplace = ['index.html', 'index.js'],
 				scope = {css: "", js: ""},
 				config = {};

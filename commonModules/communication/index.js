@@ -17,9 +17,9 @@ function COMUNICATION(){
 	io.on('connection', (socket) => {
 		connected.push(socket);
 		socket.on('event', (data) => {
-			let ip = socket.handshake.address.split(":").slice(-1)[0],
+			let id = modules.server.getCookieValue(socket.handshake.headers.cookie, '_id');
 				toSend = [data[0], data[3], data[4]],
-			 	instanceName = `${ip}_${data[1]}`;
+			 	instanceName = `${id}_${data[1]}`;
 			instances[instanceName].slice(-1)[0][data[2]](toSend, socket);
 		});
 		socket.on('modal', (data) => {

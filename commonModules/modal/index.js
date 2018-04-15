@@ -15,18 +15,17 @@ function modal() {
 	let sleep = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 	this.ready = 0;
 	this.openApps = (args, socket) => {
-		let ip = socket.handshake.address.split(":").slice(-1)[0];
+		let id = modules.server.getCookieValue(socket.handshake.headers.cookie, '_id');
 		let l = new modules["LoadApp"](`${__dirname}/../../module/${args[0]}/`, args[0], [args[1]]);
-		let instanceName = `${ip}_${args[0]}`;
+		let instanceName = `${id}_${args[0]}`;
 		if (!instances[instanceName]) instances[instanceName] = [];
 		let obj = global.modules[args[0]];
-		global["instances"][instanceName].push(new obj(ip));
+		global["instances"][instanceName].push(new obj(id));
 		let m = l.secuence();
 		m.then((a) => { socket.emit('modal', a); });
 
 	};
 	this.loadModal = (html = false) => {
-		console.log("comienza la creación del modal con la ruta: " + html);
 		let path = html.split("/").slice(0, -1).join("/") + "/",
 			file = '',
 		readFiles = (() => {
@@ -75,7 +74,6 @@ function modal() {
 		})();
 		this.ready++;
 		var replace = (obj, str, clean) => {
-			console.log("entra en la función replace y ready vale: " +  this.ready);
 			var match, rpl, ret, i = 0,
 				regex = /#{(\w*)(\[(\d+|"\w+")])?}/g,
 				list, key, content, match, tmpStr;
@@ -128,24 +126,17 @@ function modal() {
 			 * Si empieza en "./" se toma la desde la ubicación del archivo, en caso contrario
 			 * desde aquí (módulos generales)
 			 */
-			console.log("entra en la función searchResource y ready vale"+ this.ready);
-
 			let pat = /require\('(.*)'\)/g,
 				m, path = __dirname.split("/").slice(0, -1).join("/") + "/";
 			while ((m = pat.exec(file)) != null) {
-				if (m[1].search("./") == 1) { //Se esta buscando desde la ubicación del archivo
-					console.log(m[1]);
-				}
 				file = file.replace(m[1], path + m[1])
 			};
 			return file;
 		};
 	}
 	this.createModal = async function(obj) {
-		console.log("entra en la función createModal y ready vale "+ this.ready);
 		let name ='';
 		while (this.ready!==2){await sleep(5);}
-		console.log("Voy a  leer el archivo")
 		fs.readFile("/tmp/modal.html", "UTF-8", (e, c) =>{
 			if (e) return console.error(e);
 			c = replace(obj, c);
@@ -154,12 +145,10 @@ function modal() {
 			name = `${l.getHours()}_${l.getMinutes()}_${l.getSeconds()}_${l.getMilliseconds()}.html`;
 			fs.writeFile("/tmp/"+name, c, (e) => {
 				if (e) return console.error(e);
-				console.log("ya se ha creado el archivo con el nombre "+name )
 				this.ready++;
 			});
 		});
 		while (this.ready!==3){await sleep(5);}              
-		console.log("Voy a crear la ventana para el archivo: " + name)		
 	};
 };
 module.exports = modal;

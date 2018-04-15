@@ -2,10 +2,10 @@ function mongoDB(bbdd_name) {
 	const MongoClient = require('mongodb').MongoClient;
 	this.name = bbdd_name;
 	this.init = ()=> {
-		console.log("se va a iniciar la conexion en "+ this.name);
+		console.info("se va a iniciar la conexion en "+ this.name);
 		MongoClient.connect('mongodb://127.0.0.1:27017/', (err, db) => {
 			if (err) return console.error(err);
-			console.log("conexion iniciada");
+			console.info("conexion iniciada");
 			this.conn = db.db(this.name);
 			this.db = db;
 		});
@@ -13,7 +13,6 @@ function mongoDB(bbdd_name) {
 	this.newCollection = (name) => {
 		this.conn.createCollection(name, (e, r) => {
 			if (e) return console.error (e);
-			console.log("colección creada");
 		});
 	};
 	this.insert = (obj)=> {
@@ -47,14 +46,12 @@ function mongoDB(bbdd_name) {
 		*/
 		if (typeof(obj) === 'string') obj = JSON.parse(obj);
 		let collection = Object.keys(obj)[0];
-		console.log(obj[collection]);
-		console.log(field);
-		this.conn.collection(collection).updateMany(obj[collection],{$set: field}, (err, res) => {if (err) return console.log(err); console.log(res.result.nModified)});
+		this.conn.collection(collection).updateMany(obj[collection],{$set: field}, (err, res) => {if (err) return console.error(err);});
 		
 	}
 	this.exit = () => {
 		this.db.close();
-		console.log("conexion cerrada");
+		console.info("conexion cerrada");
 	};
 };
 module.exports = mongoDB

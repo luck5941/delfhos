@@ -22,5 +22,12 @@ loginScope.sendForm = (e) => {
 };
 
 loginScope.form.on('submit', loginScope.sendForm);
-loginScope.loginFunct = (data) => data.access ? window.location.href = "desktop" : loginScope.data.message = "Contraseño o contraseña incorrecta";
-
+loginScope.loginFunct = (data) =>{
+	console.log(data);
+	if (data.access){
+		console.log("vamonoooooooos");
+		document.cookie = "_id="+data.key+";path=/;"
+		return window.location.href = "desktop";
+	}
+	else return loginScope.data.message = "Contraseño o contraseña incorrecta";
+};

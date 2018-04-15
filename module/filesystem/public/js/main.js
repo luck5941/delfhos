@@ -28,7 +28,25 @@ mainScope.toCopy = {"file": [], "folder": []};
 mainScope.mapKey = {};
 mainScope.currentPath = '';
 mainScope.vueData = {dir: [], fil: [], currentPath:[]};
-mainScope.vue = new Vue({el: 'filesystem', data: mainScope.vueData});
+	
+mainScope.vue = new Vue({el: 'filesystem', data: mainScope.vueData, computed:{
+	getPath: function(){
+		let availabesExt = ['jpg', 'png', 'svg', 'jpeg', 'gif'];
+		let arr = []
+		let ext = '';
+		let toPush = ''
+		for (let f of this.fil){
+			arr.push({});
+			arr.slice(-1)[0].name = f;
+			ext = f.split(".").slice(-1)[0];
+			toPush = (availabesExt.indexOf(ext) === -1) ? "common/images/file.jpg" : `${this.currentPath.join("/")}${f}`;	
+			console.log(toPush);
+			arr.slice(-1)[0].path = toPush;
+		}
+		console.log(arr);
+		return arr;
+	}
+}});
 
 /*modulos externos*/
 
@@ -283,7 +301,12 @@ mainScope.keyUp = (e)=>  {
 	if (e.keyCode === 17) mainScope.ctrlPress = false;
 	mainScope.mapKey[e.keyCode] = false;
 };
+mainScope.newFolder = () =>{
+	console.log("newFolder");
+	comunication.send('event', [''], 'filesystem', 'newFolder', 'mainScope', 'drawFiles');
+	//$('.elements .folder').addClass('selected');
 
+};
 
 /*control de eventos*/
 $('body')
@@ -300,5 +323,6 @@ $('body')
 .on('mousedown', '.elements', mainScope.unselect)
 .on('keydown', mainScope.pressKey)
 .on('keyup', mainScope.keyUp)
-.on('keydown', '[contenteditable="true"]', mainScope.aceptName);
+.on('keydown', '[contenteditable="true"]', mainScope.aceptName)
+.on('click', '#newFolder', mainScope.newFolder);
 $(document).ready(()=> comunication.send('event', [''], 'filesystem', 'initialLoad', 'mainScope', 'drawFiles'));

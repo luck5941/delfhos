@@ -3,6 +3,7 @@ function FORM() {
 	 *Modulo encargado de gestionar todas las entradas con el formulario
 	*/
 	const fs = require('fs');
+	const crypto = require('crypto');
 	this.newUser = (data) => {
 		data[0].wallPaper = 'common/images/fsociety.jpg';
 		ddbb.insert({user: data[0]});
@@ -10,17 +11,22 @@ function FORM() {
 	};
 	this.login = (data, socket) => {
 		let response = ddbb.query({user: data[0]});
-		let ip = socket.handshake.address.split(":").slice(-1)[0];
+		//let id = socket.handshake.address.split(":").slice(-1)[0];
+		let id;
 		response.then((res) => {
 			if (res.length < 1){ 
-				session[ip]["register"] = false;
 				modules.communication.send({access: false}, data[1], data[2], socket);
 			}
 			else{
+				let key = '',
+					now = new Date().getTime();
 				res = res[0];
-				session[ip]["register"] = true;
-				session[ip]["user"] = res.user
-				modules.communication.send({access: true}, data[1], data[2], socket);
+				id = now+res._id;
+				id = crypto.createHash('sha256').update(id).digest('base64');
+				session[id] = {};
+				session[id]["register"] = true;
+				session[id]["user"] = res.user
+				modules.communication.send({access: true, key: id}, data[1], data[2], socket);
 			}
 		});
 	};

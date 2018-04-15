@@ -1,7 +1,11 @@
 <ul class="topBar">
-    <li class="track">Carpeta personal</li>
+	<li class="track">Carpeta personal</li>
 	<li v-for="location in currentPath">{{location}}</li>
-
+</ul>
+<ul id="options" class="topBar">
+	<li id="newFolder">
+		<img src="common/images/createFolder.svg" alt="Nueva carpeta">
+	</li>
 </ul>
 <ul class="frecuentFile">
     <li>Recientes</li>
@@ -10,14 +14,16 @@
     <li>Imágenes</li>
 </ul>
 <main>
+	<section>
+	<section>
     <ul class="elements">
         <li v-for="folder in dir" class="folder">
             <img src="common/images/folder.jpg" alt="folder icon" draggable="true">
             <p>{{folder}}</p>
         </li>
-        <li v-for="file in fil" class="file">
-            <img src="common/images/file.jpg" alt="file icon" draggable="true">
-            <p>{{file}}</p>
+        <li v-for="file in getPath" class="file">
+            <img :src="file.path" alt="file icon" draggable="true" >
+            <p>{{file.name}}</p>
         </li>
     </ul>
 </main>

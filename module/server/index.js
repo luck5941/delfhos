@@ -17,30 +17,30 @@ function SERVER(modules) {
 	this._server = (req, res) => {
 		var d = new Date(),
 			uri = req.url,
-			path = '';		
-		uri = url.parse(uri);		
+			path = '';
+		uri = url.parse(uri);
 		path = (uri.path === '/') ? '/desktop' : uri.path;
 		req_save['url'] = req.url;
 		req_save["date"] = `${d.getFullYear()}/${d.getMonth()}/${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
 		req_save["ip"] = req.connection.remoteAddress.split(":").slice(-1)[0];
 		str = `${req_save["ip"]};${req_save["date"]};${req_save['url']}`
+		//Obtención de la clave que se le impone por cookie
+		let id = this.getCookieValue(req.headers.cookie, '_id');
 		if (this.modules[path]){
 			if (path !== '/login')
-				if (!session[req_save["ip"]])
+				if (!id || !session[id])
 					return this.redirect(res,'login' );
-				else if (!session[req_save["ip"]]["register"])
-					return this.redirect(res, 'login');
 			let l  = new global.modules["LoadApp"](`${__dirname}/..${path}/`, path.slice(1));
-			let instanceName = `${req_save['ip']}_${path.slice(1)}`;
+			let instanceName = `${id}_${path.slice(1)}`;
 			if (!instances[instanceName]) instances[instanceName] = [];
 			let obj = global.modules[path.slice(1)];
-			global["instances"][instanceName].push(new obj(req_save["ip"])); 
+			global["instances"][instanceName].push(new obj(id)); 
 			let m = l.secuence();
 			m.then((d)=>{
 				let moduleInstance = global["instances"][instanceName].slice(-1)[0];
 				let customize = (Object.keys(moduleInstance).indexOf('customize') !=-1);
 				if (customize){
-					let p = moduleInstance.customize(d, req_save["ip"]);
+					let p = moduleInstance.customize(d, id);
 					return p.then((d) => {
 						d.css = this.lib.css + d.css;
 						d.js = this.lib.js + d.js;
@@ -51,17 +51,15 @@ function SERVER(modules) {
 				else{ 
 					d.css = this.lib.css + d.css;
 					d.js = this.lib.js + d.js;
-					let html = this.base.replace(`<${path.slice(1)}></${path.slice(1)}>`, `<${path.slice(1)}>${d.html}</${path.slice(1)}>`).replace("#{css}", d.css).replace("#{js}", d.js);	
+					let html = this.base.replace(`<${path.slice(1)}></${path.slice(1)}>`, `<${path.slice(1)}>${d.html}</${path.slice(1)}>`).replace("#{css}", d.css).replace("#{js}", d.js);
 					return this._sendFile(res, html, ["200", this.mime_types["html"]])
 				}
 			});
-			if (!session[req_save["ip"]]){ 
-				session[req_save["ip"]] = {};
-				session[req_save["ip"]]["res"] =res; 
-			}
 		}
 		else if (path.search(/^(\/?\w*)*\.\w*$/) !== -1){
-			path = __dirname+"/../../files"+path;
+			let id = this.getCookieValue(req.headers.cookie, '_id');
+			let toAdd = /^\/common/.test(path) ? "" : "/users/"+session[id].user
+			path = __dirname+"/../../files"+toAdd+path;
 			let ext = path.split('.').slice(-1)[0];
 			fs.readFile(path, (e, d) => e ? this.forbiddenFunct(res) : this._sendFile(res, d, ["200", this.mime_types[ext]]));
 		}
@@ -132,7 +130,32 @@ function SERVER(modules) {
 		fs.appendFile("logs/serverLogs", str + '\n', function(e) {
 			if (e) throw e;
 		});
-	}
+	};
+
+	this.getCookieValue = (cookie, key = false) => {
+		/*
+		 *metodo encargado de devolver el valor de una cookie. Si key esta vacio. devuelve el objeto con todos los datos
+		 * cookie:String -> cookies que se quieran analizar
+		 * key: [any] -> valor o valores que se quieran obtener
+		*/
+		if (!cookie) return false;
+		let obj = {}
+			arr = [],
+			reg = /(\w*)=(.*)/,
+			mach = [];
+		arr = cookie.split(";");
+		for (let a of arr){
+			match = reg.exec(a);
+			if (key){
+				if(key === match[1])
+					obj = match[2];
+				continue;
+			}
+			else 
+				obj[match[1]] = match[2];
+		}
+		return obj
+	};
 
 	this.init = () => {		
 		fs.exists('logs', (e) => { if (!e) fs.mkdir('logs', () => {}); });

@@ -1,9 +1,9 @@
 'use strict';
 /*Importación de módulos */
-function FILESYSTEM(ip) {
+function FILESYSTEM(id) {
 	const fs = require('fs');
 	const EventServer = require(process.env.PWD + '/commonModules/remoteEvent');	
-	this.ip = ip;
+	this.id = id;
 	/*Variables globales*/
 	this.currentPath = '';
 	this.homeName = "Carpeta personal";
@@ -24,7 +24,7 @@ function FILESYSTEM(ip) {
 				name = renameOneFile(`${dst}`, f.split("/").slice(-1)[0]);
 				fs.createReadStream(`${f}`).pipe(fs.createWriteStream(`${name}`));
 			} else if (fs.lstatSync(f).isDirectory()) {
-				fs.mkdir(`${dst}${f}`, '0544', (e) => {
+				fs.mkdir(`${dst}${f}`, '0744', (e) => {
 					if (e) return console.error(e);
 					copyRecursive(fs.readdirSync(f), `${src}${f}/`, `${dst}${f}/`);
 				});
@@ -168,12 +168,11 @@ function FILESYSTEM(ip) {
 
 	/*metodos globales*/
 
-	var loadFiles, changeDir, move, copy, initialLoad, rename, remove, getProperties, updateName, prepareToChangeName, changePermissions;
+	var loadFiles, changeDir, move, copy, initialLoad, rename, remove, getProperties, updateName, prepareToChangeName, changePermissions, newFolder;
 
 	this.loadFiles = loadFiles = (dir = '', socket) => {
 		this.currentPath = (dir !== '') ? (this.currentPath + dir[0] + '/') : this.currentPath;
 		let currentFiles = { dir: [], fil: [] };
-		console.log("en loadFiles currentPath vale: " + this.currentPath);
 		var listDir = fs.readdirSync(this.currentPath);
 		for (let i of listDir) {
 			if (i.search(/^\./) !== -1)
@@ -193,8 +192,7 @@ function FILESYSTEM(ip) {
 		let path = this.currentPath.split('/'),
 			arr;
 		this.currentPath = (name[0] !==	this.homeName) ? path.slice(0, path.indexOf(name[0]) + 1).join("/") + '/' : this.homeDir;
-		console.log("en changeDir currentPath vale: " + this.currentPath);
-		arr = (name != this.homeName) ? path.slice(1, path.indexOf(name[0]) + 1) : [];		
+		arr = (name != this.homeName) ? path.slice(1, path.indexOf(name[0]) + 1) : [];
 		modules.communication.send([loadFiles()[0], arr], name[1], name[2], socket);
 	};
 
@@ -227,7 +225,7 @@ function FILESYSTEM(ip) {
 		 * las variables que necesiten obtener datos más complejos y no sean generales para todas las
 		 * instancias como puede ser la carpeta personal del usuario
 		*/
-		let userName = session[this.ip].user;
+		let userName = session[this.id].user;
 		this.homeDir = `files/users/${userName}/`;
 		this.trashPath = `/.trash/`;
 		switch (option) {
@@ -248,14 +246,12 @@ function FILESYSTEM(ip) {
 		 *fls[1]: String -> El nuevo nombre del archivo.
 		 *fls[2]: Bool -> Si la ext se ha modificado
 		 */
-		console.log(fls)
 		let files = fls[0][0],
 			name = fls[0][1],
 			extMod = fls[0][2],
 			newName,
 			newNames,
 			names = [];
-		console.log(files)
 		if (files.length === 1) {
 			name = renameOneFile(this.currentPath, name);
 			fs.rename(`${this.currentPath}/${files[0]}`, name, (err) => { if (err) console.error(err) });
@@ -276,7 +272,7 @@ function FILESYSTEM(ip) {
 		global.modules.modal.loadModal(`${__dirname}/external/properties/index.html`);
 		let data = {};
 		fs.lstat(this.homeDir + files[0][0], (e, s) => {
-			if (e) return console.log(e)
+			if (e) return console.error(e)
 			//Pantalla 1
 			//let ownGroup = readcsv([s.uid, s.gid, '\\d{4}', '\\d{4}']);
 			data.name = files[0][0].split("/").slice(-1)[0];
@@ -297,6 +293,20 @@ function FILESYSTEM(ip) {
 			global.modules.modal.createModal.call(this, data)
 		});
 	};
+	this.newFolder = newFolder = (name, socket) => {
+		fs.mkdir(`${this.currentPath}newFolder`, '0744', (e) =>{
+			if (e)
+				if (e.errno === -17){ //la carpeta ya existe
+					let listFolder = fs.readdirSync(this.currentPath);
+					let ind = 1;
+					let str = "newFolder";
+					while (listFolder.indexOf(`${str}${ind}`) !== -1) 
+						ind++;
+					fs.mkdir(`${this.currentPath}${str}${ind}`, '0774', (e) => (e) ? console.error(e) : null);
+				}
+			modules.communication.send([loadFiles()[0]], name[1], name[2], socket);
+		});
+	}
 
 	updateName = (name) => comunication.send(win, 'changeName', name);
 
@@ -330,6 +340,7 @@ function FILESYSTEM(ip) {
 	*/
 		fs.chmod(`${file[0]}${file[1]}`, file[2], (e) => (e) ? console.error(e) : null);
 	};
+	
 }
 
 module.exports = FILESYSTEM;

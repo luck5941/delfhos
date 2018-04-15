@@ -8,7 +8,7 @@ filesystem{
 	background-color: lightgray;
 	box-shadow: 5px 5px 5px;
 	ul.topBar {
-		width: 100%;
+		width: 80%;
 		float: left;
 		border-bottom:2px solid $color1;
 		height: $menuHeight;
@@ -33,6 +33,10 @@ filesystem{
 			list-style: none;
 			width: 100%;
 		}
+	}
+	ul#options {
+		width: 20%;
+		li { font-weight: initial; }
 	}
 	main {
 		float: left;
