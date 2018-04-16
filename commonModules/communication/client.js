@@ -1,6 +1,6 @@
 
 function Client() {
-	var socket = io('http://192.168.1.9:8080');
+	var socket = io('http://127.0.0.1:8080');
 	socket.on('event', function(args) {
 		//win[args[0]](args[1]);
 		console.log("------------------------>" + args.join(", "));
