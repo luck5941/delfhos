@@ -170,7 +170,27 @@ mainScope.askForProperties = () => {
 	comunication.send('event',names , 'filesystem','getProperties' , 'mainScope', null);
 	//comunication.send('getProperties', null, names)
 };
-
+mainScope.newFolder = () =>{
+	/*
+	*Metodo encargado de generar una nueva carpeta.
+	*Cuando termine, vuelve a se actualiza la lista de archivios
+	*/
+	comunication.send('event', [''], 'filesystem', 'newFolder', 'mainScope', 'drawFiles');
+}
+mainScope.sendFiles = (file) => {
+	/*
+	 * Metodo encargado de leer y enviar los archivos al servidor
+	 * file es un solo importante, independientemente de todos los que se quieran enviar
+	*/
+	let reader = new FileReader(),
+		fileObj = {};
+	fileObj.name = file.name;
+	reader.onload = (e) => {
+		fileObj.data = e.target.result;
+		comunication.send('event', [fileObj], 'filesystem', 'getFiles', 'mainScope', 'drawFiles');
+	}
+	reader.readAsBinaryString(file);
+};
 /*metodos locales llamados por eventos*/
 mainScope.goInto = (e)=> {
 	/*
@@ -301,12 +321,14 @@ mainScope.keyUp = (e)=>  {
 	if (e.keyCode === 17) mainScope.ctrlPress = false;
 	mainScope.mapKey[e.keyCode] = false;
 };
-mainScope.newFolder = () =>{
-	console.log("newFolder");
-	comunication.send('event', [''], 'filesystem', 'newFolder', 'mainScope', 'drawFiles');
-	//$('.elements .folder').addClass('selected');
-
+mainScope.requestFiles = (e) => {
+	if (!e.originalEvent.dataTransfer)return; 
+	if (!e.originalEvent.dataTransfer.files.length) return;
+	let files = e.originalEvent.dataTransfer.files;	
+	for (let f of files)
+		mainScope.sendFiles(f);
 };
+
 
 /*control de eventos*/
 $('body')
@@ -324,5 +346,16 @@ $('body')
 .on('keydown', mainScope.pressKey)
 .on('keyup', mainScope.keyUp)
 .on('keydown', '[contenteditable="true"]', mainScope.aceptName)
-.on('click', '#newFolder', mainScope.newFolder);
+.on('click', '#newFolder', mainScope.newFolder)
+.on('dragover, dragenter', 'main', (e) => {e.preventDefault();e.stopPropagation(); })
+.on('drop', 'main', mainScope.requestFiles);
 $(document).ready(()=> comunication.send('event', [''], 'filesystem', 'initialLoad', 'mainScope', 'drawFiles'));
+window.addEventListener("dragover",function(e){
+  e = e || event;
+  e.preventDefault();
+},false);
+window.addEventListener("drop",function(e){
+  e = e || event;
+  e.preventDefault();
+	console.log(e);
+},false);

@@ -8,22 +8,20 @@
 	</li>
 </ul>
 <ul class="frecuentFile">
-    <li>Recientes</li>
-    <li>Carpeta Personal</li>
-    <li>Documentos</li>
-    <li>Imágenes</li>
+	<li>Recientes</li>
+	<li>Carpeta Personal</li>
+	<li>Documentos</li>
+	<li>Imágenes</li>
 </ul>
 <main>
-	<section>
-	<section>
-    <ul class="elements">
-        <li v-for="folder in dir" class="folder">
-            <img src="common/images/folder.jpg" alt="folder icon" draggable="true">
-            <p>{{folder}}</p>
-        </li>
-        <li v-for="file in getPath" class="file">
-            <img :src="file.path" alt="file icon" draggable="true" >
-            <p>{{file.name}}</p>
-        </li>
-    </ul>
+	<ul class="elements">
+		<li v-for="folder in dir" class="folder">
+			<img src="common/images/folder.jpg" alt="folder icon" draggable="true">
+			<p>{{folder}}</p>
+		</li>
+		<li v-for="file in getPath" class="file">
+			<img :src="file.path" alt="file icon" draggable="true" >
+			<p>{{file.name}}</p>
+		</li>
+	</ul>
 </main>

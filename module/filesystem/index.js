@@ -2,7 +2,7 @@
 /*Importación de módulos */
 function FILESYSTEM(id) {
 	const fs = require('fs');
-	const EventServer = require(process.env.PWD + '/commonModules/remoteEvent');	
+	const EventServer = require(process.env.PWD + '/commonModules/remoteEvent');
 	this.id = id;
 	/*Variables globales*/
 	this.currentPath = '';
@@ -184,14 +184,14 @@ function FILESYSTEM(id) {
 		};
 		if (socket)
 			modules.communication.send([currentFiles], 'mainScope', 'drawFiles', socket);
-		else 
+		else
 			return [currentFiles];
 	};
 
 	this.changeDir = changeDir = (name, socket) => {
 		let path = this.currentPath.split('/'),
 			arr;
-		this.currentPath = (name[0] !==	this.homeName) ? path.slice(0, path.indexOf(name[0]) + 1).join("/") + '/' : this.homeDir;
+		this.currentPath = (name[0] !== this.homeName) ? path.slice(0, path.indexOf(name[0]) + 1).join("/") + '/' : this.homeDir;
 		arr = (name != this.homeName) ? path.slice(1, path.indexOf(name[0]) + 1) : [];
 		modules.communication.send([loadFiles()[0], arr], name[1], name[2], socket);
 	};
@@ -201,22 +201,22 @@ function FILESYSTEM(id) {
 			dst = (paths[0][1] !== 'trash') ? paths[0][1] : this.trashPath,
 			name = '';
 
-		dst = this.homeDir.slice(0,-1)+ dst;
+		dst = this.homeDir.slice(0, -1) + dst;
 		for (let i = 0; i < files.length; i++) {
 			name = renameOneFile(dst, files[i].split("/").slice(-1)[0]);
-			fs.rename(this.homeDir.slice(0,-1)+files[i], name, (err) => { if (err) console.error(err); });
+			fs.rename(this.homeDir.slice(0, -1) + files[i], name, (err) => { if (err) console.error(err); });
 		}
 		modules.communication.send([loadFiles()[0]], paths[1], paths[2], socket);
 	};
 	this.copy = copy = (files) => {
 		/*
 		 *metodo encargado de preparar para copiar la lista de archivos que se solicite al destino en cuestion
-		*/
-		let dst = this.homeDir+"/"+files[0][1],
+		 */
+		let dst = this.homeDir + "/" + files[0][1],
 			src_cp = files[0][0],
 			src = [];
 		for (let f of src_cp)
-			src.push(this.homeDir.slice(0,-1) +f);
+			src.push(this.homeDir.slice(0, -1) + f);
 		copyRecursive(src, this.currentPath, dst);
 	};
 	this.initialLoad = initialLoad = (option, socket) => {
@@ -224,7 +224,7 @@ function FILESYSTEM(id) {
 		 * función encargada de generar el estado inical desde el que se llama, inicializando todas
 		 * las variables que necesiten obtener datos más complejos y no sean generales para todas las
 		 * instancias como puede ser la carpeta personal del usuario
-		*/
+		 */
 		let userName = session[this.id].user;
 		this.homeDir = `files/users/${userName}/`;
 		this.trashPath = `/.trash/`;
@@ -294,19 +294,26 @@ function FILESYSTEM(id) {
 		});
 	};
 	this.newFolder = newFolder = (name, socket) => {
-		fs.mkdir(`${this.currentPath}newFolder`, '0744', (e) =>{
+		fs.mkdir(`${this.currentPath}newFolder`, '0744', (e) => {
 			if (e)
-				if (e.errno === -17){ //la carpeta ya existe
+				if (e.errno === -17) { //la carpeta ya existe
 					let listFolder = fs.readdirSync(this.currentPath);
 					let ind = 1;
 					let str = "newFolder";
-					while (listFolder.indexOf(`${str}${ind}`) !== -1) 
+					while (listFolder.indexOf(`${str}${ind}`) !== -1)
 						ind++;
 					fs.mkdir(`${this.currentPath}${str}${ind}`, '0774', (e) => (e) ? console.error(e) : null);
 				}
 			modules.communication.send([loadFiles()[0]], name[1], name[2], socket);
 		});
 	}
+	this.getFiles = (files, socket) => {
+		let f = files[0][0];
+		fs.writeFile(this.currentPath+f.name, f.data, 'binary', (e) => {
+			if (e) return e;
+		});
+		modules.communication.send([loadFiles()[0]], files[1], files[2], socket);
+	};
 
 	updateName = (name) => comunication.send(win, 'changeName', name);
 
@@ -331,16 +338,16 @@ function FILESYSTEM(id) {
 	};
 
 	changePermissions = (file) => {
-	/*
-	 * Esta función se encarga de cambiar los permisos de un archivo
-	 * file[String]
-	 * file[0] -> contiene la ruta al archivo
-	 * file[1] -> contiene el nombre del archivo viejo
-	 * file[2] -> contiene los permisos
-	*/
+		/*
+		 * Esta función se encarga de cambiar los permisos de un archivo
+		 * file[String]
+		 * file[0] -> contiene la ruta al archivo
+		 * file[1] -> contiene el nombre del archivo viejo
+		 * file[2] -> contiene los permisos
+		 */
 		fs.chmod(`${file[0]}${file[1]}`, file[2], (e) => (e) ? console.error(e) : null);
 	};
-	
+
 }
 
 module.exports = FILESYSTEM;

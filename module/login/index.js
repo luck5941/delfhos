@@ -11,7 +11,6 @@ function FORM() {
 	};
 	this.login = (data, socket) => {
 		let response = ddbb.query({user: data[0]});
-		//let id = socket.handshake.address.split(":").slice(-1)[0];
 		let id;
 		response.then((res) => {
 			if (res.length < 1){ 
