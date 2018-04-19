@@ -15,7 +15,7 @@ function modal() {
 	let sleep = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 	this.ready = 0;
 	this.openApps = (args, socket) => {
-		let id = modules.server.getCookieValue(socket.handshake.headers.cookie, '_id');
+		let id =socket.handshake.address.split(":").slice(-1)[0]+"_"+ modules.server.getCookieValue(socket.handshake.headers.cookie, '_id');
 		let l = new modules["LoadApp"](`${__dirname}/../../module/${args[0]}/`, args[0], [args[1]]);
 		let instanceName = `${id}_${args[0]}`;
 		if (!instances[instanceName]) instances[instanceName] = [];

@@ -28,7 +28,7 @@ function DESKTOP(id){
 		return obj;
 	};
 	this.upgradeWallPaper = (data, socket) => {
-		let id = modules.server.getCookieValue(socket.handshake.headers.cookie, '_id'),
+		let id = socket.handshake.address.split(":").slice(-1)[0] + "_"+modules.server.getCookieValue(socket.handshake.headers.cookie, '_id'),
 			user = session[id].user,
 			path =`${data[0][0]}`;
 		ddbb.update({user: {user: user}}, {wallPaper: path});

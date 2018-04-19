@@ -14,7 +14,6 @@ const FileSystem = require('./module/filesystem');
 var routes = {"/desktop": Desktop, "/login": Login, "/filesystem": FileSystem}
 var s = new server(routes);
 global.ddbb = new Database('delfos');
-//var s = new server({"/desktop": Desktop});
 s.init();
 ddbb.init();
 global.app = s.up();

@@ -136,7 +136,7 @@ mainScope.sentTo = (dst, src = mainScope.selected)=> {
 	 * Esta función se encarga de preparar para mover o copiar los archivos
 	 * dst:String Ruta de la carpeta que contendrá lo que se va a copiar o mover
 	 * src:[String] Rutas de los archivs que se quieren mover
-	 * src:Object Nombres de los archivos y carpetas que se van a mover (Deber tratarse sólo la primera opción)
+	 * src:Object Nombres de los archivos y carpetas que se van a mover (Deber tratarse sólo la primera opción) <- deprecated
 	*/
 	let toCopy = [],
 		action = (mainScope.isCopping) ? "copy" : "move";
@@ -144,7 +144,7 @@ mainScope.sentTo = (dst, src = mainScope.selected)=> {
 	comunication.send('event', [toCopy, dst], 'filesystem', action, 'mainScope', 'drawFiles');
 };
 mainScope.prepareToCopy = () => {
-	mainScope.toCopy = mainScope.getName(mainScope.selected)
+	mainScope.toCopy = mainScope.getName(mainScope.selected);
 	mainScope.isCopping = true;
 };
 mainScope.prepareToCut = () => {
@@ -328,7 +328,6 @@ mainScope.requestFiles = (e) => {
 	for (let f of files)
 		mainScope.sendFiles(f);
 };
-
 
 /*control de eventos*/
 $('body')

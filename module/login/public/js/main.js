@@ -18,6 +18,7 @@ loginScope.sendForm = (e) => {
 	for (let i of input)
 		if ($(i).attr('type') !== 'submit')
 			formObj[$(i).attr('name')] = $(i).val()
+	formObj.id = document.cookie;
 	comunication.send('event', formObj, 'login', method, 'loginScope', 'loginFunct')
 };
 
@@ -25,8 +26,6 @@ loginScope.form.on('submit', loginScope.sendForm);
 loginScope.loginFunct = (data) =>{
 	console.log(data);
 	if (data.access){
-		console.log("vamonoooooooos");
-		document.cookie = "_id="+data.key+";path=/;"
 		return window.location.href = "desktop";
 	}
 	else return loginScope.data.message = "Contraseño o contraseña incorrecta";

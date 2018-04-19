@@ -25,11 +25,21 @@ function SERVER(modules) {
 		req_save["ip"] = req.connection.remoteAddress.split(":").slice(-1)[0];
 		str = `${req_save["ip"]};${req_save["date"]};${req_save['url']}`
 		//Obtención de la clave que se le impone por cookie
-		let id = this.getCookieValue(req.headers.cookie, '_id');
+		let id = req_save["ip"]+ "_"+this.getCookieValue(req.headers.cookie, '_id');
+		let headersObj = {};
 		if (this.modules[path]){
-			if (path !== '/login')
-				if (!id || !session[id])
-					return this.redirect(res,'login' );
+			if (path !== '/login'){
+				if (!id || !session[id] || !session[id].register){
+					return this.redirect(res,'login');
+				}
+			}
+			if (path == '/login' && !global.session[id]){
+				let now = new Date();
+				now = now.getTime();
+				id = req_save["ip"]+ "_"+now;
+				headersObj = {'Set-Cookie':"_id="+now};
+				global.session[id] = {};
+			}
 			let l  = new global.modules["LoadApp"](`${__dirname}/..${path}/`, path.slice(1));
 			let instanceName = `${id}_${path.slice(1)}`;
 			if (!instances[instanceName]) instances[instanceName] = [];
@@ -45,34 +55,35 @@ function SERVER(modules) {
 						d.css = this.lib.css + d.css;
 						d.js = this.lib.js + d.js;
 						let html = this.base.replace(`<${path.slice(1)}></${path.slice(1)}>`, `<${path.slice(1)}>${d.html}</${path.slice(1)}>`).replace("#{css}", d.css).replace("#{js}", d.js);	
-						return this._sendFile(res, html, ["200", this.mime_types["html"]])
+						headersObj['Content-Type'] = this.mime_types["html"];
+						return this._sendFile(res, html, ["200", headersObj])
 					});
 				}
 				else{ 
 					d.css = this.lib.css + d.css;
 					d.js = this.lib.js + d.js;
 					let html = this.base.replace(`<${path.slice(1)}></${path.slice(1)}>`, `<${path.slice(1)}>${d.html}</${path.slice(1)}>`).replace("#{css}", d.css).replace("#{js}", d.js);
-					return this._sendFile(res, html, ["200", this.mime_types["html"]])
+					return this._sendFile(res, html, ["200", headersObj])
 				}
 			});
 		}
 		else if (path.search(/^(\/?\w*)*\.\w*$/) !== -1){
-			let id = this.getCookieValue(req.headers.cookie, '_id');
 			let toAdd = /^\/common/.test(path) ? "" : "/users/"+session[id].user
 			path = __dirname+"/../../files"+toAdd+path;
 			let ext = path.split('.').slice(-1)[0];
-			fs.readFile(path, (e, d) => e ? this.forbiddenFunct(res) : this._sendFile(res, d, ["200", this.mime_types[ext]]));
+			fs.readFile(path, (e, d) => e ? this.forbiddenFunct(res, id) : this._sendFile(res, d, ["200", this.mime_types[ext]]));
 		}
-		else this.forbiddenFunct(res);
+		else this.forbiddenFunct(res, id);
 	}
 
 	this._sendFile = (res, content, headers) => {
+		let headersObj = headers[1];
 		try{
-			res.writeHead(headers[0], headers[1]);
+			res.writeHead(headers[0],headersObj);
 			res.end(content);
 		}
 		catch (e){
-			content.then((d)=>{res.writeHead(headers[0], headers[1]);res.end(d);});
+			content.then((d)=>{res.writeHead(headers[0], headersObj);res.end(d);});
 		}
 	};
 
@@ -114,7 +125,7 @@ function SERVER(modules) {
 		 * función encargada de redirigir al usuario a una página determinada
 		 * place: String -> url a la que se le redirige al usuario
 		*/
-		req_save["code"] = '307';
+		req_save["code"] = '304';
 		str +=";"+req_save["code"];
 		fs.appendFile("logs/serverLogs", str + '\n', function(e) {
 			if (e) throw e;
@@ -123,7 +134,7 @@ function SERVER(modules) {
 		res.end();
 	};
 
-	this.forbiddenFunct = (res)=> {
+	this.forbiddenFunct = (res, id)=> {
 		req_save["code"] = '403';
 		fs.readFile(this.forbidden, (e, d) => this._sendFile(res, d, [req_save["code"], this.mime_types["html"]]));
 		str +=";"+req_save["code"];
@@ -154,7 +165,7 @@ function SERVER(modules) {
 			else 
 				obj[match[1]] = match[2];
 		}
-		return obj
+		return (Object.keys(obj).length !==0) ? obj : false; 
 	};
 
 	this.init = () => {		
