@@ -1,4 +1,5 @@
 function mongoDB(bbdd_name) {
+	var sleep = (ms) => new Promise((resolve, reyect)=> setTimeout(resolve,))
 	const MongoClient = require('mongodb').MongoClient;
 	this.name = bbdd_name;
 	this.init = ()=> {
@@ -15,17 +16,26 @@ function mongoDB(bbdd_name) {
 			if (e) return console.error (e);
 		});
 	};
-	this.insert = (obj)=> {
+	this.insert = async (obj)=> {
 		/*
 		 *metodo encargado de insertar un nuevo valor en el docuemento
 		 *obj:Object -> el contenedor da el nombre del documento o colección y dentro se hayan los datos a insertar
 		 * _ejemplo_ {collection: {data: "val1", data2: "val2}}
 		 */
+
 		if (typeof(obj) === 'string') obj = JSON.parse(obj);
-		for (let o in obj){
-			let method = Array.isArray(obj[o]) ? "insertMany":"insertOne";
-			this.conn.collection(o)[method](obj[o], (e) => (e) ? console.error(e) : null);
-		}
+		let o = Object.keys(obj)[0];
+		let method = Array.isArray(obj[o]) ? "insertMany":"insertOne";
+		let code = '';
+		let end = false;
+		this.conn.collection(o)[method](obj[o], (e) => {
+			code = (e) ? e.code : true;
+			end = true;			
+		});
+		while(!end)
+			await sleep(5);
+		return code
+		
 	};
 	this.query = (obj, field = {}) => {
 		/*
@@ -33,8 +43,11 @@ function mongoDB(bbdd_name) {
 		 * obj: Object -> Se estructura igual que en insert. Dictamina los match que se deben dar para que se considere una coincidencia
 		 * field: Obj -> el filtro que se debe tener en cuenta a la hora de pasar la pregunta
 		*/
+		console.log(obj)
 		if (typeof(obj) === 'string') obj = JSON.parse(obj);
 		let collection = Object.keys(obj)[0];
+		console.log("collection")
+		console.log(obj[collection])
 		let answer = this.conn.collection(collection).find(obj[collection], field).toArray();
 		return answer;
 	};

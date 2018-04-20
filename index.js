@@ -5,13 +5,14 @@ const Communication  = require('./commonModules/communication');
 const Database = require('./commonModules/mongoDB');
 const LoadApp = require("./commonModules/loadapp");
 const Modal = require("./commonModules/modal");
+const Chat = require('./module/chat');
 //Modulos
 const Desktop = require('./module/desktop');
 const Login = require('./module/login');
 const FileSystem = require('./module/filesystem');
 
 //Inicializción  de las variables
-var routes = {"/desktop": Desktop, "/login": Login, "/filesystem": FileSystem}
+var routes = {"/desktop": Desktop, "/login": Login, "/filesystem": FileSystem, "/chat": Chat}
 var s = new server(routes);
 global.ddbb = new Database('delfos');
 s.init();

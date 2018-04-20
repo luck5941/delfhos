@@ -22,14 +22,14 @@ function DESKTOP(id){
 		 *antes de que este sea enviado
 		 * obj {key:String} Contiene todo el texto
 		*/
-		let path = await  ddbb.query({user: {'user': session[id].user}}, {"_id": 0, "wallPaper": 1});
+		let path = await  ddbb.query({user: {'user': session[id].user}}, {"_id": 0, "wallPaper": 1});		
 		path = path[0].wallPaper;
 		obj.css = obj.css.replace('%backgroundUri%', path)
 		return obj;
 	};
 	this.upgradeWallPaper = (data, socket) => {
 		let id = socket.handshake.address.split(":").slice(-1)[0] + "_"+modules.server.getCookieValue(socket.handshake.headers.cookie, '_id'),
-			user = session[id].user,
+			user = session[this.id].user,
 			path =`${data[0][0]}`;
 		ddbb.update({user: {user: user}}, {wallPaper: path});
 		modules.communication.send([path], data[1], data[2], socket);

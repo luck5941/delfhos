@@ -70,6 +70,10 @@
         "pluggins": [],
         "style": [],
         "script": ["js/main.js"]
+    },
+    "chat": {
+        "pluggins": [],
+        "style": ["css/chat.css"],
+        "script": ["js/main.js"]
     }
-
 }

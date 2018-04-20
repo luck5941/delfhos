@@ -18,7 +18,7 @@ loginScope.sendForm = (e) => {
 	for (let i of input)
 		if ($(i).attr('type') !== 'submit')
 			formObj[$(i).attr('name')] = $(i).val()
-	formObj.id = document.cookie;
+	if (method === 'login') formObj.id = document.cookie;
 	comunication.send('event', formObj, 'login', method, 'loginScope', 'loginFunct')
 };
 

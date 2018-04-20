@@ -6,8 +6,14 @@ function FORM() {
 	const crypto = require('crypto');
 	this.newUser = (data) => {
 		data[0].wallPaper = 'common/images/fsociety.jpg';
-		ddbb.insert({user: data[0]});
-		fs.mkdir(`files/users/${data[0].user}`, (e) => (e) ? console.error(e) : null);
+		data[0].chats = [];		
+		let answer = ddbb.insert({user: data[0]});
+		answer.then((d) =>{
+			if (d == 11000) 
+				console.log("ya existe")
+			else
+				fs.mkdir(`files/users/${data[0].user}`, (e) => (e) ? console.error(e) : null);
+		})
 	};
 	this.getSession = (ip) => {
 		/*
@@ -22,10 +28,11 @@ function FORM() {
 		for (let o in data[0])
 			if (o !== 'id')
 				obj[o] = data[0][o];
-		let response = ddbb.query({user: obj});
+		let response = ddbb.query({user: obj}, {"user": 1, "_id": 0});
 		let id = modules.server.getCookieValue(data[0].id, "_id");
-		let ip = socket.handshake.address.split(":").slice(-1)[0];
+		let ip = socket.handshake.address.split(":").slice(-1)[0];		
 		response.then((res) => {
+			console.log(res)
 			if (res.length < 1){ 
 				session[ip+"_"+id].register  = false;
 				modules.communication.send({access: false}, data[1], data[2], socket);
@@ -34,7 +41,7 @@ function FORM() {
 				let key = '';
 				session[ip+"_"+id]["register"] = true;
 				session[ip+"_"+id]["user"] = res[0].user
-				modules.communication.send({access: true, key: id}, data[1], data[2], socket);
+				modules.communication.send({access: true}, data[1], data[2], socket);
 			}
 		});
 	};

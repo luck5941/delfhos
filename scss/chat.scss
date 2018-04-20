@@ -1,0 +1,23 @@
+chat{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 40%;
+	height: 25vh;
+	#user {
+		float: left;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		img{
+			width: 10%;
+		}
+		p {
+			display: inline-block;
+		}
+	}
+	#chats {
+		float:left;
+		display: flex;
+	}
+}
