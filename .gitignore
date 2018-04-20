@@ -9,3 +9,5 @@ notas
 *.py
 index.html
 serverProve.js
+tmp/
+pruebaZip.js

@@ -2,7 +2,8 @@
 /*Importación de módulos */
 function FILESYSTEM(id) {
 	const fs = require('fs');
-	const EventServer = require(process.env.PWD + '/commonModules/remoteEvent');
+	const archiver = require('archiver');
+	var sleep = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms)) 
 	this.id = id;
 	/*Variables globales*/
 	this.currentPath = '';
@@ -31,7 +32,30 @@ function FILESYSTEM(id) {
 			}
 		}
 	};
+	var getZip = async (files, name) => {
+		var output = fs.createWriteStream('tmp/'+name);
+		let end = false;
+		output.on('close', () => {
+			end = true;
+		});
+		var archive = archiver('zip', {
+			zlib: { level: 9 } // Sets the compression level.
+		});
+		archive.pipe(output);
+		for (let i of files){
+			i = this.homeDir+i;
+			if (fs.lstatSync(i).isFile())
+				archive.file(i, {name: i.split("/").slice(-1)[0]})
+			else if (fs.lstatSync(i).isDirectory())
+				archive.directory(i, i.split("/").slice(-1)[0])
+		}
+		archive.finalize();
+		while (!end){
+			await sleep(1);
+		}
+		return true;
 
+	};
 	var renameOneFile = (path, newName) => {
 		/*
 		 * Función encargada de devolver el nombre del archivo en el nuevo directorio,
@@ -168,7 +192,7 @@ function FILESYSTEM(id) {
 
 	/*metodos globales*/
 
-	var loadFiles, changeDir, move, copy, initialLoad, rename, remove, getProperties, updateName, prepareToChangeName, changePermissions, newFolder;
+	var loadFiles, changeDir, move, copy, initialLoad, rename, remove, getProperties, updateName, prepareToChangeName, changePermissions, newFolder, getFiles, preparedDownload;
 
 	this.loadFiles = loadFiles = (dir = '', socket) => {
 		this.currentPath = (dir !== '') ? (this.currentPath + dir[0] + '/') : this.currentPath;
@@ -264,8 +288,7 @@ function FILESYSTEM(id) {
 			fs.rename(`${this.currentPath}/${files[i]}`, name, (err) => { if (err) console.error(err) })
 		}
 		return [loadFiles()[0]];
-	};
-	remove = (files) => removeRecursive(files);
+	};	
 
 	this.getProperties = getProperties = (files) => {
 		//modal = new l.bcknd.Modal_Main(__dirname + '/external/properties/index.html');
@@ -307,13 +330,38 @@ function FILESYSTEM(id) {
 			modules.communication.send([loadFiles()[0]], name[1], name[2], socket);
 		});
 	}
-	this.getFiles = (files, socket) => {
+	this.getFiles = getFiles = (files, socket) => {
 		let f = files[0][0];
 		fs.writeFile(this.currentPath+f.name, f.data, 'binary', (e) => {
 			if (e) return e;
 		});
 		modules.communication.send([loadFiles()[0]], files[1], files[2], socket);
 	};
+
+	this.preparedDownload = preparedDownload = (files, socket) => {
+		/*
+		 *metodo encargado de guardar en una carpeta temporal el zip con todos los archivos que se vayan a descargar.
+		 *Si solo es uno, no se comprime y preserva el nombre. En caso de ser varios, procedemos a comprimir
+		 *el arvhivo se guardará con el identificador de sessión del usuario en la carpeta, por si hubiese varios al mismo tiempo.
+		*/
+
+		let id = socket.handshake.address.split(":").slice(-1)[0] + "_"+modules.server.getCookieValue(socket.handshake.headers.cookie, '_id'),
+			filesToDownload = files[0][0];
+			let file = ''
+		if (filesToDownload.length<=1 && fs.lstatSync(this.homeDir + filesToDownload[0]).isFile()){
+			file = filesToDownload[0].split("/").slice(-1)[0];
+			fs.createReadStream(this.homeDir + filesToDownload[0]).pipe(fs.createWriteStream(`tmp/${id}`));
+			modules.communication.send(file.split("/").slice(-1), files[1], files[2], socket);
+		}
+		else {
+			let a = getZip(filesToDownload, id);
+			file =filesToDownload.length>1 ? this.currentPath.split("/").slice(-2)[0] : filesToDownload[0].split("/").slice(-1)[0];
+			file +=".zip";
+			a.then(()=>modules.communication.send(file.split("/").slice(-1), files[1], files[2], socket))
+		}
+	};
+
+	this.remove  = remove = (files) => removeRecursive(files);
 
 	updateName = (name) => comunication.send(win, 'changeName', name);
 

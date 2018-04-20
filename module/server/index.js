@@ -2,10 +2,10 @@ function SERVER(modules) {
 	const http = require('http');
 	const fs = require('fs');
 	const url = require('url');
+	const {contentType} = require('mime-types');
 	let sleep = (ms) => {return new Promise(resolve => setTimeout(resolve, ms));},
 		req_save = { "url": "", "date": "", "ip": "", "code": "" },
 		str = '';
-	this.mime_types = { 'js': 'text/javascript', 'json': 'application/json', 'html': 'text/html', 'css': 'text/css', 'jpg': 'image/jpg', 'png': 'image/png', 'gif': 'image/gif' };
 	this.logs = 'logs';
 	this.port = 8080;
 	this.forbidden = __dirname + '/files/forbidden.html';
@@ -17,9 +17,9 @@ function SERVER(modules) {
 	this._server = (req, res) => {
 		var d = new Date(),
 			uri = req.url,
-			path = '';
-		uri = url.parse(uri);
-		path = (uri.path === '/') ? '/desktop' : uri.path;
+			path = '',
+			q = url.parse(uri);
+		path = (q.pathname === '/') ? '/desktop' : q.pathname;
 		req_save['url'] = req.url;
 		req_save["date"] = `${d.getFullYear()}/${d.getMonth()}/${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
 		req_save["ip"] = req.connection.remoteAddress.split(":").slice(-1)[0];
@@ -39,7 +39,8 @@ function SERVER(modules) {
 				id = req_save["ip"]+ "_"+now;
 				headersObj = {'Set-Cookie':"_id="+now};
 				global.session[id] = {};
-			}
+			};
+
 			let l  = new global.modules["LoadApp"](`${__dirname}/..${path}/`, path.slice(1));
 			let instanceName = `${id}_${path.slice(1)}`;
 			if (!instances[instanceName]) instances[instanceName] = [];
@@ -55,7 +56,7 @@ function SERVER(modules) {
 						d.css = this.lib.css + d.css;
 						d.js = this.lib.js + d.js;
 						let html = this.base.replace(`<${path.slice(1)}></${path.slice(1)}>`, `<${path.slice(1)}>${d.html}</${path.slice(1)}>`).replace("#{css}", d.css).replace("#{js}", d.js);	
-						headersObj['Content-Type'] = this.mime_types["html"];
+						headersObj['Content-Type'] = contentType("html");
 						return this._sendFile(res, html, ["200", headersObj])
 					});
 				}
@@ -67,15 +68,18 @@ function SERVER(modules) {
 				}
 			});
 		}
+		else if (path == '/download'){			
+			let name = this.getCookieValue(q.query, 'name');
+			return this.download(name, id,res)
+		}
 		else if (path.search(/^(\/?\w*)*\.\w*$/) !== -1){
 			let toAdd = /^\/common/.test(path) ? "" : "/users/"+session[id].user
 			path = __dirname+"/../../files"+toAdd+path;
 			let ext = path.split('.').slice(-1)[0];
-			fs.readFile(path, (e, d) => e ? this.forbiddenFunct(res, id) : this._sendFile(res, d, ["200", this.mime_types[ext]]));
+			fs.readFile(path, (e, d) => e ? this.forbiddenFunct(res, id) : this._sendFile(res, d, ["200", contentType(ext)]));
 		}
 		else this.forbiddenFunct(res, id);
 	}
-
 	this._sendFile = (res, content, headers) => {
 		let headersObj = headers[1];
 		try{
@@ -86,7 +90,6 @@ function SERVER(modules) {
 			content.then((d)=>{res.writeHead(headers[0], headersObj);res.end(d);});
 		}
 	};
-
 	this.__createWin = async (file = `${__dirname}/../../public/index.html`) => {
 		/*
 		 *función encargada de enviar el string correspondiente para que el navegador pueda renderizar correctamente el modulo.
@@ -133,16 +136,14 @@ function SERVER(modules) {
 		res.writeHead(307,{'Location': place, 'Content-Type': 'multipart/form-data'});
 		res.end();
 	};
-
 	this.forbiddenFunct = (res, id)=> {
 		req_save["code"] = '403';
-		fs.readFile(this.forbidden, (e, d) => this._sendFile(res, d, [req_save["code"], this.mime_types["html"]]));
+		fs.readFile(this.forbidden, (e, d) => this._sendFile(res, d, [req_save["code"], contentType("html")]));
 		str +=";"+req_save["code"];
 		fs.appendFile("logs/serverLogs", str + '\n', function(e) {
 			if (e) throw e;
 		});
 	};
-
 	this.getCookieValue = (cookie, key = false) => {
 		/*
 		 *metodo encargado de devolver el valor de una cookie. Si key esta vacio. devuelve el objeto con todos los datos
@@ -154,7 +155,7 @@ function SERVER(modules) {
 			arr = [],
 			reg = /(\w*)=(.*)/,
 			mach = [];
-		arr = cookie.split(";");
+		arr = cookie.split(";");		
 		for (let a of arr){
 			match = reg.exec(a);
 			if (key){
@@ -167,14 +168,27 @@ function SERVER(modules) {
 		}
 		return (Object.keys(obj).length !==0) ? obj : false; 
 	};
-
 	this.init = () => {		
 		fs.exists('logs', (e) => { if (!e) fs.mkdir('logs', () => {}); });
 		fs.exists('public', (e) => { if (!e) fs.mkdir('public', () => {}); });
 		this.__createWin();
 	};
-
 	this.up = (port = this.port, listen = true) => (listen) ? http.createServer(this._server).listen(port): http.createServer(this._server);
+
+	this.download = (name, key, res) => {
+		/*
+		 *metodo encargado de gestionar las descargas cuando un usuario demande un archivo
+		 *name:String -> nombre que se le debe dar al archivo cuando este sea descargado
+		 *res: Obj -> Objeto de respuesta que permita gestionar la descarga en cuestión.
+		*/
+		let mimeTypes = contentType(name);		
+		res.writeHead(200, {"Content-Disposition": "attachment; filename="+name, "Content-Type": mimeTypes});
+		fs.readFile(`tmp/${key}`, (e, d) => {
+			if (e)  return console.log(e);
+			fs.unlink(`tmp/${key}`, (e) => (e) ? console.error(e) : null);
+			res.end(d);
+		});
+	} 
 }
 
 

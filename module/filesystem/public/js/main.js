@@ -48,8 +48,8 @@ mainScope.vue = new Vue({el: 'filesystem', data: mainScope.vueData, computed:{
 	}
 }});
 
-/*modulos externos*/
 
+/*metodos locales*/
 mainScope.drawFiles = (args) => {
 	/*Lista los archivos y carpetas que hay en ese direcorio*/	
 	let str = args[0];
@@ -69,7 +69,6 @@ mainScope.changeName = (name) => {
 	else if (mainScope.selected["folder"].length >0) 
 		$(mainScope.selected["folder"][0]).find('p').text(name)
 };
-/*metodos locales*/
 mainScope.unselectOne = (name) => {
 	/*
 	 *Metodo encargado de borrar de la lista de elementos seleccionados
@@ -170,13 +169,6 @@ mainScope.askForProperties = () => {
 	comunication.send('event',names , 'filesystem','getProperties' , 'mainScope', null);
 	//comunication.send('getProperties', null, names)
 };
-mainScope.newFolder = () =>{
-	/*
-	*Metodo encargado de generar una nueva carpeta.
-	*Cuando termine, vuelve a se actualiza la lista de archivios
-	*/
-	comunication.send('event', [''], 'filesystem', 'newFolder', 'mainScope', 'drawFiles');
-}
 mainScope.sendFiles = (file) => {
 	/*
 	 * Metodo encargado de leer y enviar los archivos al servidor
@@ -191,6 +183,12 @@ mainScope.sendFiles = (file) => {
 	}
 	reader.readAsBinaryString(file);
 };
+mainScope.startDownload = (name) => {
+	console.log(name)
+	window.location.href = "download?name="+name[0];
+}
+
+
 /*metodos locales llamados por eventos*/
 mainScope.goInto = (e)=> {
 	/*
@@ -328,6 +326,18 @@ mainScope.requestFiles = (e) => {
 	for (let f of files)
 		mainScope.sendFiles(f);
 };
+mainScope.newFolder = () =>{
+	/*
+	*Metodo encargado de generar una nueva carpeta.
+	*Cuando termine, vuelve a se actualiza la lista de archivios
+	*/
+	comunication.send('event', [''], 'filesystem', 'newFolder', 'mainScope', 'drawFiles');
+};
+mainScope.download = () => {
+	let files = mainScope.getName(mainScope.selected);
+	comunication.send('event', [files], 'filesystem', 'preparedDownload', 'mainScope', 'startDownload');
+
+};
 
 /*control de eventos*/
 $('body')
@@ -346,6 +356,7 @@ $('body')
 .on('keyup', mainScope.keyUp)
 .on('keydown', '[contenteditable="true"]', mainScope.aceptName)
 .on('click', '#newFolder', mainScope.newFolder)
+.on('click', '#download', mainScope.download)
 .on('dragover, dragenter', 'main', (e) => {e.preventDefault();e.stopPropagation(); })
 .on('drop', 'main', mainScope.requestFiles);
 $(document).ready(()=> comunication.send('event', [''], 'filesystem', 'initialLoad', 'mainScope', 'drawFiles'));
