@@ -43,11 +43,9 @@ function mongoDB(bbdd_name) {
 		 * obj: Object -> Se estructura igual que en insert. Dictamina los match que se deben dar para que se considere una coincidencia
 		 * field: Obj -> el filtro que se debe tener en cuenta a la hora de pasar la pregunta
 		*/
-		console.log(obj)
+
 		if (typeof(obj) === 'string') obj = JSON.parse(obj);
 		let collection = Object.keys(obj)[0];
-		console.log("collection")
-		console.log(obj[collection])
 		let answer = this.conn.collection(collection).find(obj[collection], field).toArray();
 		return answer;
 	};

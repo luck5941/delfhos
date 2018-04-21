@@ -48,7 +48,6 @@ mainScope.vue = new Vue({el: 'filesystem', data: mainScope.vueData, computed:{
 	}
 }});
 
-
 /*metodos locales*/
 mainScope.drawFiles = (args) => {
 	/*Lista los archivos y carpetas que hay en ese direcorio*/	

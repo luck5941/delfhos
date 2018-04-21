@@ -16,6 +16,11 @@ function COMUNICATION(){
 	let connected = [];
 	io.on('connection', (socket) => {
 		connected.push(socket);
+		socket.on('chat', (data) =>{
+			let id = socket.handshake.address.split(":").slice(-1)[0]+"_"+ modules.server.getCookieValue(socket.handshake.headers.cookie, '_id'),
+				instanceName = `${id}_chat`
+				instances[instanceName].slice(-1)[0]["newMessage"](data[0], socket);
+		});
 		socket.on('event', (data) => {
 			let id = socket.handshake.address.split(":").slice(-1)[0]+"_"+ modules.server.getCookieValue(socket.handshake.headers.cookie, '_id'),
 				toSend = [data[0], data[3], data[4]],

@@ -10,13 +10,13 @@ var users = {
 };
 var chats ={
 	id_chats: 0,
-	members: [],
-	storage: {
+	members: []
+	messages: [{
 		to: 0,
 		from: 0,
 		time: new Date(),
 		message: ""
-	}
+	}]
 };
 var files = {
 

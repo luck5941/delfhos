@@ -1,23 +1,58 @@
+@import './vars.scss';
 chat{
 	position: absolute;
 	top: 0;
 	left: 0;
 	width: 40%;
 	height: 25vh;
-	#user {
-		float: left;
+	background-color: $color1;
+	header{
+		position: absolute;
+		top: 0;
+		left: 0;
 		width: 100%;
 		display: flex;
 		align-items: center;
-		img{
-			width: 10%;
+		z-index: 3;
+		height: 20%;
+		#user {
+			align-self: flex-start;
+			flex-grow: 1;
+			display: flex;
+			align-items: center;
+			img{
+				width: 10%;
+			}
+			p {
+				display: inline-block;
+			}
 		}
-		p {
-			display: inline-block;
+		#search {
+			flex-grow: 1;
 		}
 	}
 	#chats {
-		float:left;
+		position: absolute;		
 		display: flex;
+		top: 20%;
+	}
+	main {
+		position: absolute;
+		bottom:0;
+		display: flex;
+		height: 80%;
+		width: 100%;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		#chatArea {
+			flex-grow: 1;
+			background-color: #f3f3f3;
+			width: 80%;
+		}
+		input {
+			flex-basis: 0;
+			width: 80%;
+		}
 	}
 }
