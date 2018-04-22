@@ -23,8 +23,10 @@ desktopScope.openModal = (e) => {
 			args = ['filesystem'];
 			break;
 		case 'cambiar la img':
-			args ['filesystem', 'selectfile']; 
+			args = ['filesystem', 'selectfile']; 
 			break;
+		case 'chat':
+			args = ['chat']
 		default:
 			console.log("something went bad");
 	}

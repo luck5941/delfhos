@@ -1,5 +1,6 @@
+@import './vars.scss';
 desktop {
-	background-color: $color1;
+	background-color: $light_blue;
 	background-image: url('%backgroundUri%');
 	background-repeat: no-repeat;
 	background-size: cover;
@@ -24,7 +25,7 @@ desktop {
 		.slide {
 			background-color: $color3;
 			display: flex;
-			flex: 1-1;
+			flex: 1 1;
 			justify-content: center;
 			align-items: center;
 			li {
@@ -46,6 +47,10 @@ desktop {
 		height: 2vh;
 		width: 100%;
 		bottom:0;
+		.slide li{
+			flex-grow: 1;
+			text-align:center;
+		}
 	}
 		
 }
