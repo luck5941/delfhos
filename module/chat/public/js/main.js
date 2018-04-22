@@ -22,7 +22,7 @@ chatScope.printMessage = (data) => {
 	if (!chatScope.messages[data.from])
 		chatScope.messages[data.from] = [];
 	chatScope.data.activeChat =data.from;
-	chatScope.messages[chatScope.data.activeChat].push({"text": data.txt});
+	chatScope.messages[chatScope.data.activeChat].push({"text": data.txt, time: new Date()});
 	chatScope.data.messages = chatScope.messages[chatScope.data.activeChat];
 	chatScope.moveScroll();
 };
@@ -57,7 +57,7 @@ chatScope.openChat = (to) => {
 
 chatScope.sendMessage = (e) => {
 	if (e.keyCode !== 13) return;	
-	chatScope.messages[chatScope.data.activeChat].push({text: chatScope.data.message, own: true});
+	chatScope.messages[chatScope.data.activeChat].push({text: chatScope.data.message, own: true, time: new Date()});
 	chatScope.data.messages = chatScope.messages[chatScope.data.activeChat];
 	comunication.send('chat', {dst: chatScope.data.activeChat, text: chatScope.data.message});
 	chatScope.data.message = "";

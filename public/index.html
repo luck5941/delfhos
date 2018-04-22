@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<link rel="stylesheet" type="text/css" href="/public/css/style.css">
 	<link rel="icon" href="/common/demo_icon.gif" type="image/gif" sizes="16x16">
-	<style type="text/css">#{css}</style>
+	#{css}
 </head>
 <body oncontextmenu="return false">
     <login></login>
@@ -18,16 +18,13 @@
 			<!--<li v-for="option in options" onclick="{{option.func}}()">{{option.txt}}</li>-->
 		</ul></nav>
 	</div>
-   <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://vuejs.org/js/vue.js"></script>-->
-	<script src="http://192.168.1.9:8080/common/libs/jquery.js"></script>
-	<script src="http://192.168.1.9:8080/common/libs/vue.js"></script>
-    <script type="text/javascript" src="/node_modules/socket.io-client/dist/socket.io.js"></script>
-    <script type="text/javascript" src="/commonModules/communication/client.js"></script>
-    <script type="text/javascript" src="/commonModules/modal/client.js"></script>
-    <script type="text/javascript">
-    	let sleep = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms))
-    #{js} var comunication = new Client(external); 
-    </script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://vuejs.org/js/vue.js"></script>
+	<!-- <script src="http://192.168.1.9:8080/common/libs/jquery.js"></script>
+	<script src="http://192.168.1.9:8080/common/libs/vue.js"></script> -->
+	#{js}
+	<script type="text/javascript" src="/node_modules/socket.io-client/dist/socket.io.js"></script>
+	<script type="text/javascript" src="/commonModules/communication/client.js"></script>
+	<script type="text/javascript" src="/commonModules/modal/client.js"></script>
 </body>
 </html>

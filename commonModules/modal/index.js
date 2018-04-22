@@ -19,12 +19,13 @@ function modal() {
 		let l = new modules["LoadApp"](`${__dirname}/../../module/${args[0]}/`, args[0], [args[1]]);
 		let instanceName = `${id}_${args[0]}`;
 		if (!instances[instanceName]) instances[instanceName] = [];
-		console.log("args")
-		console.log(args)
 		let obj = global.modules[args[0]];
 		global["instances"][instanceName].push(new obj(id));
 		let m = l.secuence();
-		m.then((a) => { socket.emit('modal', [a, args[0]]); });
+		m.then((a) => {
+			session[id][`${args[0]}.css`] = a.css
+			session[id][`${args[0]}.js`] = a.js
+			socket.emit('modal', [a.html, args[0]]); });
 
 	};
 	this.loadModal = (html = false) => {

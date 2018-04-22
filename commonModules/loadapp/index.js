@@ -32,7 +32,7 @@ var loadApp = function(path, name, toLoad = []) {
 			let loadFile = (e, d) => {
 				if (e) return console.error(e)
 				if (where === 'css' || where === 'html')
-					this.toReplace[where] += d;
+					this.toReplace[where] += d.replace(/[\n\t\r]*\/\*#\ssourceMappingURL=(\w*\.?){3}[\n\t\r]*/, '');
 				else if (where === 'js'){
 					this.toReplace[where][place] += d.replace(/[\n\t\r]*module\.exports\s?=\s?\w*;?[\n\t\r]*$/, '');					
 				}
@@ -162,8 +162,6 @@ var loadApp = function(path, name, toLoad = []) {
 						this.filesToRead.push(src + dir[i]);
 				} else if (fs.lstatSync(src + dir[i]).isDirectory())
 					this.__copyInBuffer((src + dir[i] + '/'));
-
-
 			}
 			this.ready[0] = true;
 			let cond = (this.ready[2] === this.config[this.ProgramName].style.length + this.config[this.ProgramName].script.length+this.loadderPlugins);

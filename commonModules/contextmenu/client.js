@@ -12,9 +12,6 @@ function ContextMenu() {
 		if (!t) return null;
 		menuVue.options = menu[t];
 		menuVue.style = { "display": "block", "top": `${y}px`, "left": `${x}px` };
-		console.log(menuVue.options.length);
-		//$('body').append(menu[t]);
-		//$("#contentMenu").css({ "display": "block", "top": `${y}px`, "left": `${x}px` });
 	};
 	var cliked = (e) => {
 		/*
@@ -62,4 +59,4 @@ function ContextMenu() {
 let contextMenu =  new ContextMenu();
 menuVue = {options: {}, style:{}},
 method = {};
-contextMenuVue = new Vue({el: '#contextMenu', data: menuVue, methods: {d:(data) => {method[data](); menuVue.style.display = "none"; console.log(menuVue);}}});
+contextMenuVue = new Vue({el: '#contextMenu', data: menuVue, methods: {d:(data) => {method[data](); menuVue.style.display = "none";}}});

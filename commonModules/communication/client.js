@@ -6,7 +6,6 @@ function Client() {
 	}).on('modal', function(args) {
 		modalScope.generate(args);
 	}).on('chat', (data) => {
-		console.log("vamos a pintar cosillas")
 		chatScope.printMessage(data);
 	});
 	

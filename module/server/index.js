@@ -53,17 +53,23 @@ function SERVER(modules) {
 				if (customize){
 					let p = moduleInstance.customize(d, id);
 					return p.then((d) => {
-						d.css = this.lib.css + d.css;
-						d.js = this.lib.js + d.js;
-						let html = this.base.replace(`<${path.slice(1)}></${path.slice(1)}>`, `<${path.slice(1)}>${d.html}</${path.slice(1)}>`).replace("#{css}", d.css).replace("#{js}", d.js);	
+						session[id].css = this.lib.css + d.css;
+						session[id].js = "let sleep = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));\n"+this.lib.js + d.js + "\nvar comunication = new Client(external);";
+						let html = this.base
+										.replace(`<${path.slice(1)}></${path.slice(1)}>`, `<${path.slice(1)}>${d.html}</${path.slice(1)}>`)
+										.replace("#{css}", '<link rel="stylesheet" type="text/css" href="/foo.css">')
+										.replace("#{js}", '<script type="text/javascript" src="/foo.js"></script>');
 						headersObj['Content-Type'] = contentType("html");
 						return this._sendFile(res, html, ["200", headersObj])
 					});
 				}
 				else{ 
-					d.css = this.lib.css + d.css;
-					d.js = this.lib.js + d.js;
-					let html = this.base.replace(`<${path.slice(1)}></${path.slice(1)}>`, `<${path.slice(1)}>${d.html}</${path.slice(1)}>`).replace("#{css}", d.css).replace("#{js}", d.js);
+					session[id].css = this.lib.css + d.css;
+					session[id].js = "let sleep = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));\n"+this.lib.js + d.js + "\nvar comunication = new Client(external);";
+					let html = this.base
+									.replace(`<${path.slice(1)}></${path.slice(1)}>`, `<${path.slice(1)}>${d.html}</${path.slice(1)}>`)
+									.replace("#{css}", '<link rel="stylesheet" type="text/css" href="/foo.css">')
+									.replace("#{js}", '<script type="text/javascript" src="/foo.js"></script>');
 					return this._sendFile(res, html, ["200", headersObj])
 				}
 			});
@@ -72,13 +78,24 @@ function SERVER(modules) {
 			let name = this.getCookieValue(q.query, 'name');
 			return this.download(name, id,res)
 		}
+		else if (path.search('foo') !== -1){
+			let ext = /foo\.(\w{2,3})/.exec(path)[1]
+			this._sendFile(res, session[id][ext], [200, contentType(ext)])
+		}
+		else if(Object.keys(this.modules).indexOf(path.split(".")[0]) !==-1){
+			let name = path.slice(1),
+				ext = path.split(".")[0];
+			this._sendFile(res, session[id][name], [200, contentType(ext)])
+		}
 		else if (path.search(/^(\/?\w*)*\.\w*$/) !== -1){
 			let toAdd = /^\/common/.test(path) ? "" : "/users/"+session[id].user
 			path = __dirname+"/../../files"+toAdd+path;
 			let ext = path.split('.').slice(-1)[0];
 			fs.readFile(path, (e, d) => e ? this.forbiddenFunct(res, id) : this._sendFile(res, d, ["200", contentType(ext)]));
 		}
+
 		else this.forbiddenFunct(res, id);
+
 	}
 	this._sendFile = (res, content, headers) => {
 		let headersObj = headers[1];
@@ -101,15 +118,17 @@ function SERVER(modules) {
 			rsc = {};
 		fs.readFile(file, 'utf-8', (e, bufferFile)=>{
 			let pat = `[\\"\\']((\\/?\\.{2})*(\\/?[\\w-\\.]*)*)[\\"\\'"]`,
-				paterns = [`<link.*href=${pat}>`, `<script.*src=${pat}></script>`],
+				paterns = [`\\t?<link.*href=${pat}>\\n?`, `\\t?<script.*src=${pat}></script>\\n?`],
 				path = '';
 			for (let i in paterns) {
 				let p = new RegExp(paterns[i]);
 				while((path = p.exec(bufferFile)) != null){
 					let content = fs.readFileSync(`${__dirname}/../../${path[1]}`, 'utf-8'),
 						ext = path[1].split(".").slice(-1);
-					if (!rsc[ext]) rsc[ext] = '';					
-					rsc[ext] += content.replace(/[\n\t\r]*module\.exports\s?=\s?\w*;?[\n\t\r]*$/, '');
+					if (!rsc[ext]) rsc[ext] = '';		
+					rsc[ext] += content
+							.replace(/[\n\t\r]*module\.exports\s?=\s?\w*;?[\n\t\r]*$/, '')
+							.replace(/[\n\t\r]*\/\*#\ssourceMappingURL=(\w*\.?){3}[\n\t\r]*/, '');
 					bufferFile = bufferFile.replace(path[0], '');
 				}
 			}
@@ -184,7 +203,7 @@ function SERVER(modules) {
 		let mimeTypes = contentType(name);		
 		res.writeHead(200, {"Content-Disposition": "attachment; filename="+name, "Content-Type": mimeTypes});
 		fs.readFile(`tmp/${key}`, (e, d) => {
-			if (e)  return console.log(e);
+			if (e)  return console.error(e);
 			fs.unlink(`tmp/${key}`, (e) => (e) ? console.error(e) : null);
 			res.end(d);
 		});
