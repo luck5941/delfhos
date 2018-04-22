@@ -28,6 +28,8 @@ function COMUNICATION(){
 			instances[instanceName].slice(-1)[0][data[2]](toSend, socket);
 		});
 		socket.on('modal', (data) => {
+			console.log("data")
+			console.log(data)
 			modules[data.slice(-1)[0]][data[1]](data[0], socket);
 		});
 	});

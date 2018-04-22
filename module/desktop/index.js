@@ -22,7 +22,9 @@ function DESKTOP(id){
 		 *antes de que este sea enviado
 		 * obj {key:String} Contiene todo el texto
 		*/
-		let path = await  ddbb.query({user: {'user': session[id].user}}, {"_id": 0, "wallPaper": 1});		
+		let path = await  ddbb.query({user: {'user': session[id].user}}, {"_id": 1, "wallPaper": 1});
+		session[id]["_id"] = path[0]._id;
+		console.log(session[id]._id);
 		path = path[0].wallPaper;
 		obj.css = obj.css.replace('%backgroundUri%', path)
 		return obj;

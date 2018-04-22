@@ -21,12 +21,15 @@ function Client() {
 		 * who: string -> quien debe ejecutar el callback
     		*/
     	let parameters = []
+    	console.log(event)
 		if (event === 'event'){
 			parameters = [args, where, funt1, context];
 			if (who) parameters.push(who);
 		}
 		else if (event === 'chat')
 			parameters = [args];
+		else if (event === 'modal')
+			parameters = args;
 		socket.emit(event, parameters);
 	};
 };

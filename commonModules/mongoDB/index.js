@@ -28,8 +28,8 @@ function mongoDB(bbdd_name) {
 		let method = Array.isArray(obj[o]) ? "insertMany":"insertOne";
 		let code = '';
 		let end = false;
-		this.conn.collection(o)[method](obj[o], (e) => {
-			code = (e) ? e.code : true;
+		this.conn.collection(o)[method](obj[o], (e, d) => {
+			code = (e) ? e.code : d.ops[0];
 			end = true;			
 		});
 		while(!end)
@@ -48,6 +48,9 @@ function mongoDB(bbdd_name) {
 		let collection = Object.keys(obj)[0];
 		let answer = this.conn.collection(collection).find(obj[collection], field).toArray();
 		return answer;
+	};
+	this.aggregate = (collection, ...args) =>{		
+		return this.conn.collection(collection).aggregate(args).toArray();
 	};
 	this.update = (obj, field) => {
 		/*

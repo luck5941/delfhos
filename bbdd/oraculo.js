@@ -1,10 +1,11 @@
 var users = {
 	id_users: 0,
 	name: "",
+	wallPaper: "",
+	profilePicture: "",
 	pwd:"",
 	groups: [0],
 	lastpwd: "",
-	chats: [0],
 	share_innodes: [0],
 	share_to_me: [0]
 };

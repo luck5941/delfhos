@@ -8,6 +8,7 @@ chatScope.init = (data) => {
 	*/	
 	chatScope.data.userName = data[0].user;
 	chatScope.data.chats = data[0].chats;
+	chatScope.messages = data[0].messages;
 }
 chatScope.listUsers = (data) => {	
 	chatScope.data.searchChats = data;
@@ -16,8 +17,6 @@ chatScope.printMessage = (data) => {
 	/*
 	 * función encargada de recibir los nuevos mensajes, ya sea del chat activo o de otros chats
 	*/
-	console.log("se pinta")
-
 	if (!chatScope.data.chats.some((d)=>d.user === data.from))
 		chatScope.data.chats.push({user: data.from, photo: data.photo});	
 	if (!chatScope.messages[data.from])
@@ -25,7 +24,18 @@ chatScope.printMessage = (data) => {
 	chatScope.data.activeChat =data.from;
 	chatScope.messages[chatScope.data.activeChat].push({"text": data.txt});
 	chatScope.data.messages = chatScope.messages[chatScope.data.activeChat];
+	chatScope.moveScroll();
 };
+
+chatScope.moveScroll = async () => {
+	let lenght = $("#chatArea").find('div').length;
+	console.log(lenght)
+	while (lenght === $("#chatArea").find('div').length){
+		await sleep(1);
+	};
+	$('#chatArea').scrollTop($('#chatArea')[0].scrollHeight);
+}
+
 /*metodos locales llamados por eventos*/
 
 chatScope.searchUser = () => comunication.send('event', [chatScope.data.nick], 'chat', 'searchUser', 'chatScope', 'listUsers');
@@ -42,6 +52,7 @@ chatScope.openChat = (to) => {
 	chatScope.data.searchChats = [];
 	if (!chatScope.messages[to])
 		chatScope.messages[to] = [];
+	chatScope.data.messages =chatScope.messages[to]; 
 }
 
 chatScope.sendMessage = (e) => {
@@ -49,7 +60,8 @@ chatScope.sendMessage = (e) => {
 	chatScope.messages[chatScope.data.activeChat].push({text: chatScope.data.message, own: true});
 	chatScope.data.messages = chatScope.messages[chatScope.data.activeChat];
 	comunication.send('chat', {dst: chatScope.data.activeChat, text: chatScope.data.message});
-	chatScope.data.message = ""
+	chatScope.data.message = "";
+	chatScope.moveScroll();
 };
 
 chatScope.vue = new Vue({el: "chat",data: chatScope.data, methods: {

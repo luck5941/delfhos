@@ -26,6 +26,7 @@
     <script type="text/javascript" src="/commonModules/communication/client.js"></script>
     <script type="text/javascript" src="/commonModules/modal/client.js"></script>
     <script type="text/javascript">
+    	let sleep = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms))
     #{js} var comunication = new Client(external); 
     </script>
 </body>

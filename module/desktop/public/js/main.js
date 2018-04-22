@@ -28,6 +28,7 @@ desktopScope.openModal = (e) => {
 		default:
 			console.log("something went bad");
 	}
+	console.log("vamos a enviar las coasa")
 	comunication.send('modal', args, 'openApps', 'changeImg','modal' );
 };
 desktopScope.changeImg = () => {
