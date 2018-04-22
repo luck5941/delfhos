@@ -34,7 +34,7 @@ function ContextMenu() {
 						let property = t.match(/\W/);
 						let join = (property) ? property[0] : "";
 						let search = (join === ".") ? "className" : (join === "#") ? "id" : "localName";
-						if (join + e.currentTarget[search].replace(' ', join).indexOf(t) !== -1)
+						if ((join + e.currentTarget[search].replace(' ', join)).indexOf(t) != -1)
 							return t;
 					}
 				})();

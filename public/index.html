@@ -10,8 +10,9 @@
 <body oncontextmenu="return false">
     <login></login>
     <desktop></desktop> 
-    <filesystem></filesystem>	
+    <filesystem></filesystem>
     <chat></chat>
+    <modal></modal>
 	<div id="contextMenu" class="shadow" v-bind:style="style">
 		<nav> <ul>
 			<li v-for="option in options"><span @click="d(option.func)">{{option.txt}}</span></li>

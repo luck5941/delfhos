@@ -1,4 +1,3 @@
-'use strict';
 /*Variables globales*/
 var mainScope = {};
 mainScope.contentMenuConstruct = {
@@ -20,7 +19,7 @@ mainScope.contentMenuConstruct = {
 		"Propiedades": "mainScope.askForProperties"
 	}
 };
-contextMenu.updateMenu(mainScope.contentMenuConstruct);
+
 mainScope.ctrlPress = false;
 mainScope.isCopping = false;
 mainScope.selected = {"file": [], "folder": []};
@@ -142,7 +141,7 @@ mainScope.sentToTrush = () => {
 mainScope.remove = () => {
 	mainScope.prepareToCut();
 	let toDel = mainScope.toCopy;
-	comunication.send('event',null , 'filesystem','remove' , 'mainScope', 'drawFiles');
+	comunication.send('event',toDel , 'filesystem','remove' , 'mainScope', 'drawFiles');
 };
 mainScope.askForProperties = () => {
 	let names = mainScope.getName(mainScope.selected)
@@ -174,6 +173,7 @@ mainScope.goInto = (e)=> {
 	 *funcion encarga de mandar el evento necesario que determina que
 	 *carpeta quieren abrir
 	*/
+	console.log("me llaman")
 	let name = '';
 	try{
 		name = $(e.currentTarget).find('p').html();
@@ -379,3 +379,4 @@ mainScope.vue = new Vue({
 		goFolderTopBar: mainScope.goFolderTopBar
 	}
 });
+contextMenu.updateMenu(mainScope.contentMenuConstruct);

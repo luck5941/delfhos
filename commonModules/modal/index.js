@@ -14,6 +14,7 @@ function modal() {
 	const fs = require('fs');
 	let sleep = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 	this.ready = 0;
+	this.content = 'vale algo';
 	this.openApps = (args, socket) => {
 		let id =socket.handshake.address.split(":").slice(-1)[0]+"_"+ modules.server.getCookieValue(socket.handshake.headers.cookie, '_id');
 		let l = new modules["LoadApp"](`${__dirname}/../../module/${args[0]}/`, args[0], [args[1]]);
@@ -31,52 +32,51 @@ function modal() {
 	this.loadModal = (html = false) => {
 		let path = html.split("/").slice(0, -1).join("/") + "/",
 			file = '',
-		readFiles = (() => {
-			/*
-			 * Este método se encarga de crear una copia del archivo que se solicita, en /tmp con el html modificado
-			 */			
-			var scripts = { js: [], css: [] },
-				finalFile, flags = 0,
-				scriptsContents = { js: "", css: "" };
-			fs.readFile(__dirname + '/bases/modal.html', 'utf-8', (e, cont) => {
-				if (e) return console.error(e);
-				finalFile = cont;
-				flags++;
-			});
-			fs.readFile(html, 'utf-8', (e, cont) => {
-				if (e) return console.error(e);
-				let srcScript = [/<script\s.*(src)=\"(.*)\"(\s.*)*><\/script>/g, /<link\s.*(href)=\"(.*)\"(\s.*)*>/],
-					m;
-				for (let s of srcScript) {
-					while ((m = s.exec(cont)) != null) {
-						for (let i of m) {
-							if (m.indexOf(i) === 0) {
-								cont = cont.replace(i, "");
-							}
-							if (i === "src")
-								scripts["js"].push(m[m.indexOf(i) + 1]);
-							else if (i === "href")
-								scripts["css"].push(m[m.indexOf(i) + 1]);
-						}
-					}
-				}
-				for (var i in scripts) {
-					for (let s of scripts[i]) {
-						s = s.replace(/^\.\//, "")
-						fs.readFile(path + s, 'utf-8', (e, c) => {
-							scriptsContents[s.split(".").slice(-1)] += c;
-							flags++;
-							if (flags === 2 + scripts["js"].length + scripts["css"].length) {
-								return writeFile(finalFile, cont, scriptsContents)
-							}
-						});
-					}
-				}
-			});
+		
+		/*
+		 * Este método se encarga de crear una copia del archivo que se solicita, en /tmp con el html modificado
+		 */			
+			scripts = { js: [], css: [] },
+			finalFile, flags = 0,
+			scriptsContents = { js: "", css: "" };
+		fs.readFile(__dirname + '/bases/modal.html', 'utf-8', (e, cont) => {
+			if (e) return console.error(e);
+			finalFile = cont;
 			flags++;
-		})();
+		});
+		fs.readFile(html, 'utf-8', (e, cont) => {
+			if (e) return console.error(e);
+			let srcScript = [/<script\s.*(src)=\"(.*)\"(\s.*)*><\/script>/g, /<link\s.*(href)=\"(.*)\"(\s.*)*>/],
+				m;
+			for (let s of srcScript) {
+				while ((m = s.exec(cont)) != null) {
+					for (let i of m) {
+						if (m.indexOf(i) === 0) {
+							cont = cont.replace(i, "");
+						}
+						if (i === "src")
+							scripts["js"].push(m[m.indexOf(i) + 1]);
+						else if (i === "href")
+							scripts["css"].push(m[m.indexOf(i) + 1]);
+					}
+				}
+			}
+			for (var i in scripts) {
+				for (let s of scripts[i]) {
+					s = s.replace(/^\.\//, "")
+					fs.readFile(path + s, 'utf-8', (e, c) => {
+						scriptsContents[s.split(".").slice(-1)] += c;
+						flags++;
+						if (flags === 2 + scripts["js"].length + scripts["css"].length) {
+							return writeFile.call(this, finalFile, cont, scriptsContents); 
+						}
+					});
+				}
+			}
+		});
+		flags++;
 		this.ready++;
-		var replace = (obj, str, clean) => {
+		this.replace = (obj, str, clean) => {
 			var match, rpl, ret, i = 0,
 				regex = /#{(\w*)(\[(\d+|"\w+")])?}/g,
 				list, key, content, match, tmpStr;
@@ -109,8 +109,8 @@ function modal() {
 				str = str.replace(match[0], tmpStr)
 			}
 			return str;
-		},
-		writeFile = (total, content, src) => {
+		};
+		var writeFile = (total, content, src) => {
 			/*
 			 *Encargado de generar un único archivo con la base del resto
 			 */
@@ -119,10 +119,11 @@ function modal() {
 				"js": src.js,
 				"css": src.css
 			};
-			file = replace(toReplace, total);
-			this.ready++;			
-		},
-		searchResource = (file) => {
+			this.ready++;
+			this.content = toReplace;
+			return file;
+		};
+		this.searchResource = (file) => {
 			/*
 			 * Función encargada de buscar los require que se pidan y adaptarlos a la
 			 * nueva ruta.
@@ -137,21 +138,16 @@ function modal() {
 			return file;
 		};
 	}
-	this.createModal = async function(obj) {
+	this.createModal = async function(obj, socket) {
 		let name ='';
-		while (this.ready!==2){await sleep(5);}
-		fs.readFile("/tmp/modal.html", "UTF-8", (e, c) =>{
-			if (e) return console.error(e);
-			c = replace(obj, c);
-			c = searchResource(c);
-			let l = new Date();
-			name = `${l.getHours()}_${l.getMinutes()}_${l.getSeconds()}_${l.getMilliseconds()}.html`;
-			fs.writeFile("/tmp/"+name, c, (e) => {
-				if (e) return console.error(e);
-				this.ready++;
-			});
-		});
-		while (this.ready!==3){await sleep(5);}              
+		while (this.ready<2){await sleep(5);}
+			let id =socket.handshake.address.split(":").slice(-1)[0]+"_"+ modules.server.getCookieValue(socket.handshake.headers.cookie, '_id');
+			this.content.content = this.replace(obj, this.content.content);
+			//c = this.searchResource(c);
+			session[id]["modal.css"] = this.content.css
+			session[id]["modal.js"] = this.content.js
+			this.ready = 0;
+			socket.emit('modal', [this.content.content, 'modal']);
 	};
 };
 module.exports = modal;

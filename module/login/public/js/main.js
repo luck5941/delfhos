@@ -9,11 +9,7 @@ loginScope.sendForm = (e) => {
 	let method = $(e.currentTarget).attr('id');
 	let input = $(e.currentTarget).find('input');
 	e.preventDefault();
-	/*formObj = {};
-	formObj.user = $(loginScope.input[0]).val();
-	formObj.mail = $(loginScope.input[1]).val();
-	formObj.passwd = $(loginScope.input[2]).val();
-	*/
+
 	let formObj = {};
 	for (let i of input)
 		if ($(i).attr('type') !== 'submit')

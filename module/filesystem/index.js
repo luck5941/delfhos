@@ -137,18 +137,23 @@ function FILESYSTEM(id) {
 		}
 		return [newName, ext];
 	};
-	var removeRecursive = (files, path) => {
+	var removeRecursive = (files) => {
 		/*
 		 * Función encargada de borrar la lista de archivos que se ha indicado
 		 * files: [String] Lista con los nombres completos de los archivos que se desean borrar
 		 *
 		 */
 		for (let f of files) {
-			if (fs.lstatSync(f).isFile())
-				fs.unlink(f, (e) => (e) ? console.error(e) : null);
-			else if (fs.lstatSync(f).isDirectory()) {
-				removeRecursive(fs.readdirSync(f));
-				fs.rmdir(f, (e) => (e.errno === -39) ? removeRecursive([f]) : console.error(e));
+			if (fs.lstatSync(this.currentPath + f).isFile())
+				fs.unlink(this.currentPath + f, (e) => (e) ? console.error(e) : null);
+			else if (fs.lstatSync(this.currentPath + f).isDirectory()) {
+				removeRecursive(fs.readdirSync(this.currentPath + f));
+				fs.rmdir(this.currentPath + f, (e) => {
+					if (e)
+						return (e.errno === -39) ? removeRecursive([this.currentPath + f]) : console.error(e)
+					else
+						return null;
+				});
 			}
 		}
 		return [loadFiles()[0]];
@@ -289,9 +294,8 @@ function FILESYSTEM(id) {
 			fs.rename(`${this.currentPath}/${files[i]}`, name, (err) => { if (err) console.error(err) })
 		}
 		return [loadFiles()[0]];
-	};	
-
-	this.getProperties = getProperties = (files) => {
+	};
+	this.getProperties = getProperties = (files, socket) => {
 		//modal = new l.bcknd.Modal_Main(__dirname + '/external/properties/index.html');
 		global.modules.modal.loadModal(`${__dirname}/external/properties/index.html`);
 		let data = {};
@@ -300,12 +304,12 @@ function FILESYSTEM(id) {
 			//Pantalla 1
 			//let ownGroup = readcsv([s.uid, s.gid, '\\d{4}', '\\d{4}']);
 			data.name = files[0][0].split("/").slice(-1)[0];
-			data.path = this.currentPath;
+			data.path = "~/"+this.currentPath.split("/").slice(3).join("/")
 			data.size = s.size.toString();
 			//Pantalla 2
 			data.lastView = formatDate(s.atime);
 			data.lastConMod = formatDate(s.mtime);
-			data.lastConMod = formatDate(s.birthtime);
+			data.birthdate = formatDate(s.birthtime);
 			//pantalla 3
 			data.type = getFileInfo(s.mode.toString(8))[0];
 			data.permission = getFileInfo(s.mode.toString(8))[1].split("");
@@ -314,7 +318,7 @@ function FILESYSTEM(id) {
 			//data.group = ownGroup[1];
 			//data.owns = ownGroup[2];
 			//data.groups = ownGroup[3];
-			global.modules.modal.createModal.call(this, data)
+			global.modules.modal.createModal(data, socket)
 		});
 	};
 	this.newFolder = newFolder = (name, socket) => {
@@ -362,7 +366,10 @@ function FILESYSTEM(id) {
 		}
 	};
 
-	this.remove  = remove = (files) => removeRecursive(files);
+	this.remove  = remove = (files, socket) => {
+		let r = removeRecursive(files[0]);
+		modules.communication.send(r, files[1], files[2], socket);
+	}
 
 	updateName = (name) => comunication.send(win, 'changeName', name);
 

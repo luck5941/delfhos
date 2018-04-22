@@ -80,12 +80,12 @@ function SERVER(modules) {
 		}
 		else if (path.search('foo') !== -1){
 			let ext = /foo\.(\w{2,3})/.exec(path)[1]
-			this._sendFile(res, session[id][ext], [200, contentType(ext)])
+			return (session[id][ext]) ? this._sendFile(res, session[id][ext], [200, contentType(ext)]) : this.forbiddenFunct(res, id);
 		}
-		else if(Object.keys(this.modules).indexOf(path.split(".")[0]) !==-1){
+		else if(Object.keys(this.modules).indexOf(path.split(".")[0]) !==-1 || path.search('/modal') !== -1){
 			let name = path.slice(1),
-				ext = path.split(".")[0];
-			this._sendFile(res, session[id][name], [200, contentType(ext)])
+				ext = path.split(".")[1];
+			return (session[id][name]) ? this._sendFile(res, session[id][name], [200, contentType(ext)]) : this.forbiddenFunct(res, id);
 		}
 		else if (path.search(/^(\/?\w*)*\.\w*$/) !== -1){
 			let toAdd = /^\/common/.test(path) ? "" : "/users/"+session[id].user

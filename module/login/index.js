@@ -11,7 +11,10 @@ function FORM() {
 			if (d == 11000) 
 				console.log("ya existe")
 			else
-				fs.mkdir(`files/users/${data[0].user}`, (e) => (e) ? console.error(e) : null);
+				fs.mkdir(`files/users/${data[0].user}`, (e) => {
+					if (e) return console.error(e);
+					fs.mkdir(`files/users/${data[0].user}/.trash`, (e) => (e) ? console.error(e) : null);
+				});
 		})
 	};
 	this.getSession = (ip) => {
@@ -31,7 +34,6 @@ function FORM() {
 		let id = modules.server.getCookieValue(data[0].id, "_id");
 		let ip = socket.handshake.address.split(":").slice(-1)[0];		
 		response.then((res) => {
-			console.log(res)
 			if (res.length < 1){ 
 				session[ip+"_"+id].register  = false;
 				modules.communication.send({access: false}, data[1], data[2], socket);

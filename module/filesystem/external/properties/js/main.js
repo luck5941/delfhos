@@ -1,48 +1,47 @@
-const $ = require('jquery');
+/*comentario de prueba para que sea aquí donde pete*/
+/*const $ = require('jquery');
 const Whatch = require('watcher');
-var EventClient = require('localEvent').Client;
+var EventClient = require('localEvent').Client;*/
 /*Variables globales*/
-var modalScope = {};
-modalScope.body = $('body');
-modalScope.cat = modalScope.body.find('ul');
-modalScope.cats = modalScope.cat.find('li');
-modalScope.main = modalScope.body.find('main');
-modalScope.inputName = modalScope.main.find("input.name");
-modalScope.inputPermissions = modalScope.main.find("input[type=number]");
-modalScope.inputText = modalScope.main.find(".permission");
-modalScope.pathFile = "#{path}";
-modalScope.nameFile = "#{name}";
-modalScope.permissionCode = {
+var propertiesScope = {};
+propertiesScope.body = $('modal');
+propertiesScope.cat = propertiesScope.body.find('ul');
+propertiesScope.cats = propertiesScope.cat.find('li');
+propertiesScope.main = propertiesScope.body.find('main');
+propertiesScope.inputName = propertiesScope.main.find("input.name");
+propertiesScope.inputPermissions = propertiesScope.main.find("input[type=number]");
+propertiesScope.inputText = propertiesScope.main.find(".permission");
+propertiesScope.pathFile = "#{path}";
+propertiesScope.nameFile = "#{name}";
+/*propertiesScope.permissionCode = {
     	"property": #{permission[0]},
     	"groups":  #{permission[1]},
     	"others" : #{permission[2]}
-};
+};*/
 external = {}
-var modalScopeWatch = new Whatch (modalScope.permissionCode);
+// var propertiesScopeWatch = new Whatch (propertiesScope.permissionCode);
 
 /*funciones generales*/
-modalScope.updatePermissions = (toChange = "text") => {
+propertiesScope.updatePermissions = (toChange = "text") => {
 	let p = 'xwr',
 		v = 0,
 		str = ["","",""],
 		input;
-	for (let g in modalScope.permissionCode){
-		o = modalScope.permissionCode[g];
-		bin = modalScope.decimalToBinary(o);
+	for (let g in propertiesScope.permissionCode){
+		o = propertiesScope.permissionCode[g];
+		bin = propertiesScope.decimalToBinary(o);
 		bin = bin.split("").reverse().join("");		
 		console.log(bin)
-		input = $(modalScope.inputText[v+1]).find('input');
+		input = $(propertiesScope.inputText[v+1]).find('input');
 		for (let i in p){
 			console.log(p.length-i)
 			$(input[p.length-i-1]).prop("checked", (bin[i] === "1"))
-			// str[v] = (bin[i] === "1") ? p[i]+str[v]  : "_"+str[v];
 		}
-		$(modalScope.inputPermissions[v]).val(o)
-		// $(modalScope.inputText[v]).text(str[v]);
+		$(propertiesScope.inputPermissions[v]).val(o)
 		v++;
 	};
 };
-modalScope.decimalToBinary = (x) => {
+propertiesScope.decimalToBinary = (x) => {
 	let str  ="",
 		bin = 0,
 		t = 0
@@ -59,29 +58,31 @@ modalScope.decimalToBinary = (x) => {
 	return str;
 };
 /*funciones lanzadas por eventos*/
-modalScope.changeCat = (e) => {
-    let catNum = $(e.currentTarget).index('ul li');
-    modalScope.cat.attr("class", `cat${catNum+1}`);
-    modalScope.main.attr("class", `cat${catNum+1}`);
+propertiesScope.changeCat = (e) => {
+	alert("si que entramos!")
+    let catNum = $(e.currentTarget).index('modal ul li');
+    console.log(catNum)
+    propertiesScope.cat.attr("class", `cat${catNum+1}`);
+    propertiesScope.main.attr("class", `cat${catNum+1}`);
 };
-modalScope.updatePermissionsInput = (e)=>{
+propertiesScope.updatePermissionsInput = (e)=>{
 	let code = $(e.currentTarget).val();
 	let ind = $(e.currentTarget).index("input[type=number]");
-	let keys = Object.keys(modalScope.permissionCode);
-	modalScope.permissionCode[keys[ind]] = code;
+	let keys = Object.keys(propertiesScope.permissionCode);
+	propertiesScope.permissionCode[keys[ind]] = code;
 };
-modalScope.updateName = (e) => {
+propertiesScope.updateName = (e) => {
 	if (e.which === 13) // enter
 		return $(e.currentTarget).blur();
 	comunication.send('updateName', null, $(e.currentTarget).val());
 }
-modalScope.changeName = (e) => {
-	let newName = $(modalScope.inputName).val();
-	if (modalScope.nameFile === newName) return null; 
-	comunication.send('prepareToChangeName', null, [modalScope.pathFile, modalScope.nameFile, newName]);
-	modalScope.nameFile = newName;
+propertiesScope.changeName = (e) => {
+	let newName = $(propertiesScope.inputName).val();
+	if (propertiesScope.nameFile === newName) return null; 
+	comunication.send('prepareToChangeName', null, [propertiesScope.pathFile, propertiesScope.nameFile, newName]);
+	propertiesScope.nameFile = newName;
 }
-modalScope.updatePermissionsCheck = (e) => {
+propertiesScope.updatePermissionsCheck = (e) => {
 	let toCheck = $(e.currentTarget).parent().find('input'),
 		key = 0,
 		ind = $(e.currentTarget).parent().index(".permission")-1
@@ -89,24 +90,22 @@ modalScope.updatePermissionsCheck = (e) => {
 		if ($(o).prop("checked"))
 			key += parseInt($(o).val());
 	
-	modalScope.permissionCode[Object.keys(modalScope.permissionCode)[ind]] = key;
+	propertiesScope.permissionCode[Object.keys(propertiesScope.permissionCode)[ind]] = key;
 };
-modalScope.updatePermissionsSys = () => {
-	let p = Object.values(modalScope.permissionCode);
-	comunication.send('changePermissions', null, [$("#path").text(), modalScope.nameFile, "0"+p.join("")]);
+propertiesScope.updatePermissionsSys = () => {
+	let p = Object.values(propertiesScope.permissionCode);
+	comunication.send('changePermissions', null, [$("#path").text(), propertiesScope.nameFile, "0"+p.join("")]);
 };
 
 /*eventos*/
-modalScope.cats.on('click', modalScope.changeCat);
-modalScope.inputPermissions.on('change', modalScope.updatePermissionsInput);
-modalScope.inputName
-	.on('keyup', modalScope.updateName)
-	.on('focusout', modalScope.changeName);
-$("#confirm").on('click', modalScope.updatePermissionsSys);
-$("input[type=checkbox]").on("change", modalScope.updatePermissionsCheck)
+propertiesScope.cats.on('click', propertiesScope.changeCat);
+propertiesScope.inputPermissions.on('change', propertiesScope.updatePermissionsInput);
+propertiesScope.inputName
+	.on('keyup', propertiesScope.updateName)
+	.on('focusout', propertiesScope.changeName);
+$("#confirm").on('click', propertiesScope.updatePermissionsSys);
+$("input[type=checkbox]").on("change", propertiesScope.updatePermissionsCheck)
 /*Inicializar al principio*/
-modalScope.updatePermissions();
-for (let o in modalScope.permissionCode)
-modalScopeWatch.appendWatch(o, modalScope.updatePermissions);
-var comunication = new EventClient(external);
-// comunication.send('prueba1', null, '');
+propertiesScope.updatePermissions();
+// for (let o in propertiesScope.permissionCode)
+// propertiesScopeWatch.appendWatch(o, propertiesScope.updatePermissions);
