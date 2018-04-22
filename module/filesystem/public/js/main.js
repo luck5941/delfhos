@@ -28,25 +28,6 @@ mainScope.toCopy = {"file": [], "folder": []};
 mainScope.mapKey = {};
 mainScope.currentPath = '';
 mainScope.vueData = {dir: [], fil: [], currentPath:[]};
-	
-mainScope.vue = new Vue({el: 'filesystem', data: mainScope.vueData, computed:{
-	getPath: function(){
-		let availabesExt = ['jpg', 'png', 'svg', 'jpeg', 'gif'];
-		let arr = []
-		let ext = '';
-		let toPush = ''
-		for (let f of this.fil){
-			arr.push({});
-			arr.slice(-1)[0].name = f;
-			ext = f.split(".").slice(-1)[0];
-			toPush = (availabesExt.indexOf(ext) === -1) ? "common/images/file.jpg" : `${this.currentPath.join("/")}${f}`;	
-			console.log(toPush);
-			arr.slice(-1)[0].path = toPush;
-		}
-		console.log(arr);
-		return arr;
-	}
-}});
 
 /*metodos locales*/
 mainScope.drawFiles = (args) => {
@@ -187,7 +168,6 @@ mainScope.startDownload = (name) => {
 	window.location.href = "download?name="+name[0];
 }
 
-
 /*metodos locales llamados por eventos*/
 mainScope.goInto = (e)=> {
 	/*
@@ -211,9 +191,14 @@ mainScope.goFolderTopBar = (e)=>{
 	 *Funcion encarga de enviar el evento para indicar a que carpeta del camino
 	 *de migas de pan generado en la topbar se quiere ir
 	*/
-	e.stopPropagation();
-	let name = $(e.currentTarget).html();
+	let name = '';
+	if (typeof e !== 'string'){
+		e.stopPropagation();
+		name = $(e.currentTarget).html();
+	}
+	else name = e;
 	comunication.send('event', name, 'filesystem', 'changeDir', 'mainScope', 'drawFiles');
+	console.log(name)
 };
 mainScope.showName = (e)=> {
 	/*mostrar el texto completo de la carpeta  o archivo*/
@@ -368,3 +353,29 @@ window.addEventListener("drop",function(e){
   e.preventDefault();
 	console.log(e);
 },false);
+
+mainScope.vue = new Vue({
+	el: 'filesystem',
+	data: mainScope.vueData,
+	computed:{
+		getPath: function(){
+			let availabesExt = ['jpg', 'png', 'svg', 'jpeg', 'gif'];
+			let arr = []
+			let ext = '';
+			let toPush = ''
+			for (let f of this.fil){
+				arr.push({});
+				arr.slice(-1)[0].name = f;
+				ext = f.split(".").slice(-1)[0];
+				toPush = (availabesExt.indexOf(ext) === -1) ? "common/images/file.jpg" : `${this.currentPath.join("/")}${f}`;	
+				console.log(toPush);
+				arr.slice(-1)[0].path = toPush;
+			}
+			console.log(arr);
+			return arr;
+		}
+	},
+	methods: {
+		goFolderTopBar: mainScope.goFolderTopBar
+	}
+});

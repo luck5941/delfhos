@@ -1,6 +1,6 @@
 <ul class="topBar">
 	<li class="track">Carpeta personal</li>
-	<li v-for="location in currentPath">{{location}}</li>
+	<li v-for="location in currentPath" @click="goFolderTopBar(location)">{{location}}</li>
 </ul>
 <ul id="options" class="topBar">
 	<li id="newFolder">

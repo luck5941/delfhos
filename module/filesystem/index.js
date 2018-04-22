@@ -216,7 +216,8 @@ function FILESYSTEM(id) {
 		let path = this.currentPath.split('/'),
 			arr;
 		this.currentPath = (name[0] !== this.homeName) ? path.slice(0, path.indexOf(name[0]) + 1).join("/") + '/' : this.homeDir;
-		arr = (name != this.homeName) ? path.slice(1, path.indexOf(name[0]) + 1) : [];
+		console.log(this.currentPath)
+		arr = (name != this.homeName) ? path.slice(4, path.indexOf(name[0]) + 1) : [];
 		modules.communication.send([loadFiles()[0], arr], name[1], name[2], socket);
 	};
 
