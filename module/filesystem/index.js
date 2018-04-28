@@ -1,8 +1,7 @@
 'use strict';
 /*Importación de módulos */
 function FILESYSTEM(id) {
-	const fs = require('fs');
-	const archiver = require('archiver');
+	const fs = require('fs');	
 	var sleep = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms)) 
 	this.id = id;
 	/*Variables globales*/

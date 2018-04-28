@@ -4,6 +4,46 @@ img {width: 100%;}
 body {
 	font-family: sans-serif;
 	overflow: hidden;
+	.module {
+		width: 60%;
+		height: 40vh;
+		position: absolute;
+		top: 0;
+		left: 0;
+		background-color: lightgray;
+		box-shadow: 5px 5px 5px;
+		border-radius: 15px 15px 0 0;
+		header {
+			background-color: $color3;
+			width: 100%;
+			height: 25px;
+			border-radius: 15px 15px 0 0;
+			text-align: center;
+			color: #d8d8d8;
+			display: flex;
+			.programName {
+				flex-grow: 1;
+				flex-basis:0;
+				text-align: center;				
+			}
+			nav {
+				display: flex;
+				width: 81px;
+				li {
+					width:23px;
+					margin: 0 1%;
+					height:23px;
+					border-radius: 50%;
+					list-style-type: none;
+					background-color: gray;								
+				}
+				li.close {background-color: red;}
+				li.min {background-color: yellow;}
+				li.max {background-color: green;}
+			}
+
+		}
+	}
 	#contextMenu {
 		display: none;
 		position: absolute;

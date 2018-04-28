@@ -26,6 +26,7 @@ function modal() {
 		m.then((a) => {
 			session[id][`${args[0]}.css`] = a.css
 			session[id][`${args[0]}.js`] = a.js
+			a.html = `<header move="true"><span class="programName">${args[0]}</span><nav><li class="min"></li><li class="max"></li><li class="close"></li></nav></header>`+a.html;
 			socket.emit('modal', [a.html, args[0]]); });
 
 	};

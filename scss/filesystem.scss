@@ -1,16 +1,9 @@
 @import './vars.scss';
 filesystem{
-	width: 60%;
-	height: 40vh;
-	position: absolute;
-	top: 0;
-	left: 0;
-	background-color: lightgray;
-	box-shadow: 5px 5px 5px;
 	ul.topBar {
 		width: 80%;
 		float: left;
-		border-bottom:2px solid $color1;
+		border-bottom:2px solid $light_blue;
 		height: $menuHeight;
 		display: flex;
 		align-items: center;
@@ -27,7 +20,7 @@ filesystem{
 	ul.frecuentFile {
 		width: 20%;
 		float: left;
-		border-right: 1px solid $color1;
+		border-right: 1px solid $light_blue;
 		height: 100 - $menuHeight;
 		li {
 			list-style: none;
