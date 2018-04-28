@@ -17,6 +17,7 @@ function COMUNICATION(){
 	io.on('connection', (socket) => {
 		connected.push(socket);
 		socket.on('chat', (data) =>{
+			console.log(socket.handshake.headers.cookie);
 			let id = socket.handshake.address.split(":").slice(-1)[0]+"_"+ modules.server.getCookieValue(socket.handshake.headers.cookie, '_id'),
 				instanceName = `${id}_chat`
 				instances[instanceName].slice(-1)[0]["newMessage"](data[0], socket);
@@ -25,6 +26,7 @@ function COMUNICATION(){
 			let id = socket.handshake.address.split(":").slice(-1)[0]+"_"+ modules.server.getCookieValue(socket.handshake.headers.cookie, '_id'),
 				toSend = [data[0], data[3], data[4]],
 			 	instanceName = `${id}_${data[1]}`;
+			console.log(id);
 			instances[instanceName].slice(-1)[0][data[2]](toSend, socket);
 		});
 		socket.on('modal', (data) => {

@@ -26,6 +26,7 @@ function SERVER(modules) {
 		str = `${req_save["ip"]};${req_save["date"]};${req_save['url']}`
 		//Obtención de la clave que se le impone por cookie
 		let id = req_save["ip"]+ "_"+this.getCookieValue(req.headers.cookie, '_id');
+		console.log(id);
 		let headersObj = {};
 		if (this.modules[path]){
 			if (path !== '/login'){

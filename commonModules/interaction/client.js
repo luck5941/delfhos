@@ -57,17 +57,18 @@ interaction.canResize = (e) => {
 	interaction.obj.height = parseInt(her.css("height"));
 	interaction.obj.init_x = Xpos;
 	interaction.obj.init_y = Ypos;
+	console.log(interaction.direction);
 	return interaction.direction;
 };
 interaction.resize = (e) => {
-	interaction.isresizing = true;
-	console.log("entra en resize y por eso se para");
+	console.log("entra en resize y por eso se para con direction valiendo: "+ interaction.direction);
 	let Xpos = (interaction.is_mobile) ? e.originalEvent.touches[0].pageX: e.pageX,
 		Ypos = (interaction.is_mobile) ? e.originalEvent.touches[0].pageY: e.pageY;
 	switch(interaction.direction){
 		case 'left':
 			break;
 		case 'right':
+			console.log("vamos a agrandar esto no?");
 			let newWidth = Xpos-interaction.obj.init_x+interaction.obj.width;
 			interaction.obj.selected.css('width', newWidth+'px');
 			break;
@@ -89,5 +90,5 @@ $("body")
 .on(interaction.click_move, ".module", interaction.canResize)
 .on(interaction.click_up, ".module", interaction.resize)
 
-.on(interaction.click_move,(e) => (interaction.isMoving) ? interaction.desplace(e) : (interaction.resizing) ? interaction.resize(e) :interaction.direction=false);
+.on(interaction.click_move,(e) => (interaction.isMoving) ? interaction.desplace(e) : (interaction.direction) ? interaction.resize(e) :null);
 ;
