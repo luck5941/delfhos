@@ -1,54 +1,54 @@
 /*Variables globales*/
-var mainScope = {};
-mainScope.contentMenuConstruct = {
+var filesystemScope = {};
+filesystemScope.contentMenuConstruct = {
 	".folder": {
-		"Abrir": "mainScope.goInto",
-		"Enviar a la papelera de reciclaje": "mainScope.sentToTrush",
-		"Cambiar nombre": "mainScope.changeName",
-		"Borrar permanentemente": "mainScope.remove",
-		"Cortar": "mainScope.prepareToCut",
-		"Copiar": "mainScope.prepareToCopy",
-		"Propiedades": "mainScope.askForProperties"
+		"Abrir": "filesystemScope.goInto",
+		"Enviar a la papelera de reciclaje": "filesystemScope.sentToTrush",
+		"Cambiar nombre": "filesystemScope.changeName",
+		"Borrar permanentemente": "filesystemScope.remove",
+		"Cortar": "filesystemScope.prepareToCut",
+		"Copiar": "filesystemScope.prepareToCopy",
+		"Propiedades": "filesystemScope.askForProperties"
 	},
 	".file": {
-		"Enviar a la papelera de reciclaje": "mainScope.sentToTrush",
-		"Cambiar nombre": "mainScope.changeName",
-		"Borrar permanentemente": "mainScope.remove",
-		"Cortar": "mainScope.prepareToCut",
-		"Copiar": "mainScope.prepareToCopy",
-		"Propiedades": "mainScope.askForProperties"
+		"Enviar a la papelera de reciclaje": "filesystemScope.sentToTrush",
+		"Cambiar nombre": "filesystemScope.changeName",
+		"Borrar permanentemente": "filesystemScope.remove",
+		"Cortar": "filesystemScope.prepareToCut",
+		"Copiar": "filesystemScope.prepareToCopy",
+		"Propiedades": "filesystemScope.askForProperties"
 	}
 };
 
-mainScope.ctrlPress = false;
-mainScope.isCopping = false;
-mainScope.selected = {"file": [], "folder": []};
-mainScope.toCopy = {"file": [], "folder": []};
-mainScope.mapKey = {};
-mainScope.currentPath = '';
-mainScope.vueData = {dir: [], fil: [], currentPath:[]};
+filesystemScope.ctrlPress = false;
+filesystemScope.isCopping = false;
+filesystemScope.selected = {"file": [], "folder": []};
+filesystemScope.toCopy = {"file": [], "folder": []};
+filesystemScope.mapKey = {};
+filesystemScope.currentPath = '';
+filesystemScope.vueData = {dir: [], fil: [], currentPath:[]};
 
 /*metodos locales*/
-mainScope.drawFiles = (args) => {
+filesystemScope.drawFiles = (args) => {
 	/*Lista los archivos y carpetas que hay en ese direcorio*/	
 	let str = args[0];
 	for (let p in args[0])
-		mainScope.vueData[p] = args[0][p]
+		filesystemScope.vueData[p] = args[0][p]
 	/*Cambia el menú de navegación */
 	if (args.length >=2){
 		let path = args[1];
-		mainScope.vueData.currentPath = path;
-		mainScope.currentPath = path.join("/");
-		mainScope.currentPath = (mainScope.currentPath.search(/\/$/) !== -1) ? mainScope.currentPath : mainScope.currentPath +"/"; 
+		filesystemScope.vueData.currentPath = path;
+		filesystemScope.currentPath = path.join("/");
+		filesystemScope.currentPath = (filesystemScope.currentPath.search(/\/$/) !== -1) ? filesystemScope.currentPath : filesystemScope.currentPath +"/"; 
 	}
 };
-mainScope.changeName = (name) => {
-	if (mainScope.selected["file"].length >0) 
-		$(mainScope.selected["file"][0]).find('p').text(name)
-	else if (mainScope.selected["folder"].length >0) 
-		$(mainScope.selected["folder"][0]).find('p').text(name)
+filesystemScope.changeName = (name) => {
+	if (filesystemScope.selected["file"].length >0) 
+		$(filesystemScope.selected["file"][0]).find('p').text(name)
+	else if (filesystemScope.selected["folder"].length >0) 
+		$(filesystemScope.selected["folder"][0]).find('p').text(name)
 };
-mainScope.unselectOne = (name) => {
+filesystemScope.unselectOne = (name) => {
 	/*
 	 *Metodo encargado de borrar de la lista de elementos seleccionados
 	 *uno de los elementos. Para ello busca cual tiene el mismo texto,
@@ -56,15 +56,15 @@ mainScope.unselectOne = (name) => {
 	 *el indice que tenga de la lista y le quita el inidicativo de estar
 	 *seleccionado
 	*/
-	for (let f in mainScope.selected)
-		for (let i =0;i<mainScope.selected[f].length; i++)
-			if ($(mainScope.selected[f][i]).find("p").html() === name){
-				$(mainScope.selected[f][i]).removeClass("selected")
-				mainScope.selected[f].splice(i, i);
+	for (let f in filesystemScope.selected)
+		for (let i =0;i<filesystemScope.selected[f].length; i++)
+			if ($(filesystemScope.selected[f][i]).find("p").html() === name){
+				$(filesystemScope.selected[f][i]).removeClass("selected")
+				filesystemScope.selected[f].splice(i, i);
 				return null;
 			}
 };
-mainScope.deleteRenderMove = (toDel) => {
+filesystemScope.deleteRenderMove = (toDel) => {
 	/*
 	 *Función que permite la desaparición de los arhivo o carpeta una vez movidos o borrados
 	*/
@@ -75,26 +75,26 @@ mainScope.deleteRenderMove = (toDel) => {
 		}
 	}
 };
-mainScope.evalKeyMap = () =>{
-	if (mainScope.mapKey[17] && mainScope.mapKey[67]){ //press cntrl +c
-		mainScope.prepareToCopy()
+filesystemScope.evalKeyMap = () =>{
+	if (filesystemScope.mapKey[17] && filesystemScope.mapKey[67]){ //press cntrl +c
+		filesystemScope.prepareToCopy()
 	}
-	else if (mainScope.mapKey[17] && mainScope.mapKey[86]){ // press cntl +v
-		mainScope.paste()
+	else if (filesystemScope.mapKey[17] && filesystemScope.mapKey[86]){ // press cntl +v
+		filesystemScope.paste()
 	}
-	else if (mainScope.mapKey[17] && mainScope.mapKey[88]){ // press cntl +x
-		mainScope.prepareToCut();
+	else if (filesystemScope.mapKey[17] && filesystemScope.mapKey[88]){ // press cntl +x
+		filesystemScope.prepareToCut();
 	}
-	else if (mainScope.mapKey[113]) //press f2
-		mainScope.changeName();
-	else if (mainScope.mapKey[46] && mainScope.mapKey[16]) // press shift + supr
-		mainScope.remove();
-	else if (mainScope.mapKey[46]) //press supr
-		mainScope.sentToTrush();
-	else if (/*mainScope.mapKey[17] &&*/ mainScope.mapKey[73]) // press cntrl + i
-		mainScope.askForProperties();
+	else if (filesystemScope.mapKey[113]) //press f2
+		filesystemScope.changeName();
+	else if (filesystemScope.mapKey[46] && filesystemScope.mapKey[16]) // press shift + supr
+		filesystemScope.remove();
+	else if (filesystemScope.mapKey[46]) //press supr
+		filesystemScope.sentToTrush();
+	else if (/*filesystemScope.mapKey[17] &&*/ filesystemScope.mapKey[73]) // press cntrl + i
+		filesystemScope.askForProperties();
 };
-mainScope.getName = (src) => {
+filesystemScope.getName = (src) => {
 	/*
 	 * Esta función se encarga de devolver un array con los nombres
 	 * de todos los elementos seleccionados
@@ -105,11 +105,11 @@ mainScope.getName = (src) => {
 	let toCopy = [];
 	for (let f in src)
 		for (let i = 0; i<src[f].length; i++){
-			toCopy.push(mainScope.currentPath+$(src[f][i]).find("p").html());
+			toCopy.push(filesystemScope.currentPath+$(src[f][i]).find("p").html());
 		}
 	return toCopy;
 };
-mainScope.sentTo = (dst, src = mainScope.selected)=> {
+filesystemScope.sentTo = (dst, src = filesystemScope.selected)=> {
 	/*
 	 * Esta función se encarga de preparar para mover o copiar los archivos
 	 * dst:String Ruta de la carpeta que contendrá lo que se va a copiar o mover
@@ -117,38 +117,38 @@ mainScope.sentTo = (dst, src = mainScope.selected)=> {
 	 * src:Object Nombres de los archivos y carpetas que se van a mover (Deber tratarse sólo la primera opción) <- deprecated
 	*/
 	let toCopy = [],
-		action = (mainScope.isCopping) ? "copy" : "move";
-	toCopy = (!Array.isArray(src)) ? mainScope.getName(src) : src;
-	comunication.send('event', [toCopy, dst], 'filesystem', action, 'mainScope', 'drawFiles');
+		action = (filesystemScope.isCopping) ? "copy" : "move";
+	toCopy = (!Array.isArray(src)) ? filesystemScope.getName(src) : src;
+	comunication.send('event', [toCopy, dst], 'filesystem', action, 'filesystemScope', 'drawFiles');
 };
-mainScope.prepareToCopy = () => {
-	mainScope.toCopy = mainScope.getName(mainScope.selected);
-	mainScope.isCopping = true;
+filesystemScope.prepareToCopy = () => {
+	filesystemScope.toCopy = filesystemScope.getName(filesystemScope.selected);
+	filesystemScope.isCopping = true;
 };
-mainScope.prepareToCut = () => {
-	mainScope.toCopy = mainScope.getName(mainScope.selected)
-	mainScope.isCopping = false;
+filesystemScope.prepareToCut = () => {
+	filesystemScope.toCopy = filesystemScope.getName(filesystemScope.selected)
+	filesystemScope.isCopping = false;
 };
-mainScope.paste = () => {
-	let dst = mainScope.currentPath
-	if (mainScope.selected['folder'][0]) dst += $(mainScope.selected['folder'][0]).find("p").html()+"/";
-	mainScope.sentTo(dst, mainScope.toCopy);
+filesystemScope.paste = () => {
+	let dst = filesystemScope.currentPath
+	if (filesystemScope.selected['folder'][0]) dst += $(filesystemScope.selected['folder'][0]).find("p").html()+"/";
+	filesystemScope.sentTo(dst, filesystemScope.toCopy);
 };
-mainScope.sentToTrush = () => {
-	mainScope.prepareToCut();
-	mainScope.sentTo('trash', mainScope.toCopy);
+filesystemScope.sentToTrush = () => {
+	filesystemScope.prepareToCut();
+	filesystemScope.sentTo('trash', filesystemScope.toCopy);
 };
-mainScope.remove = () => {
-	mainScope.prepareToCut();
-	let toDel = mainScope.toCopy;
-	comunication.send('event',toDel , 'filesystem','remove' , 'mainScope', 'drawFiles');
+filesystemScope.remove = () => {
+	filesystemScope.prepareToCut();
+	let toDel = filesystemScope.toCopy;
+	comunication.send('event',toDel , 'filesystem','remove' , 'filesystemScope', 'drawFiles');
 };
-mainScope.askForProperties = () => {
-	let names = mainScope.getName(mainScope.selected)
-	comunication.send('event',names , 'filesystem','getProperties' , 'mainScope', null);
+filesystemScope.askForProperties = () => {
+	let names = filesystemScope.getName(filesystemScope.selected)
+	comunication.send('event',names , 'filesystem','getProperties' , 'filesystemScope', null);
 	//comunication.send('getProperties', null, names)
 };
-mainScope.sendFiles = (file) => {
+filesystemScope.sendFiles = (file) => {
 	/*
 	 * Metodo encargado de leer y enviar los archivos al servidor
 	 * file es un solo importante, independientemente de todos los que se quieran enviar
@@ -158,17 +158,17 @@ mainScope.sendFiles = (file) => {
 	fileObj.name = file.name;
 	reader.onload = (e) => {
 		fileObj.data = e.target.result;
-		comunication.send('event', [fileObj], 'filesystem', 'getFiles', 'mainScope', 'drawFiles');
+		comunication.send('event', [fileObj], 'filesystem', 'getFiles', 'filesystemScope', 'drawFiles');
 	}
 	reader.readAsBinaryString(file);
 };
-mainScope.startDownload = (name) => {
+filesystemScope.startDownload = (name) => {
 	console.log(name)
 	window.location.href = "download?name="+name[0];
 }
 
 /*metodos locales llamados por eventos*/
-mainScope.goInto = (e)=> {
+filesystemScope.goInto = (e)=> {
 	/*
 	 *funcion encarga de mandar el evento necesario que determina que
 	 *carpeta quieren abrir
@@ -178,15 +178,15 @@ mainScope.goInto = (e)=> {
 	try{
 		name = $(e.currentTarget).find('p').html();
 	}catch (e){
-		name = mainScope.selected['folder'];
+		name = filesystemScope.selected['folder'];
 		name = name[name.length-1].find("p").html();
 	}
-	mainScope.currentPath += name + "/";
-	mainScope.vueData.currentPath = mainScope.currentPath.split("/");
-	mainScope.selected = {"file": [], "folder": []};
+	filesystemScope.currentPath += name + "/";
+	filesystemScope.vueData.currentPath = filesystemScope.currentPath.split("/");
+	filesystemScope.selected = {"file": [], "folder": []};
 	comunication.send('event', [name], 'filesystem', 'loadFiles');
 };
-mainScope.goFolderTopBar = (e)=>{
+filesystemScope.goFolderTopBar = (e)=>{
 	/*
 	 *Funcion encarga de enviar el evento para indicar a que carpeta del camino
 	 *de migas de pan generado en la topbar se quiere ir
@@ -197,53 +197,53 @@ mainScope.goFolderTopBar = (e)=>{
 		name = $(e.currentTarget).html();
 	}
 	else name = e;
-	comunication.send('event', name, 'filesystem', 'changeDir', 'mainScope', 'drawFiles');
+	comunication.send('event', name, 'filesystem', 'changeDir', 'filesystemScope', 'drawFiles');
 	console.log(name)
 };
-mainScope.showName = (e)=> {
+filesystemScope.showName = (e)=> {
 	/*mostrar el texto completo de la carpeta  o archivo*/
 	$(e.currentTarget).find('p').removeClass('ellipsis');
 };
-mainScope.hideName = (e)=> {
+filesystemScope.hideName = (e)=> {
 	/*volver a ocultar el texto completo de la carpeta  o archivo*/
 	$(e.currentTarget).find('p').addClass('ellipsis');
 };
-mainScope.select = (e)=> {
+filesystemScope.select = (e)=> {
 	/*
 	 *Esta función se encarga de:
 	 *seleccionar o deseleccionar carpeta o archivos
 	*/
 	if (e.which === 2) return;	
 	// si no está pulsado cntr y no se está arrastrando, se deselecciona
-	if (!mainScope.ctrlPress && e.originalEvent.type !== "dragstart") mainScope.unselect();
+	if (!filesystemScope.ctrlPress && e.originalEvent.type !== "dragstart") filesystemScope.unselect();
 	// Si el elemento ya estába se seleccionado, se sale de la función deseleccionado el elemento
 	if ($(e.currentTarget).attr("class").search("selected") !== -1)
-		return mainScope.unselectOne($(e.currentTarget).find("p").html());
+		return filesystemScope.unselectOne($(e.currentTarget).find("p").html());
 	//la clase indica si se trata de una carpeta o un archivo
 	let type = $(e.currentTarget).attr("class").split(" ")[0];
-	mainScope.selected[type].push($(e.currentTarget));
+	filesystemScope.selected[type].push($(e.currentTarget));
 	$(e.currentTarget).addClass('selected');
 };
-mainScope.onDrag = (e) => {
+filesystemScope.onDrag = (e) => {
 	/*
 	 *Función encargada de posicionar en un lugar concreto los elementos seleccionados
 	*/
 	let x = e.clientX, y = e.clientY;
-	for (let f in mainScope.selected)
+	for (let f in filesystemScope.selected)
 		for (let i = 0; i< f.length; i++)
-			$(mainScope.selected[f][i]).addClass("moving").css({"top": y+50, "left": x-50});
+			$(filesystemScope.selected[f][i]).addClass("moving").css({"top": y+50, "left": x-50});
 };
-mainScope.endDrag = (e) => {
+filesystemScope.endDrag = (e) => {
 	/*
 	 *Función encargada de determinar la posicón que han de tomar los elementos arrastrados
 	*/
 	let x = e.clientX, y = e.clientY;
-	for (let f in mainScope.selected)
+	for (let f in filesystemScope.selected)
 		for (let i = 0; i< f.length; i++)
-			$(mainScope.selected[f][i]).css({"top": y, "left": x+i*$(mainScope.selected[f][i]).width()});
-	mainScope.unselect();
+			$(filesystemScope.selected[f][i]).css({"top": y, "left": x+i*$(filesystemScope.selected[f][i]).width()});
+	filesystemScope.unselect();
 };
-mainScope.endDrop = (e) =>{
+filesystemScope.endDrop = (e) =>{
 	/*
 	 *Metodo encargado de determinar si se ha soltado en un carpeta o archivo
 	 *distinto a  los seleccionados. Cuando encuentre una coincidencia se sale
@@ -251,30 +251,30 @@ mainScope.endDrop = (e) =>{
 	 *Se trata de una función de prevención. No debería encontrar nunca una coincidencia
 	*/
 	e.preventDefault();
-	for (let f in mainScope.selected)
+	for (let f in filesystemScope.selected)
 		for (var i = 0; i< f.length; i++)
-			if ($(e.currentTarget).index("ul li") === $(mainScope.selected[f][i]).index("ul li"))
+			if ($(e.currentTarget).index("ul li") === $(filesystemScope.selected[f][i]).index("ul li"))
 				return;
-	if (mainScope.ctrlPress) mainScope.isCopping = true;
-	mainScope.sentTo(mainScope.currentPath+ $(e.currentTarget).find("p").html()+"/")
+	if (filesystemScope.ctrlPress) filesystemScope.isCopping = true;
+	filesystemScope.sentTo(filesystemScope.currentPath+ $(e.currentTarget).find("p").html()+"/")
 };
-mainScope.unselect = () => {
+filesystemScope.unselect = () => {
 	/*
 	 *Función que permite la deselección de un arhivo o carpeta
 	*/	
-	for (let f in mainScope.selected){
-		for (let i = mainScope.selected[f].length-1; i>=0; i--){
-			$(mainScope.selected[f][i]).removeClass("selected");			
+	for (let f in filesystemScope.selected){
+		for (let i = filesystemScope.selected[f].length-1; i>=0; i--){
+			$(filesystemScope.selected[f][i]).removeClass("selected");			
 		}
 	}
-	mainScope.selected = {"file": [], "folder": []};
+	filesystemScope.selected = {"file": [], "folder": []};
 };
-mainScope.changeName = (e) => {
-	let cont = (mainScope.selected['file'].length >=1) ? 'file': 'folder',
-		name =  $(mainScope.selected[cont][0]).find('p').html();
-	$(mainScope.selected[cont][0]).find('p').attr({"contenteditable": "true", "name": name}).focus();
+filesystemScope.changeName = (e) => {
+	let cont = (filesystemScope.selected['file'].length >=1) ? 'file': 'folder',
+		name =  $(filesystemScope.selected[cont][0]).find('p').html();
+	$(filesystemScope.selected[cont][0]).find('p').attr({"contenteditable": "true", "name": name}).focus();
 }
-mainScope.aceptName = (e) => {
+filesystemScope.aceptName = (e) => {
 	if (e.keyCode !== 13) return;
 	e.preventDefault();
 	let name = $(e.currentTarget).html(),
@@ -282,7 +282,7 @@ mainScope.aceptName = (e) => {
 		extMode = '',
 		ext = []
 	for (let f of ["file", "folder"]){
-		for (let o of mainScope.selected[f])
+		for (let o of filesystemScope.selected[f])
 			toRename.push(($(o).find("p").attr("name")) ? $(o).find("p").attr("name") : $(o).find("p").html());
 	}
 	//ext1 = $(e.currentTarget).attr("name").split(".").slice(-1).join("."), $(e.currentTarget).html().split(".").slice(-1).join(".")];
@@ -291,59 +291,59 @@ mainScope.aceptName = (e) => {
 	ext.push((ext1.length >=2)? ext1.slice(-1)[0]:'');
 	ext.push((ext2.length >=2)? ext2.slice(-1)[0]:'');
 	extMode = (ext[0] == ext[1]) ? false : ext[0];	
-	comunication.send('event', [toRename, name, extMode], 'filesystem', 'rename', 'mainScope', 'drawFiles');
+	comunication.send('event', [toRename, name, extMode], 'filesystem', 'rename', 'filesystemScope', 'drawFiles');
 };
-mainScope.pressKey = (e)=> {
-	mainScope.ctrlPress = (e.keyCode === 17) ? true : false;
-	mainScope.mapKey[e.keyCode] = true;
-	mainScope.evalKeyMap();
+filesystemScope.pressKey = (e)=> {
+	filesystemScope.ctrlPress = (e.keyCode === 17) ? true : false;
+	filesystemScope.mapKey[e.keyCode] = true;
+	filesystemScope.evalKeyMap();
 	console.log(e.keyCode);
 };
-mainScope.keyUp = (e)=>  {
-	if (e.keyCode === 17) mainScope.ctrlPress = false;
-	mainScope.mapKey[e.keyCode] = false;
+filesystemScope.keyUp = (e)=>  {
+	if (e.keyCode === 17) filesystemScope.ctrlPress = false;
+	filesystemScope.mapKey[e.keyCode] = false;
 };
-mainScope.requestFiles = (e) => {
+filesystemScope.requestFiles = (e) => {
 	if (!e.originalEvent.dataTransfer)return; 
 	if (!e.originalEvent.dataTransfer.files.length) return;
 	let files = e.originalEvent.dataTransfer.files;	
 	for (let f of files)
-		mainScope.sendFiles(f);
+		filesystemScope.sendFiles(f);
 };
-mainScope.newFolder = () =>{
+filesystemScope.newFolder = () =>{
 	/*
 	*Metodo encargado de generar una nueva carpeta.
 	*Cuando termine, vuelve a se actualiza la lista de archivios
 	*/
-	comunication.send('event', [''], 'filesystem', 'newFolder', 'mainScope', 'drawFiles');
+	comunication.send('event', [''], 'filesystem', 'newFolder', 'filesystemScope', 'drawFiles');
 };
-mainScope.download = () => {
-	let files = mainScope.getName(mainScope.selected);
-	comunication.send('event', [files], 'filesystem', 'preparedDownload', 'mainScope', 'startDownload');
+filesystemScope.download = () => {
+	let files = filesystemScope.getName(filesystemScope.selected);
+	comunication.send('event', [files], 'filesystem', 'preparedDownload', 'filesystemScope', 'startDownload');
 
 };
 
 /*control de eventos*/
 $('body')
-.on('dblclick', '.folder', mainScope.goInto)
-.on('dblclick', '.track', mainScope.goFolderTopBar)
-.on('mouseover', '.folder, .file', mainScope.showName)
-.on('mouseout', '.folder, .file', mainScope.hideName)
-.on('mousedown', '.folder, .file', mainScope.select)
-.on('dragstart', '.folder, .file', mainScope.select)
-.on('drag', '.folder, .file', mainScope.onDrag)
-.on('dragend', '.folder, .file', mainScope.endDrag)
+.on('dblclick', '.folder', filesystemScope.goInto)
+.on('dblclick', '.track', filesystemScope.goFolderTopBar)
+.on('mouseover', '.folder, .file', filesystemScope.showName)
+.on('mouseout', '.folder, .file', filesystemScope.hideName)
+.on('mousedown', '.folder, .file', filesystemScope.select)
+.on('dragstart', '.folder, .file', filesystemScope.select)
+.on('drag', '.folder, .file', filesystemScope.onDrag)
+.on('dragend', '.folder, .file', filesystemScope.endDrag)
 .on('dragover', '.folder, .file', (e)=>{e.preventDefault();})
-.on('drop', '.folder, file', mainScope.endDrop)
-.on('mousedown', '.elements', mainScope.unselect)
-.on('keydown', mainScope.pressKey)
-.on('keyup', mainScope.keyUp)
-.on('keydown', '[contenteditable="true"]', mainScope.aceptName)
-.on('click', '#newFolder', mainScope.newFolder)
-.on('click', '#download', mainScope.download)
+.on('drop', '.folder, file', filesystemScope.endDrop)
+.on('mousedown', '.elements', filesystemScope.unselect)
+.on('keydown', filesystemScope.pressKey)
+.on('keyup', filesystemScope.keyUp)
+.on('keydown', '[contenteditable="true"]', filesystemScope.aceptName)
+.on('click', '#newFolder', filesystemScope.newFolder)
+.on('click', '#download', filesystemScope.download)
 .on('dragover, dragenter', 'main', (e) => {e.preventDefault();e.stopPropagation(); })
-.on('drop', 'main', mainScope.requestFiles);
-$(document).ready(()=> comunication.send('event', [''], 'filesystem', 'initialLoad', 'mainScope', 'drawFiles'));
+.on('drop', 'main', filesystemScope.requestFiles);
+$(document).ready(()=> comunication.send('event', [''], 'filesystem', 'initialLoad', 'filesystemScope', 'drawFiles'));
 window.addEventListener("dragover",function(e){
   e = e || event;
   e.preventDefault();
@@ -354,9 +354,9 @@ window.addEventListener("drop",function(e){
 	console.log(e);
 },false);
 
-mainScope.vue = new Vue({
+filesystemScope.vue = new Vue({
 	el: 'filesystem',
-	data: mainScope.vueData,
+	data: filesystemScope.vueData,
 	computed:{
 		getPath: function(){
 			let availabesExt = ['jpg', 'png', 'svg', 'jpeg', 'gif'];
@@ -376,7 +376,7 @@ mainScope.vue = new Vue({
 		}
 	},
 	methods: {
-		goFolderTopBar: mainScope.goFolderTopBar
+		goFolderTopBar: filesystemScope.goFolderTopBar
 	}
 });
-contextMenu.updateMenu(mainScope.contentMenuConstruct);
+contextMenu.updateMenu(filesystemScope.contentMenuConstruct);

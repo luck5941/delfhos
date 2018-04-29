@@ -43,7 +43,7 @@ desktopScope.updateImg = (uri) => {
 	uri = `url("${uri[0]}")`
 	$('desktop').css({"background-image": uri})
 	selecFileScope = undefined;
-	mainScope = undefined;
+	filesystemScope = undefined;
 	$('filesystem').addClass("minify").html("");
 }
 /*metodos locales llamados por eventos*/

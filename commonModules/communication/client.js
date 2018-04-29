@@ -1,6 +1,6 @@
 
 function Client() {
-	var socket = io('http://delfos');
+	var socket = io('http://delfos.es');
 	socket.on('event', function(args) {				
 		window[args[1]][args[2]](args[0])
 	}).on('modal', function(args) {

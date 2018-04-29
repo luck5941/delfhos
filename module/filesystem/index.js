@@ -211,7 +211,7 @@ function FILESYSTEM(id) {
 				currentFiles['fil'].push(i);
 		};
 		if (socket)
-			modules.communication.send([currentFiles], 'mainScope', 'drawFiles', socket);
+			modules.communication.send([currentFiles], 'filesystemScope', 'drawFiles', socket);
 		else
 			return [currentFiles];
 	};

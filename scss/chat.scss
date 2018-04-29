@@ -6,9 +6,9 @@ chat{
 	width: 40%;
 	height: 25vh;
 	background-color: lightgray;
-	header{
+	.header{
 		position: absolute;
-		top: 0;
+		top: 25px;
 		left: 0;
 		width: 100%;
 		display: flex;

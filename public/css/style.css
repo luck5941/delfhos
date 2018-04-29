@@ -72,11 +72,17 @@ body {
           color: #fff; }
   body .shadow {
     box-shadow: 5px 5px 5px; }
-  body .minify {
+  body .minify, body .minify * {
     width: 0px;
     height: 0px;
     top: 100vh;
     left: 50vw;
+    transition-duration: .75s; }
+  body .maximify {
+    width: 100vw !important;
+    height: 100vh !important;
+    top: 0 !important;
+    left: 0 !important;
     transition-duration: .75s; }
   body #modal {
     position: absolute;

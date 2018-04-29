@@ -17,7 +17,7 @@ var s = new server(routes);
 global.ddbb = new Database('delfos');
 s.init();
 ddbb.init();
-global.app = s.up();
+global.app = s.up(8080, false);
 var communication = new Communication();
 app.listen(s.port);
 global.modules = {};

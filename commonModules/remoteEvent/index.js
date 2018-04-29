@@ -1,7 +1,7 @@
 'use strict';
 const remoteevent = {
 	Client : function(win){		
-		var socket = io('http://delfos');
+		var socket = io('http://delfos.es');
 		socket.on('event', function(args) {			
 			win[args[0]](args[1]);
 		});
