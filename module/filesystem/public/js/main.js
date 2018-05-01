@@ -26,12 +26,11 @@ filesystemScope.selected = {"file": [], "folder": []};
 filesystemScope.toCopy = {"file": [], "folder": []};
 filesystemScope.mapKey = {};
 filesystemScope.currentPath = '';
-filesystemScope.vueData = {dir: [], fil: [], currentPath:[]};
 
 /*metodos locales*/
 filesystemScope.drawFiles = (args) => {
-	/*Lista los archivos y carpetas que hay en ese direcorio*/	
-	let str = args[0];
+	/*Lista los archivos y carpetas que hay en ese direcorio*/
+	//let str = args[0];
 	for (let p in args[0])
 		filesystemScope.vueData[p] = args[0][p]
 	/*Cambia el menú de navegación */
@@ -41,12 +40,6 @@ filesystemScope.drawFiles = (args) => {
 		filesystemScope.currentPath = path.join("/");
 		filesystemScope.currentPath = (filesystemScope.currentPath.search(/\/$/) !== -1) ? filesystemScope.currentPath : filesystemScope.currentPath +"/"; 
 	}
-};
-filesystemScope.changeName = (name) => {
-	if (filesystemScope.selected["file"].length >0) 
-		$(filesystemScope.selected["file"][0]).find('p').text(name)
-	else if (filesystemScope.selected["folder"].length >0) 
-		$(filesystemScope.selected["folder"][0]).find('p').text(name)
 };
 filesystemScope.unselectOne = (name) => {
 	/*
@@ -91,7 +84,7 @@ filesystemScope.evalKeyMap = () =>{
 		filesystemScope.remove();
 	else if (filesystemScope.mapKey[46]) //press supr
 		filesystemScope.sentToTrush();
-	else if (/*filesystemScope.mapKey[17] &&*/ filesystemScope.mapKey[73]) // press cntrl + i
+	else if (filesystemScope.mapKey[17] && filesystemScope.mapKey[73]) // press cntrl + i
 		filesystemScope.askForProperties();
 };
 filesystemScope.getName = (src) => {
@@ -163,9 +156,27 @@ filesystemScope.sendFiles = (file) => {
 	reader.readAsBinaryString(file);
 };
 filesystemScope.startDownload = (name) => {
-	console.log(name)
 	window.location.href = "download?name="+name[0];
 }
+filesystemScope.changeNameNewFolder = async (data) =>{
+	/*
+	 *metodo encargado de seleccionar la nueva carpeta, preparandola
+	 *preparandola para el cambio de nombre
+	 *data: [any]
+	 *data[0]: [string] -> Lista de elementos a renderizar
+	 *data[1]: string -> Nombre dele elemento a seleccionar
+	 */ 
+	let initLength = $('.folder').length;
+	for (let p in data[0])
+		filesystemScope.vueData[p] = data[0][p]
+	while (initLength === $('.folder').length)
+		await sleep(1);
+	for (let i of $('.folder')){
+		if ($(i).find('p').html() === data[1])
+			filesystemScope.selected["folder"].push(i);
+	}
+	filesystemScope.changeName()
+};
 
 /*metodos locales llamados por eventos*/
 filesystemScope.goInto = (e)=> {
@@ -173,7 +184,6 @@ filesystemScope.goInto = (e)=> {
 	 *funcion encarga de mandar el evento necesario que determina que
 	 *carpeta quieren abrir
 	*/
-	console.log("me llaman")
 	let name = '';
 	try{
 		name = $(e.currentTarget).find('p').html();
@@ -198,7 +208,6 @@ filesystemScope.goFolderTopBar = (e)=>{
 	}
 	else name = e;
 	comunication.send('event', name, 'filesystem', 'changeDir', 'filesystemScope', 'drawFiles');
-	console.log(name)
 };
 filesystemScope.showName = (e)=> {
 	/*mostrar el texto completo de la carpeta  o archivo*/
@@ -214,8 +223,8 @@ filesystemScope.select = (e)=> {
 	 *seleccionar o deseleccionar carpeta o archivos
 	*/
 	if (e.which === 2) return;	
-	// si no está pulsado cntr y no se está arrastrando, se deselecciona
-	if (!filesystemScope.ctrlPress && e.originalEvent.type !== "dragstart") filesystemScope.unselect();
+	// si no está pulsado cntr y no se está arrastrando, se deselecciona o si no se está soltando sobre él
+	if (!filesystemScope.ctrlPress && e.originalEvent.type !== "dragstart" && e.originalEvent.type !== "drop") filesystemScope.unselect();
 	// Si el elemento ya estába se seleccionado, se sale de la función deseleccionado el elemento
 	if ($(e.currentTarget).attr("class").search("selected") !== -1)
 		return filesystemScope.unselectOne($(e.currentTarget).find("p").html());
@@ -243,7 +252,7 @@ filesystemScope.endDrag = (e) => {
 			$(filesystemScope.selected[f][i]).css({"top": y, "left": x+i*$(filesystemScope.selected[f][i]).width()});
 	filesystemScope.unselect();
 };
-filesystemScope.endDrop = (e) =>{
+filesystemScope.endDropFolder = (e) =>{
 	/*
 	 *Metodo encargado de determinar si se ha soltado en un carpeta o archivo
 	 *distinto a  los seleccionados. Cuando encuentre una coincidencia se sale
@@ -255,8 +264,22 @@ filesystemScope.endDrop = (e) =>{
 		for (var i = 0; i< f.length; i++)
 			if ($(e.currentTarget).index("ul li") === $(filesystemScope.selected[f][i]).index("ul li"))
 				return;
+	
 	if (filesystemScope.ctrlPress) filesystemScope.isCopping = true;
 	filesystemScope.sentTo(filesystemScope.currentPath+ $(e.currentTarget).find("p").html()+"/")
+};
+filesystemScope.endDropFile = (e) => {
+	/*
+	 *Metodo encargado de gestionar la agrupación de archivos en una carpeta arrastrando estos a otro archivo
+	 *Los pasos para ello son:
+	 * 	Se crea la carpeta
+	 *	Se añade el archivo destino a la lista de archivos seleccionados
+	 *	Se llava a sendTo con la nueva carpeta como destino
+	 *Si en este punto, la nueva carpeta ya está creada, se selecciona para cambiar el nombre
+	*/
+	filesystemScope.newFolder();
+	filesystemScope.select(e);
+	filesystemScope.sentTo(filesystemScope.currentPath+ "newFolder/");
 };
 filesystemScope.unselect = () => {
 	/*
@@ -269,35 +292,51 @@ filesystemScope.unselect = () => {
 	}
 	filesystemScope.selected = {"file": [], "folder": []};
 };
-filesystemScope.changeName = (e) => {
+filesystemScope.changeName = () => {
 	let cont = (filesystemScope.selected['file'].length >=1) ? 'file': 'folder',
-		name =  $(filesystemScope.selected[cont][0]).find('p').html();
-	$(filesystemScope.selected[cont][0]).find('p').attr({"contenteditable": "true", "name": name}).focus();
-}
-filesystemScope.aceptName = (e) => {
-	if (e.keyCode !== 13) return;
-	e.preventDefault();
-	let name = $(e.currentTarget).html(),
-		toRename = [],
+		name = $(filesystemScope.selected[cont][0]).find('p').html();
+	filesystemScope.vueData.isChangeName = true;
+	let element = $(filesystemScope.selected[cont][0]),
+		top =parseInt(element.offset().top)+parseInt(element.css('height'))+'px',
+		left = parseInt(element.offset().left)+'px';
+	filesystemScope.vueData.changeNameStyle = {top: top, left:left};
+	filesystemScope.vueData.oldName = name;
+	filesystemScope.oldName = name;
+	filesystemScope.toRename = [];
+	cont = (filesystemScope.selected['file'].length >=1) ? 'fil': 'dir';
+	filesystemScope.ind = filesystemScope.vueData[cont].indexOf(filesystemScope.oldName);
+	for (let f of ["file", "folder"])
+		for (let i in filesystemScope.selected[f])
+			filesystemScope.toRename.push($(filesystemScope.selected[f][i]).find('p').text());
+	console.log(filesystemScope.toRename);
+};
+filesystemScope.updateName = () => {
+	let cont = (filesystemScope.selected['file'].length >=1) ? 'fil': 'dir';
+	filesystemScope.vueData[cont][filesystemScope.ind] = (filesystemScope.vueData.oldName.length === 0)? filesystemScope.oldName: filesystemScope.vueData.oldName;
+	console.error(filesystemScope.vueData[cont][filesystemScope.ind]);
+};
+
+filesystemScope.aceptName = () => {
+	let cont = (filesystemScope.selected['file'].length >=1) ? 'fil': 'dir';
+	filesystemScope.vueData[cont][filesystemScope.ind] = filesystemScope.vueData.oldName;
+	console.log("entra en aceptName");
+	let name = filesystemScope.vueData.oldName.replace('_', ''),
 		extMode = '',
-		ext = []
-	for (let f of ["file", "folder"]){
-		for (let o of filesystemScope.selected[f])
-			toRename.push(($(o).find("p").attr("name")) ? $(o).find("p").attr("name") : $(o).find("p").html());
-	}
-	//ext1 = $(e.currentTarget).attr("name").split(".").slice(-1).join("."), $(e.currentTarget).html().split(".").slice(-1).join(".")];
-	let ext1 = $(e.currentTarget).attr("name").split("."),
+		ext = [];
+	let ext1 = filesystemScope.oldName.split("."),
 		ext2 = name.split(".");
 	ext.push((ext1.length >=2)? ext1.slice(-1)[0]:'');
 	ext.push((ext2.length >=2)? ext2.slice(-1)[0]:'');
-	extMode = (ext[0] == ext[1]) ? false : ext[0];	
-	comunication.send('event', [toRename, name, extMode], 'filesystem', 'rename', 'filesystemScope', 'drawFiles');
+	extMode = (ext[0] == ext[1]) ? false : ext[0];
+	filesystemScope.unselect();
+	filesystemScope.vueData.isChangeName = false;
+	console.log(filesystemScope.toRename);
+	comunication.send('event', [filesystemScope.toRename, name, extMode], 'filesystem', 'rename', 'filesystemScope', 'drawFiles');
 };
 filesystemScope.pressKey = (e)=> {
 	filesystemScope.ctrlPress = (e.keyCode === 17) ? true : false;
 	filesystemScope.mapKey[e.keyCode] = true;
 	filesystemScope.evalKeyMap();
-	console.log(e.keyCode);
 };
 filesystemScope.keyUp = (e)=>  {
 	if (e.keyCode === 17) filesystemScope.ctrlPress = false;
@@ -315,12 +354,11 @@ filesystemScope.newFolder = () =>{
 	*Metodo encargado de generar una nueva carpeta.
 	*Cuando termine, vuelve a se actualiza la lista de archivios
 	*/
-	comunication.send('event', [''], 'filesystem', 'newFolder', 'filesystemScope', 'drawFiles');
+	comunication.send('event', [''], 'filesystem', 'newFolder', 'filesystemScope', 'changeNameNewFolder');
 };
 filesystemScope.download = () => {
 	let files = filesystemScope.getName(filesystemScope.selected);
 	comunication.send('event', [files], 'filesystem', 'preparedDownload', 'filesystemScope', 'startDownload');
-
 };
 
 /*control de eventos*/
@@ -329,12 +367,13 @@ $('body')
 .on('dblclick', '.track', filesystemScope.goFolderTopBar)
 .on('mouseover', '.folder, .file', filesystemScope.showName)
 .on('mouseout', '.folder, .file', filesystemScope.hideName)
-.on('mousedown', '.folder, .file', filesystemScope.select)
+.on('mouseup', '.folder, .file', filesystemScope.select)
 .on('dragstart', '.folder, .file', filesystemScope.select)
 .on('drag', '.folder, .file', filesystemScope.onDrag)
 .on('dragend', '.folder, .file', filesystemScope.endDrag)
 .on('dragover', '.folder, .file', (e)=>{e.preventDefault();})
-.on('drop', '.folder, file', filesystemScope.endDrop)
+.on('drop', '.folder', filesystemScope.endDropFolder)
+.on('drop', '.file', filesystemScope.endDropFile)
 .on('mousedown', '.elements', filesystemScope.unselect)
 .on('keydown', filesystemScope.pressKey)
 .on('keyup', filesystemScope.keyUp)
@@ -345,15 +384,15 @@ $('body')
 .on('drop', 'main', filesystemScope.requestFiles);
 $(document).ready(()=> comunication.send('event', [''], 'filesystem', 'initialLoad', 'filesystemScope', 'drawFiles'));
 window.addEventListener("dragover",function(e){
-  e = e || event;
-  e.preventDefault();
+	e = e || event;
+	e.preventDefault();
 },false);
 window.addEventListener("drop",function(e){
-  e = e || event;
-  e.preventDefault();
-	console.log(e);
+  	e = e || event;
+  	e.preventDefault();
 },false);
 
+filesystemScope.vueData = {dir: [], fil: [], currentPath:[], oldName:"", changeNameStyle: {}, isChangeName:false}
 filesystemScope.vue = new Vue({
 	el: 'filesystem',
 	data: filesystemScope.vueData,
@@ -368,15 +407,15 @@ filesystemScope.vue = new Vue({
 				arr.slice(-1)[0].name = f;
 				ext = f.split(".").slice(-1)[0];
 				toPush = (availabesExt.indexOf(ext) === -1) ? "common/images/file.jpg" : `${this.currentPath.join("/")}${f}`;	
-				console.log(toPush);
 				arr.slice(-1)[0].path = toPush;
 			}
-			console.log(arr);
 			return arr;
 		}
 	},
 	methods: {
-		goFolderTopBar: filesystemScope.goFolderTopBar
+		goFolderTopBar: filesystemScope.goFolderTopBar,
+		updateName: filesystemScope.updateName,
+		aceptName: filesystemScope.aceptName
 	}
 });
 contextMenu.updateMenu(filesystemScope.contentMenuConstruct);

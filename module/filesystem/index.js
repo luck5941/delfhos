@@ -203,13 +203,14 @@ function FILESYSTEM(id) {
 		let currentFiles = { dir: [], fil: [] };
 		var listDir = fs.readdirSync(this.currentPath);
 		for (let i of listDir) {
-			if (i.search(/^\./) !== -1)
-				continue;
-			else if (fs.lstatSync(`${this.currentPath}/${i}`).isDirectory())
-				currentFiles['dir'].push(i);
-			else if (fs.lstatSync(`${this.currentPath}/${i}`).isFile())
-				currentFiles['fil'].push(i);
+			try{let a = fs.lstatSync(`${this.currentPath}/${i}`)} catch(e) { console.log(`El archivo o carpeta ${i}" ya no está`); continue;}
+				if (i.search(/^\./) !== -1) continue;
+				else if (fs.lstatSync(`${this.currentPath}/${i}`).isDirectory())
+					currentFiles['dir'].push(i);
+				else if (fs.lstatSync(`${this.currentPath}/${i}`).isFile())
+					currentFiles['fil'].push(i);
 		};
+		console.log("Terminamos de leer los archivos");
 		if (socket)
 			modules.communication.send([currentFiles], 'filesystemScope', 'drawFiles', socket);
 		else
@@ -220,7 +221,6 @@ function FILESYSTEM(id) {
 		let path = this.currentPath.split('/'),
 			arr;
 		this.currentPath = (name[0] !== this.homeName) ? path.slice(0, path.indexOf(name[0]) + 1).join("/") + '/' : this.homeDir;
-		console.log(this.currentPath)
 		arr = (name != this.homeName) ? path.slice(4, path.indexOf(name[0]) + 1) : [];
 		modules.communication.send([loadFiles()[0], arr], name[1], name[2], socket);
 	};
@@ -237,10 +237,10 @@ function FILESYSTEM(id) {
 		}
 		modules.communication.send([loadFiles()[0]], paths[1], paths[2], socket);
 	};
-	this.copy = copy = (files) => {
+	this.copy = copy = (files, socket) => {
 		/*
 		 *metodo encargado de preparar para copiar la lista de archivos que se solicite al destino en cuestion
-		 */
+		*/
 		let dst = this.homeDir + "/" + files[0][1],
 			src_cp = files[0][0],
 			src = [];
@@ -267,7 +267,7 @@ function FILESYSTEM(id) {
 		let toSend = [loadFiles()[0], this.currentPath.replace(this.homeDir, '').split("/")];
 		modules.communication.send(toSend, option[1], option[2], socket);
 	};
-	this.rename = rename = (fls) => {
+	this.rename = rename = (fls, socket) => {
 		/*
 		 *Función encargada de cambiar el nombre de los archivos
 		 *fls: [any]
@@ -275,6 +275,11 @@ function FILESYSTEM(id) {
 		 *fls[1]: String -> El nuevo nombre del archivo.
 		 *fls[2]: Bool -> Si la ext se ha modificado
 		 */
+		console.log("a renombrar");
+		console.log(fls[0]);
+		console.log("por");
+		console.log(fls[1]);
+		
 		let files = fls[0][0],
 			name = fls[0][1],
 			extMod = fls[0][2],
@@ -284,15 +289,18 @@ function FILESYSTEM(id) {
 		if (files.length === 1) {
 			name = renameOneFile(this.currentPath, name);
 			fs.rename(`${this.currentPath}/${files[0]}`, name, (err) => { if (err) console.error(err) });
-			return [loadFiles()[0]];
+			console.log("ya deberias a ver cambiar el nombre");
+			modules.communication.send([loadFiles()[0]], fls[1], fls[2], socket);
 		}
 		newName = separateName(name);
 		newNames = generateStringNewName(files, newName, extMod);
 		for (let i = 0; i < files.length; i++) {
 			name = renameOneFile(this.currentPath, newNames[i]);
-			fs.rename(`${this.currentPath}/${files[i]}`, name, (err) => { if (err) console.error(err) })
+			name = (extMod) ? name : name.slice(0,-1);
+			fs.rename(`${this.currentPath}/${files[i]}`, name, (err) => { if (err) console.error(err); })
 		}
-		return [loadFiles()[0]];
+		console.log("ya deberias a ver cambiar el nombre");
+		modules.communication.send([loadFiles()[0]], fls[1], fls[2], socket);
 	};
 	this.getProperties = getProperties = (files, socket) => {
 		//modal = new l.bcknd.Modal_Main(__dirname + '/external/properties/index.html');
@@ -321,17 +329,17 @@ function FILESYSTEM(id) {
 		});
 	};
 	this.newFolder = newFolder = (name, socket) => {
-		fs.mkdir(`${this.currentPath}newFolder`, '0744', (e) => {
+		let str = "newFolder", ind = '';
+		fs.mkdir(`${this.currentPath}${str}`, '0744', (e) => {
 			if (e)
 				if (e.errno === -17) { //la carpeta ya existe
 					let listFolder = fs.readdirSync(this.currentPath);
-					let ind = 1;
-					let str = "newFolder";
+					ind = 1;
 					while (listFolder.indexOf(`${str}${ind}`) !== -1)
 						ind++;
 					fs.mkdir(`${this.currentPath}${str}${ind}`, '0774', (e) => (e) ? console.error(e) : null);
 				}
-			modules.communication.send([loadFiles()[0]], name[1], name[2], socket);
+			modules.communication.send([loadFiles()[0], `${str}${ind}`], name[1], name[2], socket);
 		});
 	}
 	this.getFiles = getFiles = (files, socket) => {

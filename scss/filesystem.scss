@@ -66,6 +66,17 @@ filesystem{
 				background-color: $selected_color;
 			}
 		}
+		#changeName {
+			width: 20%;
+			max-width: 150px;
+			position: absolute;
+			svg {
+				margin-bottom: -20%;
+				path {fill: $color3;};
+			}
+			input{margin-top: -50%;margin-left: 16%; width: 60%;height: 10px;}
+			
+		}
 	}	
 }
 

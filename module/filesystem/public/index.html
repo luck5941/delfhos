@@ -17,6 +17,12 @@
 	<li>Imágenes</li>
 </ul>
 <main>
+	<div id="changeName" v-bind:style="changeNameStyle" v-if="isChangeName">
+		<svg viewBox="0 0 100 40">
+			<path d="M10 10 L40 10 Q50 10 50 0 Q55 0 60 10 L90 10 L90 40 L10 40 Z" />
+		</svg>
+		<input type="text" v-model="oldName" v-on:keyup="updateName"v-on:keydown="updateName" v-on:blur="aceptName">
+	</div>
 	<ul class="elements">
 		<li v-for="folder in dir" class="folder">
 			<img src="common/images/folder.jpg" alt="folder icon" draggable="true">
