@@ -203,14 +203,13 @@ function FILESYSTEM(id) {
 		let currentFiles = { dir: [], fil: [] };
 		var listDir = fs.readdirSync(this.currentPath);
 		for (let i of listDir) {
-			try{let a = fs.lstatSync(`${this.currentPath}/${i}`)} catch(e) { console.log(`El archivo o carpeta ${i}" ya no está`); continue;}
+			try{let a = fs.lstatSync(`${this.currentPath}/${i}`)} catch(e) {continue;}
 				if (i.search(/^\./) !== -1) continue;
 				else if (fs.lstatSync(`${this.currentPath}/${i}`).isDirectory())
 					currentFiles['dir'].push(i);
 				else if (fs.lstatSync(`${this.currentPath}/${i}`).isFile())
 					currentFiles['fil'].push(i);
 		};
-		console.log("Terminamos de leer los archivos");
 		if (socket)
 			modules.communication.send([currentFiles], 'filesystemScope', 'drawFiles', socket);
 		else
@@ -275,11 +274,6 @@ function FILESYSTEM(id) {
 		 *fls[1]: String -> El nuevo nombre del archivo.
 		 *fls[2]: Bool -> Si la ext se ha modificado
 		 */
-		console.log("a renombrar");
-		console.log(fls[0]);
-		console.log("por");
-		console.log(fls[1]);
-		
 		let files = fls[0][0],
 			name = fls[0][1],
 			extMod = fls[0][2],
@@ -289,17 +283,16 @@ function FILESYSTEM(id) {
 		if (files.length === 1) {
 			name = renameOneFile(this.currentPath, name);
 			fs.rename(`${this.currentPath}/${files[0]}`, name, (err) => { if (err) console.error(err) });
-			console.log("ya deberias a ver cambiar el nombre");
-			modules.communication.send([loadFiles()[0]], fls[1], fls[2], socket);
 		}
-		newName = separateName(name);
-		newNames = generateStringNewName(files, newName, extMod);
-		for (let i = 0; i < files.length; i++) {
-			name = renameOneFile(this.currentPath, newNames[i]);
-			name = (extMod) ? name : name.slice(0,-1);
-			fs.rename(`${this.currentPath}/${files[i]}`, name, (err) => { if (err) console.error(err); })
+		else {
+			newName = separateName(name);
+			newNames = generateStringNewName(files, newName, extMod);
+			for (let i = 0; i < files.length; i++) {
+				name = renameOneFile(this.currentPath, newNames[i]);
+				name = (extMod) ? name : name.slice(0,-1);
+				fs.rename(`${this.currentPath}/${files[i]}`, name, (err) => { if (err) console.error(err); })
+			}
 		}
-		console.log("ya deberias a ver cambiar el nombre");
 		modules.communication.send([loadFiles()[0]], fls[1], fls[2], socket);
 	};
 	this.getProperties = getProperties = (files, socket) => {

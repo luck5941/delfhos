@@ -128,6 +128,7 @@ filesystemScope.paste = () => {
 	filesystemScope.sentTo(dst, filesystemScope.toCopy);
 };
 filesystemScope.sentToTrush = () => {
+	if (filesystemScope.vueData.isChangeName) return;
 	filesystemScope.prepareToCut();
 	filesystemScope.sentTo('trash', filesystemScope.toCopy);
 };
@@ -297,8 +298,8 @@ filesystemScope.changeName = () => {
 		name = $(filesystemScope.selected[cont][0]).find('p').html();
 	filesystemScope.vueData.isChangeName = true;
 	let element = $(filesystemScope.selected[cont][0]),
-		top =parseInt(element.offset().top)+parseInt(element.css('height'))+'px',
-		left = parseInt(element.offset().left)+'px';
+		top =parseInt(element.offset().top)+parseInt(element.css('height')) - parseInt($('filesystem').offset().top)+'px',
+		left = parseInt(element.offset().left)- parseInt($('filesystem').offset().left)+'px';
 	filesystemScope.vueData.changeNameStyle = {top: top, left:left};
 	filesystemScope.vueData.oldName = name;
 	filesystemScope.oldName = name;
@@ -308,19 +309,27 @@ filesystemScope.changeName = () => {
 	for (let f of ["file", "folder"])
 		for (let i in filesystemScope.selected[f])
 			filesystemScope.toRename.push($(filesystemScope.selected[f][i]).find('p').text());
-	console.log(filesystemScope.toRename);
 };
-filesystemScope.updateName = () => {
-	let cont = (filesystemScope.selected['file'].length >=1) ? 'fil': 'dir';
+filesystemScope.updateName = (e) => {
+	let cont = (filesystemScope.selected['file'].length >=1) ? 'fil': 'dir',
+		code = e.keyCode;
+	switch (code) {
+		case 27: //scape
+			filesystemScope.vueData[cont][filesystemScope.ind] = filesystemScope.oldName;
+			filesystemScope.vueData.oldName = filesystemScope.oldName;
+		case 13: //enter
+			e.currentTarget.blur();
+			break;
+		default:
+			break;
+	}
 	filesystemScope.vueData[cont][filesystemScope.ind] = (filesystemScope.vueData.oldName.length === 0)? filesystemScope.oldName: filesystemScope.vueData.oldName;
-	console.error(filesystemScope.vueData[cont][filesystemScope.ind]);
 };
 
 filesystemScope.aceptName = () => {
 	let cont = (filesystemScope.selected['file'].length >=1) ? 'fil': 'dir';
 	filesystemScope.vueData[cont][filesystemScope.ind] = filesystemScope.vueData.oldName;
-	console.log("entra en aceptName");
-	let name = filesystemScope.vueData.oldName.replace('_', ''),
+	let name = filesystemScope.vueData.oldName.replace(/<\/?br>/, '').replace(/^\s*|\s*$/g, ''),
 		extMode = '',
 		ext = [];
 	let ext1 = filesystemScope.oldName.split("."),
@@ -330,8 +339,8 @@ filesystemScope.aceptName = () => {
 	extMode = (ext[0] == ext[1]) ? false : ext[0];
 	filesystemScope.unselect();
 	filesystemScope.vueData.isChangeName = false;
-	console.log(filesystemScope.toRename);
-	comunication.send('event', [filesystemScope.toRename, name, extMode], 'filesystem', 'rename', 'filesystemScope', 'drawFiles');
+	if (name !== filesystemScope.oldName)
+		comunication.send('event', [filesystemScope.toRename, name, extMode], 'filesystem', 'rename', 'filesystemScope', 'drawFiles');
 };
 filesystemScope.pressKey = (e)=> {
 	filesystemScope.ctrlPress = (e.keyCode === 17) ? true : false;
