@@ -29,7 +29,6 @@ chatScope.printMessage = (data) => {
 
 chatScope.moveScroll = async () => {
 	let lenght = $("#chatArea").find('div').length;
-	console.log(lenght)
 	while (lenght === $("#chatArea").find('div').length){
 		await sleep(1);
 	};

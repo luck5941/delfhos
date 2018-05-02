@@ -28,9 +28,8 @@ desktopScope.openModal = (e) => {
 		case 'chat':
 			args = ['chat']
 		default:
-			console.log("something went bad");
+			console.info("something went bad");
 	}
-	console.log("vamos a enviar las coasa")
 	comunication.send('modal', args, 'openApps', 'changeImg','modal' );
 };
 desktopScope.changeImg = () => {

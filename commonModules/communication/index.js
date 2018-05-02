@@ -20,15 +20,18 @@ function COMUNICATION(){
 			let id = socket.handshake.address.split(":").slice(-1)[0]+"_"+ modules.server.getCookieValue(socket.handshake.headers.cookie, '_id'),
 				instanceName = `${id}_chat`
 				instances[instanceName].slice(-1)[0]["newMessage"](data[0], socket);
-		});
-		socket.on('event', (data) => {
+		}).on('event', (data) => {
 			let id = socket.handshake.address.split(":").slice(-1)[0]+"_"+ modules.server.getCookieValue(socket.handshake.headers.cookie, '_id'),
 				toSend = [data[0], data[3], data[4]],
 			 	instanceName = `${id}_${data[1]}`;
 			instances[instanceName].slice(-1)[0][data[2]](toSend, socket);
-		});
-		socket.on('modal', (data) => {
+		}).on('modal', (data) => {
 			modules[data.slice(-1)[0]][data[1]](data[0], socket);
+		}).on('appCicle', (data) => {
+			let id = socket.handshake.address.split(":").slice(-1)[0]+"_"+ modules.server.getCookieValue(socket.handshake.headers.cookie, '_id'),
+				instanceName = `${id}_${data[1]}`;
+			let a = delete instances[instanceName];
+			
 		});
 	});
 	this.send = (args, context,funct, socket) => {

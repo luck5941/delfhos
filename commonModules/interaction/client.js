@@ -60,7 +60,6 @@ interaction.canResize = (e) => {
 	interaction.obj.y = parseInt(her.css("top"));
 	interaction.obj.init_x = Xpos;
 	interaction.obj.init_y = Ypos;
-	console.log("entra mucho");
 };
 interaction.resize = (e) => {
 	let Xpos = (interaction.is_mobile) ? e.originalEvent.touches[0].pageX: e.pageX,
@@ -101,15 +100,16 @@ interaction.specialAction = (e) => {
 		action = $(e.currentTarget).attr('class');
 	switch (action){
 		case 'close':
-			window[`${name}Scope`] = undefined;
+			window[`${name}Scope`].onClose();
 		case 'min':
+			window[`${name}Scope`].style = modal.attr('style');
 			modal.removeAttr("style").addClass('minify');
 			break;
 		case 'max':
 			modal.removeAttr("style").addClass('maximify');
 			break;
 		default:
-			console.log(action);
+			console.info(action);
 			break;
 	};
 

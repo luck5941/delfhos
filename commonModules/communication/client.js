@@ -21,12 +21,26 @@ function Client() {
     		*/
     	let parameters = []
     	
-		if (event === 'event' || event === 'modal'){
+		/*if (event === 'event' || event === 'modal'){
 			parameters = [args, where, funt1, context];
 			if (who) parameters.push(who);
 		}
 		else if (event === 'chat')
 			parameters = [args];
+		else if (event */
+		switch (event) {
+			case 'event':
+			case 'modal':
+				parameters = [args, where, funt1, context];
+				if (who) parameters.push(who);
+				break;
+			case 'chat':
+			case 'appCicle':
+				parameters = [args, where];
+				break;
+		}
+				
+			
 		socket.emit(event, parameters);
 	};
 };

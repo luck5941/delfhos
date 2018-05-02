@@ -9,7 +9,7 @@ function FORM() {
 		let answer = ddbb.insert({user: data[0]});
 		answer.then((d) =>{
 			if (d == 11000) 
-				console.log("ya existe")
+				console.info("ya existe")
 			else
 				fs.mkdir(`files/users/${data[0].user}`, (e) => {
 					if (e) return console.error(e);

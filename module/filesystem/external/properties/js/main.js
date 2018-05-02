@@ -31,10 +31,8 @@ propertiesScope.updatePermissions = (toChange = "text") => {
 		o = propertiesScope.permissionCode[g];
 		bin = propertiesScope.decimalToBinary(o);
 		bin = bin.split("").reverse().join("");		
-		console.log(bin)
 		input = $(propertiesScope.inputText[v+1]).find('input');
 		for (let i in p){
-			console.log(p.length-i)
 			$(input[p.length-i-1]).prop("checked", (bin[i] === "1"))
 		}
 		$(propertiesScope.inputPermissions[v]).val(o)
@@ -52,7 +50,6 @@ propertiesScope.decimalToBinary = (x) => {
 		x = parseInt(x/2);		
 	}
 	t = (parseInt(str.length/8)+1)* 8
-	console.log("t vale: "+t)
 	while (str.length<t)
 		str = '0'+str;
 	return str;
@@ -61,7 +58,6 @@ propertiesScope.decimalToBinary = (x) => {
 propertiesScope.changeCat = (e) => {
 	alert("si que entramos!")
     let catNum = $(e.currentTarget).index('modal ul li');
-    console.log(catNum)
     propertiesScope.cat.attr("class", `cat${catNum+1}`);
     propertiesScope.main.attr("class", `cat${catNum+1}`);
 };

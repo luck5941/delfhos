@@ -19,13 +19,29 @@ filesystemScope.contentMenuConstruct = {
 		"Propiedades": "filesystemScope.askForProperties"
 	}
 };
+//ciclos de vida de la aplicación
 
-filesystemScope.ctrlPress = false;
-filesystemScope.isCopping = false;
-filesystemScope.selected = {"file": [], "folder": []};
-filesystemScope.toCopy = {"file": [], "folder": []};
-filesystemScope.mapKey = {};
-filesystemScope.currentPath = '';
+filesystemScope.onInit = () => {
+	filesystemScope.ctrlPress = false;
+	filesystemScope.isCopping = false;
+	filesystemScope.selected = {"file": [], "folder": []};
+	filesystemScope.toCopy = {"file": [], "folder": []};
+	filesystemScope.mapKey = {};
+	filesystemScope.currentPath = '';
+	filesystemScope.isClosing = false;
+	if (!filesystemScope.vueData) filesystemScope.vueData = {};
+	filesystemScope.vueData.dir = [];
+	filesystemScope.vueData.fil = [];
+	filesystemScope.vueData.currentPath=[];
+	filesystemScope.vueData.oldName=""; 
+	filesystemScope.vueData.changeNameStyle= {};
+	filesystemScope.vueData.isChangeName=false;
+	comunication.send('event', [''], 'filesystem', 'initialLoad', 'filesystemScope', 'drawFiles')
+};
+filesystemScope.onClose = () => {
+	filesystemScope.isClosing = true;
+	comunication.send('appCicle', 'close','filesystem');
+}
 
 /*metodos locales*/
 filesystemScope.drawFiles = (args) => {
@@ -401,7 +417,8 @@ window.addEventListener("drop",function(e){
   	e.preventDefault();
 },false);
 
-filesystemScope.vueData = {dir: [], fil: [], currentPath:[], oldName:"", changeNameStyle: {}, isChangeName:false}
+filesystemScope.onInit();
+contextMenu.updateMenu(filesystemScope.contentMenuConstruct);
 filesystemScope.vue = new Vue({
 	el: 'filesystem',
 	data: filesystemScope.vueData,
@@ -427,4 +444,3 @@ filesystemScope.vue = new Vue({
 		aceptName: filesystemScope.aceptName
 	}
 });
-contextMenu.updateMenu(filesystemScope.contentMenuConstruct);
