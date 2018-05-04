@@ -14,7 +14,7 @@ function modal() {
 	const fs = require('fs');
 	let sleep = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 	this.ready = 0;
-	this.content = 'vale algo';
+	this.content = '';
 	this.openApps = (args, socket) => {
 		let id =socket.handshake.address.split(":").slice(-1)[0]+"_"+ modules.server.getCookieValue(socket.handshake.headers.cookie, '_id');
 		let l = new modules["LoadApp"](`${__dirname}/../../module/${args[0]}/`, args[0], [args[1]]);
@@ -23,7 +23,10 @@ function modal() {
 		let obj = global.modules[args[0]];
 		global["instances"][instanceName].push(new obj(id));
 		let m = l.secuence();
-		m.then((a) => {
+		m.then( async (a) => {
+			let moduleInstance = global["instances"][instanceName].slice(-1)[0];
+			let customize = (Object.keys(moduleInstance).indexOf('customize') !=-1);
+			if (customize) a = await  moduleInstance.customize(a, id);
 			session[id][`${args[0]}.css`] = a.css
 			session[id][`${args[0]}.js`] = a.js
 			a.html = `<header move="true"><span class="programName">${args[0]}</span><nav><li class="min"></li><li class="max"></li><li class="close"></li></nav></header>`+a.html;
@@ -33,10 +36,6 @@ function modal() {
 	this.loadModal = (html = false) => {
 		let path = html.split("/").slice(0, -1).join("/") + "/",
 			file = '',
-		
-		/*
-		 * Este método se encarga de crear una copia del archivo que se solicita, en /tmp con el html modificado
-		 */			
 			scripts = { js: [], css: [] },
 			finalFile, flags = 0,
 			scriptsContents = { js: "", css: "" };

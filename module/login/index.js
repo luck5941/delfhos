@@ -6,6 +6,7 @@ function FORM() {
 	const crypto = require('crypto');
 	this.newUser = (data) => {
 		data[0].wallPaper = 'common/images/fsociety.jpg';
+		data[0].profilePicture = 'common/images/newUser.png';
 		let answer = ddbb.insert({user: data[0]});
 		answer.then((d) =>{
 			if (d == 11000) 

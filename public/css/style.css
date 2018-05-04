@@ -73,10 +73,10 @@ body {
   body .shadow {
     box-shadow: 5px 5px 5px; }
   body .minify, body .minify * {
-    width: 0px;
-    height: 0px;
-    top: 100vh;
-    left: 50vw;
+    width: 0px !important;
+    height: 0px !important;
+    top: 100vh !important;
+    left: 50vw !important;
     transition-duration: .75s; }
   body .maximify {
     width: 100vw !important;

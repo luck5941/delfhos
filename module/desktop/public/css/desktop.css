@@ -4,7 +4,7 @@
 
 desktop {
   background-color: #63ccff;
-  background-image: url("%backgroundUri%");
+  background-image: url("%wallPaper%");
   background-repeat: no-repeat;
   background-size: cover;
   margin: 0;
@@ -12,6 +12,39 @@ desktop {
   width: 100%;
   font-family: sans-serif;
   display: block; }
+  desktop #menu {
+    position: absolute;
+    left: -20%;
+    bottom: 0;
+    background-color: #63ccff;
+    width: 20%;
+    height: 40vh;
+    transition-property: left;
+    transition-duration: .75s;
+    display: flex; }
+    desktop #menu #options {
+      flex-grow: 1;
+      display: flex;
+      flex: 1 1;
+      flex-direction: row; }
+      desktop #menu #options #profilePicture {
+        background-image: url("%profilePicture%");
+        background-size: cover;
+        width: 25%;
+        height: 25%; }
+      desktop #menu #options #settings {
+        flex-grow: 1; }
+        desktop #menu #options #settings nav {
+          display: flex;
+          flex: 1 1;
+          flex-direction: row; }
+          desktop #menu #options #settings nav li {
+            list-style: none;
+            flex-grow: 1; }
+    desktop #menu #apps {
+      display: grid; }
+  desktop #menu.visible {
+    left: 0%; }
   desktop #modal {
     display: none;
     position: absolute;
@@ -43,8 +76,11 @@ desktop {
     height: 2vh;
     width: 100%;
     bottom: 0; }
+    desktop #downBar #home {
+      flex-grow: 0; }
     desktop #downBar .slide li {
       flex-grow: 1;
+      flex-basis: 0;
       text-align: center; }
 
 /*# sourceMappingURL=desktop.css.map */

@@ -1,7 +1,7 @@
 @import './vars.scss';
 desktop {
 	background-color: $light_blue;
-	background-image: url('%backgroundUri%');
+	background-image: url('%wallPaper%');
 	background-repeat: no-repeat;
 	background-size: cover;
 	margin: 0;
@@ -9,6 +9,46 @@ desktop {
 	width: 100%;
 	font-family: $font;	
 	display: block;
+	#menu {
+		position: absolute;
+		left: -20%;
+		bottom: 0;
+		background-color: $light_blue;
+		width: 20%;
+		height: 40vh;
+		transition-property: left;
+		transition-duration: .75s;
+		display:flex;
+		#options {
+			flex-grow: 1;
+			display: flex;
+			flex: 1 1;
+			flex-direction: row;
+			#profilePicture{
+				background-image: url('%profilePicture%');
+				background-size: cover;
+				width: 25%;
+				height: 25%;
+			}
+			#settings{
+				flex-grow: 1;
+				nav {
+					display: flex;
+					flex: 1 1;
+					flex-direction: row;
+					li {
+						list-style: none;
+						flex-grow: 1;
+					}
+				}
+			}
+		}
+		#apps {
+			display: grid;
+		//	grid-template-area: ;
+		}
+	}
+	#menu.visible { left:0% }
 	#modal {
 		display: none;;
 		position: absolute;
@@ -47,8 +87,12 @@ desktop {
 		height: 2vh;
 		width: 100%;
 		bottom:0;
+		#home {
+			flex-grow: 0;
+		}
 		.slide li{
 			flex-grow: 1;
+			flex-basis:0;
 			text-align:center;
 		}
 	}

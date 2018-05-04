@@ -124,5 +124,6 @@ $("body")
 .on(interaction.click_up, ".module", interaction.resize)
 .on(`mouse_leave, ${interaction.click_up}`, ".module", interaction.unselect)
 .on(interaction.click_down, ".min, .max, .close", interaction.specialAction)
-.on(interaction.click_move,(e) => (interaction.isMoving) ? interaction.desplace(e) : (interaction.direction) ? interaction.resize(e) :null);
+.on(interaction.click_move,(e) => (interaction.isMoving) ? interaction.desplace(e) : (interaction.direction) ? interaction.resize(e) :null)
+.on(interaction.click_up, interaction.unselect)
 ;

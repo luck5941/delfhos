@@ -1,7 +1,23 @@
 var chatScope = {};
-chatScope.data = {userName: "", chats: [], searchChats: [], chat:false, messages: [], nick: "", message: "", activeChat:""};
-chatScope.to = '';
-chatScope.messages = {};
+chatScope.onInit = () => {
+	if (!chatScope.data) chatScope.data = {};
+	chatScope.data.userName= "";
+	chatScope.data.chats= [];
+	chatScope.data.searchChats= [];
+	chatScope.data.chat=false;
+	chatScope.data.messages= [];
+	chatScope.data.nick= "";
+	chatScope.data.message= "";
+	chatScope.data.activeChat="";
+	chatScope.to = '';
+	chatScope.messages = {};
+	$('chat').find('header').removeAttr('move');
+};
+chatScope.onClose = () => {
+	chatScope.isClosing = true;
+	comunication.send('appCicle', 'close','filesystem');
+};
+
 chatScope.init = (data) => {
 	/*
 	 *Función encarga de preguntar por los valores iniciales al backend
@@ -9,7 +25,7 @@ chatScope.init = (data) => {
 	chatScope.data.userName = data[0].user;
 	chatScope.data.chats = data[0].chats;
 	chatScope.messages = data[0].messages;
-}
+};
 chatScope.listUsers = (data) => {	
 	chatScope.data.searchChats = data;
 };
@@ -62,7 +78,7 @@ chatScope.sendMessage = (e) => {
 	chatScope.data.message = "";
 	chatScope.moveScroll();
 };
-
+chatScope.onInit();
 chatScope.vue = new Vue({el: "chat",data: chatScope.data, methods: {
 	openChat: chatScope.openChat,
 	searchUser: chatScope.searchUser,
