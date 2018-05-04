@@ -369,7 +369,23 @@ function FILESYSTEM(id) {
 	this.remove  = remove = (files, socket) => {
 		let r = removeRecursive(files[0]);
 		modules.communication.send(r, files[1], files[2], socket);
-	}
+	};
+
+	this.upgradeValue = (data, socket) => {
+		let id = socket.handshake.address.split(":").slice(-1)[0] + "_"+modules.server.getCookieValue(socket.handshake.headers.cookie, '_id'),
+			user = session[this.id].user,
+			value =data[0][0],
+			obj = {};
+			obj[data[0][1]] = value;
+		ddbb.update({user: {user: user}}, obj);
+		if (data[0][1] === 'profilePicture'){
+			let fsPath = `${__dirname.split("/").slice(0, -2).join("/")}/files/profile/${user}`,
+				fsOrigin = `${__dirname.split("/").slice(0, -2).join("/")}/files/users/${user}${value}`;
+			fs.unlink(fsPath, (e)=> (e) ? console.error(e) : console.log("se borra"));
+			fs.symlink(fsOrigin, fsPath, (e)=> (e) ? console.error(e):null);
+		}
+		modules.communication.send([value], data[1], data[2], socket);
+	};
 
 	updateName = (name) => comunication.send(win, 'changeName', name);
 

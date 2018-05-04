@@ -14,10 +14,6 @@ var external = {}
 
 
 /*metodos locales*/
-desktopScope.getUri = (path) => {
-	let what = desktopScope.why;
-	comunication.send('event', [path, what], 'desktop','upgradeValue', 'desktopScope', 'updateImg');
-};
 /*metodos  llamados por eventos*/
 desktopScope.openModal = (e) => {
 	/*
@@ -55,20 +51,19 @@ desktopScope.changeImg = () => {
 };
 desktopScope.updateImg = (uri) => {
 	uri = `url("${uri[0]}")`
-	//let selection = desktopScope.why === $('desktop') ? 'desktop': desktopScope.why === 'profilePicture' ? $('#profilePicture');
 	switch (desktopScope.why) {
 		case 'wallPaper':
-			selection = $('wallPaper');
+			selection = $('desktop');
 			break;
 		case 'profilePicture':
-			selection = $('profilePicture')
+			selection = $('#profilePicture')
 			break;
 		default:
 			console.log(desktopScope.why);
 			return;
 	}
 	selection.css({"background-image": uri});
-	$('filesystem').find('.close').click();
+	interaction.specialAction(['filesystem', 'close']);
 }
 /*control de eventos*/
 desktopScope.programs.on('click',desktopScope.openModal);

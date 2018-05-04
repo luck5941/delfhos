@@ -12,17 +12,15 @@ function Chat(id, socket) {
 		this.user = session[this.id].user;
 		this._id  = session[this.id]["_id"];
 		this.message = {};
-		let match = ddbb.aggregate("chats", {$match: {members: {$in:[this._id]}}}, {$unwind: "$members"}, {$match: {members: {$ne:this._id}}}, {$lookup: {from: "user", localField: "members", foreignField: "_id", as: "user"}}, {$project: {"_id": 1, "messages":1, "user._id":1, "user.user":1}});
+		let match = ddbb.aggregate("chats", {$match: {members: {$in:[this._id]}}}, {$unwind: "$members"}, {$match: {members: {$ne:this._id}}}, {$lookup: {from: "user", localField: "members", foreignField: "_id", as: "user"}}, {$project: {"_id": 1, "messages":1, "user._id":1, "user.user":1});
 		match.then((d) => {
 			for (let i in d){
-					if (Object.keys(this.messages).indexOf(d[i].user[0].user)==-1){
-							this.messages[d[i].user[0].user] = {id: d[i]._id, content: [], id_other: d[i].user[0]._id }
-						}
-					
-					this.messages[d[i].user[0].user].content = d[i].messages;
-					this.chats.push({user: d[i].user[0].user});
+				if (Object.keys(this.messages).indexOf(d[i].user[0].user)==-1){
+					this.messages[d[i].user[0].user] = {id: d[i]._id, content: [], id_other: d[i].user[0]._id }
 				}
-			
+				this.messages[d[i].user[0].user].content = d[i].messages;
+				this.chats.push({user: d[i].user[0].user});
+			}
 		});
 	};
 	this.getInit = (data, socket) => {
@@ -87,13 +85,11 @@ function Chat(id, socket) {
 		 *antes de que este sea enviado
 		 * obj {key:String} Contiene todo el texto
 		*/
-		console.log(obj.html);
 		let toSearch = replace(obj.html, /\%(\w*)\%/)[0],
 			toQuery = {"_id": 1};
 		for (let t of toSearch)
 			toQuery[t] = 1;
 		let path = await  ddbb.query({user: {'user': session[id].user}}, toQuery);
-		console.log(path);
 		session[id]["_id"] = path[0]._id;
 		obj.html = replace(obj.html, /\%(\w*)\%/, path[0])[1];
 		return obj;
@@ -103,7 +99,7 @@ function Chat(id, socket) {
 		/*
 		 *metodo encargado de enviar el mensaje al resto de destinatarios
 		 *Primero busca a que socket debe enviar el mensaje, una vez que lo tenga,
-		 genera la estructura que este debe enviar y actualiza en la base de datos
+		 *genera la estructura que este debe enviar y actualiza en la base de datos
 		*/
 		
 		if(Object.keys(this.messages).indexOf(message.dst) !== -1){ //exite el valor

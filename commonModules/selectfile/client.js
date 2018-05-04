@@ -3,7 +3,7 @@ var selectFileScope = {};
 selectFileScope.selectFile = (e) => {
 	e.preventDefault();
 	let selectFile = filesystemScope.currentPath + $(filesystemScope.selected["file"][0]).find('p').html();
-	desktopScope.getUri(selectFile);
+	filesystemScope.getUri(selectFile);
 };
 
 $('body').on('submit', '#selectFile form', selectFileScope.selectFile);

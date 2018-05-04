@@ -1,20 +1,11 @@
 'use strict';
-function DESKTOP(id){	
+function DESKTOP(id){
 	this.id = id;
 	/*modulos propios*/
 	var EventServer = require(process.env.PWD+'/commonModules/remoteEvent');
 	EventServer = EventServer.Server
 	/*Variables globales*/
 	function sleep(ms) {return new Promise(resolve => setTimeout(resolve, ms));}
-	var updatebackgroundImg = () =>{	
-		let bkgrUri = json['deskop_image'];
-		fs.readFile(__dirname+'/public/css/style.css', 'utf-8', (err, data) => {
-			data = data.replace('%backgroundUri%', bkgrUri);
-			fs.writeFile(__dirname+'/public/css/style_tmp.css', data, (err) => {
-				if (err) return console.error(err);
-			});
-		});
-	};
 	let replace = (str, rx, rplc = '') => {
 		/*
 		 * metodo encargado de replazar una regex por otro string en un obj o en un string.
@@ -47,16 +38,6 @@ function DESKTOP(id){
 		session[id]["_id"] = path[0]._id;
 		obj.css = replace(obj.css, /\%(\w*)\%/, path[0])[1];
 		return obj;
-	};
-	this.upgradeValue = (data, socket) => {
-		let id = socket.handshake.address.split(":").slice(-1)[0] + "_"+modules.server.getCookieValue(socket.handshake.headers.cookie, '_id'),
-			user = session[this.id].user,
-			value =data[0][0],
-			obj = {};
-			obj[data[0][1]] = value;
-		ddbb.update({user: {user: user}}, obj);
-		console.log('something');
-		modules.communication.send([value], data[1], data[2], socket);
 	};
 }
 module.exports = DESKTOP;

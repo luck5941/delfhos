@@ -7,7 +7,8 @@ function FORM() {
 	this.newUser = (data) => {
 		data[0].wallPaper = 'common/images/fsociety.jpg';
 		data[0].profilePicture = 'common/images/newUser.png';
-		let answer = ddbb.insert({user: data[0]});
+		let answer = ddbb.insert({user: data[0]}),originPath = __dirname.split("/").slice(0, -2).join("/")+'/files/'+data[0].profilePicture;
+		fs.symlink(originPath, `${__dirname}/../../files/profile/${data[0].user}`, (e)=> (e) ? console.error(e):null);
 		answer.then((d) =>{
 			if (d == 11000) 
 				console.info("ya existe")

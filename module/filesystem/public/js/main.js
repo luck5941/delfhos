@@ -44,6 +44,12 @@ filesystemScope.onClose = () => {
 }
 
 /*metodos locales*/
+
+filesystemScope.getUri = (path) => {
+	let what = desktopScope.why;
+	comunication.send('event', [path, what], 'filesystem','upgradeValue', 'desktopScope', 'updateImg');
+};
+
 filesystemScope.drawFiles = (args) => {
 	/*Lista los archivos y carpetas que hay en ese direcorio*/
 	//let str = args[0];

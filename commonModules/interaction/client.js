@@ -93,17 +93,25 @@ interaction.resize = (e) => {
 	}	
 };
 interaction.specialAction = (e) => {
-	e.stopPropagation();
-	e.preventDefault();
-	let modal = $(e.currentTarget).parent().parent().parent(),
+	let action, modal, name;
+	if (Array.isArray(e)){
+		modal = $(e[0]);
+		name = e[0];
+		action = e[1];
+	}
+	else{
+		e.stopPropagation();
+		e.preventDefault();
+		modal = $(e.currentTarget).parent().parent().parent(),
 		name = modal[0].tagName.toLowerCase(),
 		action = $(e.currentTarget).attr('class');
+	}
 	switch (action){
 		case 'close':
 			window[`${name}Scope`].onClose();
 		case 'min':
 			window[`${name}Scope`].style = modal.attr('style');
-			modal.removeAttr("style").addClass('minify');
+			modal.removeAttr("style").removeClass('maximify').addClass('minify');
 			break;
 		case 'max':
 			modal.removeAttr("style").addClass('maximify');
@@ -112,7 +120,6 @@ interaction.specialAction = (e) => {
 			console.info(action);
 			break;
 	};
-
 };
 
 
