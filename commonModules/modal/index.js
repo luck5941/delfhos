@@ -8,8 +8,8 @@ function modal() {
 	 *del que se parte para generar el contendido final.
 	 *Por defecto está vacio ya que lo normal será generar modulos ya definidos de forma
 	 *independiente.
-	 *  app:[String]  -> Contiene el nombre de la aplicación y si los modulos
-	 *  o pluggins extras que no se cargan por defecto, pero si en esta ocasión. 
+	 *  app:[String]  -> Contiene el nombre de la aplicación y los modulos 
+	 *  o pluggins extras que no se cargan por defecto, pero si en esta ocasión o por un determinado contexto. 
 	 */
 	const fs = require('fs');
 	let sleep = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
@@ -30,7 +30,7 @@ function modal() {
 			session[id][`${args[0]}.css`] = a.css
 			session[id][`${args[0]}.js`] = a.js
 			a.html = `<header move="true"><span class="programName">${args[0]}</span><nav><li class="min"></li><li class="max"></li><li class="close"></li></nav></header>`+a.html;
-			socket.emit('modal', [a.html, args[0]]); });
+			socket.emit('modal', [a.html, args]); });
 
 	};
 	this.loadModal = (html = false) => {

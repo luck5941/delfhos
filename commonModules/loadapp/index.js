@@ -25,6 +25,7 @@ var loadApp = function(path, name, toLoad = []) {
 	this.toLoad = toLoad;
 	this.bcknd = {};
 	this.toReplace = {'js':{jsInit:"", middle: "", jsEnd: ""}, 'css':"", 'html':""}
+	this.modules = [];
 	this.loadExternal = (css, where = 'css', place="middle") => {
 		for (let s of css){
 			let filePath = `${this.path}public/${s}`;
@@ -66,6 +67,7 @@ var loadApp = function(path, name, toLoad = []) {
 			if (!o["load_default"] && this.toLoad.indexOf(o["name"]) === -1) continue;
 			this.loadderPlugins++;
 			path = (o["external_path"]) ? o["external_path"] : "";
+			path = o["external_path"] || "";
 			module = o["name"].split(".");
 			if (module.length === 1) module.push("");
 			else module[1] = "." + module[1];
@@ -73,35 +75,33 @@ var loadApp = function(path, name, toLoad = []) {
 			where = (o["at_init"]) ? "jsInit" : "jsEnd";
 			if (o["difference_between_front_and_back"]) {
 				if (o["place"].search(/^bo/) !== -1) this.loadderPlugins = this.loadderPlugins   + 1;
-				if (o["place"].search(/^f|^bo/) !== -1) uri[where].push(module[0]+"/client.js");
+				if (o["place"].search(/^f|^bo/) !== -1){
+					 uri[where].push(module[0]+"/client.js");
+					this.modules.push(o["name"]);
+				}
 				if (o["place"].search(/^ba|^bo/) !== -1){ 
 					let name = `${o["name"].split(".").slice(-1)}_${name_bk}`;
-					try {
-						this.bcknd[name] = (module[1]) ? require(module[0])[module[1].slice(1)][name_bk] : require(module[0])[name_bk];
-					}
-					catch (e) {
-						findIt = false;
-					}
+					try { this.bcknd[name] = (module[1]) ? require(module[0])[module[1].slice(1)][name_bk] : require(module[0])[name_bk]; }
+					catch (e) { findIt = false; }
 					if (!findIt) {
 						let search = module[0].split("/").slice(1).join("/");
-						try {
-							this.bcknd[name] = (module[1]) ? require(search)[module[1].slice(1)][name_bk] : require(search)[name_bk];
-						}
-						catch (e) {
-							console.error(`el módulo o libreria ${o["name"]} no se ha encontrado. Por favor, contacte con el adminsitrador del sistema`);
-						}
-					this.ready[2]++;
+						try { this.bcknd[name] = (module[1]) ? require(search)[module[1].slice(1)][name_bk] : require(search)[name_bk]; }
+						catch (e) { console.error(`el módulo o libreria ${o["name"]} no se ha encontrado. Por favor, contacte con el adminsitrador del sistema`); }
+						this.ready[2]++;
+					}
 				}
-			}
 			} else {
-				if (o["place"].indexOf("f") !== -1) uri[where].push(module[0]+"/client.js");
+				if (o["place"].indexOf("f") !== -1){
+					 uri[where].push(module[0]+"/client.js");
+					this.modules.push(o["name"]);
+				}
 				else if (o["place"].indexOf("ba" !== -1)){
 					this.bcknd[module[1]] = require(module[0])[module[1]];
 					this.ready[2]++;
 				}
 			}
 			if (o["exec"] && (o["place"].indexOf("f") !== -1 || o["difference_between_front_and_back"]))
-				this[where] += `${o["name"].split(".").slice(-1)}_${name_fr}()`
+				this[where] += `${o["name"].split(".").slice(-1)}_${name_fr}()`;
 			if (o["style"].length >0) {
 				this.loadderPlugins += o["style"].length
 				let cssPath = (o["external_path"]) ? `${module[0]}/` : `../node_modules/${o["name"].toLowerCase()}/`
@@ -115,7 +115,7 @@ var loadApp = function(path, name, toLoad = []) {
 				this.loadExternal(file,'html' );
 			}
 
-		}	
+		}
 		this.loadExternal(uri["jsInit"], 'js', "jsInit")
 		this.loadExternal(uri["jsEnd"], 'js', "jsEnd")
 	};
@@ -128,7 +128,7 @@ var loadApp = function(path, name, toLoad = []) {
 			data = fs.readFileSync(f, 'utf-8'),
 			js = `${this.toReplace.js.jsInit}\n${this.toReplace.js.middle}\n${this.toReplace.js.jsEnd}`;
 			this.toReplace["html"] = data + this.toReplace["html"];
-			this.toReplace["js"] = js;			
+			this.toReplace["js"] = this.__updateJS(js, this.modules);
 			this.end = true;
 			return this.toReplace;
 	};
@@ -145,6 +145,17 @@ var loadApp = function(path, name, toLoad = []) {
 			toJoin = path.indexOf("..");
 		path.splice(toJoin - steps, steps *2);
 		return path.join("/");
+	};
+	this.__updateJS = (d, names) => {
+		let rx =  /\w*\.onInit\s?=\s?\(\)\s?=>\s?\{\n*\t(((((\t*\w*\.?)*\s*=\s*[\w\(\)= <>!\{\}\.;,:\"\'\`\[\]]*\n))*(\tif\s\(!\w*\.\w*\)\s*)?)*)/,
+			rx1 = /(\tif\s\(!\w*\.\w*\))\s*(((\w*\.?)*)\s*=\s*[\w\(\)= <>!\{\}\.;,:\"\'\`\[\]]*\n)/,
+			m = rx.exec(d), str = (m) ?m[1] : false;
+		if (!m) return d;
+		let a = rx1.exec(str), newStr = '';
+		for (let i of names)
+			newStr = `\t${a[3]}.${i} = true;\n`;
+		d = d.replace(m[1], m[1]+newStr);
+		return d;
 	};
 	this.__copyInBuffer = (src) => {
 		/*

@@ -1,4 +1,4 @@
-<footer id="selectFile">
+<footer id="selectFile" v-if="selectfile">
 	<form>
 		<p>ruta:</p>
 		<input type="text" name="path" v-bind:value="currentPath.join('/')">

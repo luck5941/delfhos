@@ -11,13 +11,11 @@ chatScope.onInit = () => {
 	chatScope.data.activeChat="";
 	chatScope.to = '';
 	chatScope.messages = {};
-	$('chat').find('header').removeAttr('move');
 };
 chatScope.onClose = () => {
 	chatScope.isClosing = true;
 	comunication.send('appCicle', 'close','filesystem');
 };
-
 chatScope.init = (data) => {
 	/*
 	 *Función encarga de preguntar por los valores iniciales al backend
@@ -85,3 +83,4 @@ chatScope.vue = new Vue({el: "chat",data: chatScope.data, methods: {
 	sendMessage: chatScope.sendMessage
 }})
 $(document).ready(()=> comunication.send('event', [''], 'chat', 'getInit', 'chatScope', 'init'));
+$('chat').find('header').removeAttr('move');

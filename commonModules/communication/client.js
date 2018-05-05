@@ -39,8 +39,6 @@ function Client() {
 				parameters = [args, where];
 				break;
 		}
-				
-			
 		socket.emit(event, parameters);
 	};
 };

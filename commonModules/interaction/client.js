@@ -112,6 +112,7 @@ interaction.specialAction = (e) => {
 		case 'min':
 			window[`${name}Scope`].style = modal.attr('style');
 			modal.removeAttr("style").removeClass('maximify').addClass('minify');
+			modalScope.closeAll(name);
 			break;
 		case 'max':
 			modal.removeAttr("style").addClass('maximify');
