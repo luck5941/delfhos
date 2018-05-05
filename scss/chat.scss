@@ -7,10 +7,10 @@ chat.module{
 	top:inherit;
 	width: 25%;
 	height: 40vh;
-	background-color:rgba(135,135,135,.5) ;
+	background-color:rgba(135,135,135,.5);
 	box-shadow: 0 0;
 	.header{
-		position: absolute;
+		float: left;
 		top: 25px;
 		left: 0;
 		width: 100%;
@@ -19,8 +19,8 @@ chat.module{
 		z-index: 3;
 		height: 20%;
 		#user {
-			align-self: flex-start;
 			flex-grow: 1;
+			flex-basis: 0;
 			display: flex;
 			align-items: center;
 			img{
@@ -30,14 +30,21 @@ chat.module{
 				display: inline-block;
 			}
 		}
-		#search {
-			flex-grow: 1;
-		}
+		#search { flex-grow: 1; flex-basis: 0; }
 	}
 	#chats {
-		position: absolute;		
+		float: left;
 		display: flex;
 		top: 20%;
+		flex-direction: column;
+		li {
+			list-style: none;
+			img {
+				width: 50px;
+				heigth: 50px;
+				border-radius:50%;
+			}
+		}
 	}
 	main {
 		position: absolute;

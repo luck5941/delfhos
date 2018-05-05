@@ -12,7 +12,7 @@ function Chat(id, socket) {
 		this.user = session[this.id].user;
 		this._id  = session[this.id]["_id"];
 		this.message = {};
-		let match = ddbb.aggregate("chats", {$match: {members: {$in:[this._id]}}}, {$unwind: "$members"}, {$match: {members: {$ne:this._id}}}, {$lookup: {from: "user", localField: "members", foreignField: "_id", as: "user"}}, {$project: {"_id": 1, "messages":1, "user._id":1, "user.user":1});
+		let match = ddbb.aggregate("chats", {$match: {members: {$in:[this._id]}}}, {$unwind: "$members"}, {$match: {members: {$ne:this._id}}}, {$lookup: {from: "user", localField: "members", foreignField: "_id", as: "user"}}, {$project: {"_id": 1, "messages":1, "user._id":1, "user.user":1}});
 		match.then((d) => {
 			for (let i in d){
 				if (Object.keys(this.messages).indexOf(d[i].user[0].user)==-1){
