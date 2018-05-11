@@ -4,20 +4,25 @@ function FORM() {
 	*/
 	const fs = require('fs');
 	const crypto = require('crypto');
-	this.newUser = (data) => {
+	this.newUser = (data, socket) => {
+		console.log(data);
 		data[0].wallPaper = 'common/images/fsociety.jpg';
 		data[0].profilePicture = 'common/images/newUser.png';
 		let answer = ddbb.insert({user: data[0]}),originPath = __dirname.split("/").slice(0, -2).join("/")+'/files/'+data[0].profilePicture;
-		fs.symlink(originPath, `${__dirname}/../../files/profile/${data[0].user}`, (e)=> (e) ? console.error(e):null);
 		answer.then((d) =>{
-			if (d == 11000) 
-				console.info("ya existe")
-			else
+			if (d == 11000){ 
+				console.info("ya existe");
+				modules.communication.send({access: 'itExist'}, data[1], data[2], socket);
+			}
+			else{
+				fs.symlink(originPath, `${__dirname}/../../files/profile/${data[0].user}`, (e)=> (e) ? console.error(e):null);
 				fs.mkdir(`files/users/${data[0].user}`, (e) => {
 					if (e) return console.error(e);
 					fs.mkdir(`files/users/${data[0].user}/.trash`, (e) => (e) ? console.error(e) : null);
+					modules.communication.send({access: 'register'}, data[1], data[2], socket);
 				});
-		})
+			}
+		});
 	};
 	this.getSession = (ip) => {
 		/*

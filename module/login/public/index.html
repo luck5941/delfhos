@@ -1,14 +1,14 @@
-<h1> Sing up</h1>
-<p id="root">{{message}}</p>
-<form action="someplace" method="post" id="newUser">
-	<input name="user" placeholder="El nick con el que quieres que te conozca"><br>
-	<input name="mail" type="email" placeholder="mail@example.com"><br>
-	<input type="password" name="passwd" placeholder="Contraseña"><br>
-	<input type="submit">
+<div id="root">
+<form action="someplace" method="post" id="newUser" v-if="action==='newUser'">
+	<h1> Sing up</h1>
+	<input v-for="input in newUser" :name="input.name" :id="input.name" :placeholder="input.placeholder" :type="input.type" :pattern="input.pattern" :required="input.required">
+	<p> No tienes cuenta aún? puedes crear una ahora mismo! solo clicka en <a href="#" @click="changeAction">crear cuenta</a>
+	<p v-if="passwordSecurity.length>=1">La calidad de tu contraseña es: {{passwordSecurity}}</p>
 </form>
-<h1> Login</h1>
-<form action "someplace" method="post" id="login">
-	<input name="user" placeholder="El nick con el que quieres que te conozca"><br>
-	<input type="password" name="passwd" placeholder="Contraseña"><br>
-	<input type="submit">
+<form action="someplace" method="post" id="login" v-if="action==='login'">
+	<h1> Login</h1>
+	<input v-for="input in login" :name="input.name" :placeholder="input.placeholder" :type="input.type" >
+	<p> No tienes cuenta aún? puedes crear una ahora mismo! solo clicka en <a href="#" @click="changeAction">crear cuenta</a>
 </form>
+<p>{{message}}</p>
+</div>
