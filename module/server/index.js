@@ -88,11 +88,8 @@ function SERVER(modules) {
 			return (session[id][name]) ? this._sendFile(res, session[id][name], [200, contentType(ext)]) : this.forbiddenFunct(res, id);
 		}
 		else if (path.search(/^\/profile\/\w*/) !== -1){
-			console.log("entra");
 			fs.realpath(`files/${path}`, (e,d) => {
-				console.log(e);
 				if (e) return this.forbiddenFunct(res, id);
-				console.log(d);
 				let ext = path.split('.').slice(-1)[0];
 				fs.readFile(d, (e, d) => e ? this.forbiddenFunct(res, id) : this._sendFile(res, d, ["200", contentType(ext)]));
 			});

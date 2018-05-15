@@ -70,7 +70,6 @@ function Chat(id, socket) {
 			for (let i of d){
 				obj = {};
 				obj.user = i.user;
-				obj.profilePhoto = i.profilePhoto;
 				toSend.push(obj);
 			}
 			modules.communication.send(toSend, data[1], data[2], socket);

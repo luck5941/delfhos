@@ -5,9 +5,9 @@ function FORM() {
 	const fs = require('fs');
 	const crypto = require('crypto');
 	this.newUser = (data, socket) => {
-		console.log(data);
 		data[0].wallPaper = 'common/images/fsociety.jpg';
 		data[0].profilePicture = 'common/images/newUser.png';
+		data[0].friends = [];
 		let answer = ddbb.insert({user: data[0]}),originPath = __dirname.split("/").slice(0, -2).join("/")+'/files/'+data[0].profilePicture;
 		answer.then((d) =>{
 			if (d == 11000){ 
@@ -19,6 +19,11 @@ function FORM() {
 				fs.mkdir(`files/users/${data[0].user}`, (e) => {
 					if (e) return console.error(e);
 					fs.mkdir(`files/users/${data[0].user}/.trash`, (e) => (e) ? console.error(e) : null);
+					fs.mkdir(`files/users/${data[0].user}/Compartido`, (e) => (e) ? console.error(e) : null);
+					fs.mkdir(`files/users/${data[0].user}/Documentos`, (e) => (e) ? console.error(e) : null);
+					fs.mkdir(`files/users/${data[0].user}/Música`, (e) => (e) ? console.error(e) : null);
+					fs.mkdir(`files/users/${data[0].user}/Imágenes`, (e) => (e) ? console.error(e) : null);
+					fs.mkdir(`files/users/${data[0].user}/Videos`, (e) => (e) ? console.error(e) : null);
 					modules.communication.send({access: 'register'}, data[1], data[2], socket);
 				});
 			}

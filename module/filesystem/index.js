@@ -18,12 +18,14 @@ function FILESYSTEM(id) {
 		 * src: String  -> La ruta a esos archivos
 		 * dst: String -> La ruta de la carpeta en la que se deben copiar
 		 */
-		let name = '';
+		let name = '', lt;
 		for (let f of files) {
-			if (fs.lstatSync(f).isFile()) {
+			lt = fs.lstatSync(f);
+			if (lt.isSymbolicLink()) lt = fs.lstatSync(fs.realpathSync(f));
+			if (lt.isFile()) {
 				name = renameOneFile(`${dst}`, f.split("/").slice(-1)[0]);
 				fs.createReadStream(`${f}`).pipe(fs.createWriteStream(`${name}`));
-			} else if (fs.lstatSync(f).isDirectory()) {
+			} else if (lt.isDirectory()) {
 				fs.mkdir(`${dst}${f}`, '0744', (e) => {
 					if (e) return console.error(e);
 					copyRecursive(fs.readdirSync(f), `${src}${f}/`, `${dst}${f}/`);
@@ -202,13 +204,15 @@ function FILESYSTEM(id) {
 		this.currentPath = (dir !== '') ? (this.currentPath + dir[0] + '/') : this.currentPath;
 		let currentFiles = { dir: [], fil: [] };
 		var listDir = fs.readdirSync(this.currentPath);
+		let lt;
 		for (let i of listDir) {
-			try{let a = fs.lstatSync(`${this.currentPath}/${i}`)} catch(e) {continue;}
-				if (i.search(/^\./) !== -1) continue;
-				else if (fs.lstatSync(`${this.currentPath}/${i}`).isDirectory())
-					currentFiles['dir'].push(i);
-				else if (fs.lstatSync(`${this.currentPath}/${i}`).isFile())
-					currentFiles['fil'].push(i);
+			if (i.search(/^\./) !== -1) continue;
+			try{lt = fs.lstatSync(`${this.currentPath}/${i}`)} catch(e) {continue;}
+			if (lt.isSymbolicLink()) lt = fs.lstatSync(fs.realpathSync(`${this.currentPath}/${i}`));
+			if (lt.isDirectory())
+				currentFiles['dir'].push(i);
+			else if (lt.isFile())
+				currentFiles['fil'].push(i);
 		};
 		if (socket)
 			modules.communication.send([currentFiles], 'filesystemScope', 'drawFiles', socket);
@@ -296,11 +300,13 @@ function FILESYSTEM(id) {
 		modules.communication.send([loadFiles()[0]], fls[1], fls[2], socket);
 	};
 	this.getProperties = getProperties = (files, socket) => {
-		//modal = new l.bcknd.Modal_Main(__dirname + '/external/properties/index.html');
 		global.modules.modal.loadModal(`${__dirname}/external/properties/index.html`);
 		let data = {};
 		fs.lstat(this.homeDir + files[0][0], (e, s) => {
-			if (e) return console.error(e)
+			if (e) {
+				 console.error(e);
+				return;
+			}
 			//Pantalla 1
 			//let ownGroup = readcsv([s.uid, s.gid, '\\d{4}', '\\d{4}']);
 			data.name = files[0][0].split("/").slice(-1)[0];
@@ -318,7 +324,7 @@ function FILESYSTEM(id) {
 			//data.group = ownGroup[1];
 			//data.owns = ownGroup[2];
 			//data.groups = ownGroup[3];
-			global.modules.modal.createModal(data, socket)
+			global.modules.modal.createModal(data,"properties - "+files[0][0],  socket)
 		});
 	};
 	this.newFolder = newFolder = (name, socket) => {
@@ -389,6 +395,81 @@ function FILESYSTEM(id) {
 
 	updateName = (name) => comunication.send(win, 'changeName', name);
 
+	this.prepareToShareFiles = (data, socket) => {
+		/*
+		 *metodo encargado de compartir los archivos y carpetas con otros usuarios
+		 * lo que se recive es igual que en otros metodos
+		 * data: [any]
+		 * data[0]: [any]
+		 * data[0][0]: [String] -> Lista de archivos o carpetas que deben ser compartidos
+		 * data[0][1]: [String] -> Lista de usuarios con los que se comparten los archivos
+		 * data[1]: Object -> Instancia que debe responder al finalizar el metodo
+		 * data[2]: Function -> Metodo de dicha instancia
+		 * socket: object -> Contenedor de la instancia de web socket para poder brindar una respuesta
+		*/
+		this.selectedFiles = data[0];
+		global.modules.modal.loadModal(`${__dirname}/external/search/index.html`);
+		global.modules.modal.createModal({},"share width",  socket)
+	};
+	this.askForFriends = (data, socket) => {
+		let _id  = session[this.id]["_id"], toSend = [];
+		ddbb.aggregate("user", {$match: {"_id": _id}},{$unwind: "$friends"}, {$lookup: {from: "user", localField: "friends", foreignField: "_id", as: "myMatch"}}, {$project: {"_id":1,"myMatch.user": 1}})
+				.then((d) =>{
+					for (let a of d)
+						if (a.myMatch[0])
+						toSend.push(a.myMatch[0].user);
+                        		modules.communication.send(toSend, data[1], data[2], socket);
+				});
+
+	};
+	this.shareFiles = (data, socket) => {
+		/*
+		 *metodo encargado de compartir los archivos
+		 *data[0][0] es un array con todas las personas con las que se comparte el archivo
+		 *el resto sigue la misma estructura
+		 *el proceso es el siguiente:
+		 *Primero se añade a la lista de amigos en caso de no estar ya
+		 *Se crea un symlink asociado en sus cuentas 
+		*/
+		let _id  = session[this.id]["_id"], dest = '', origin = '', initQuery = [];
+		for (let f of data[0][0])
+			initQuery.push({user: f});
+		ddbb.query({"user": {$or:initQuery}}, {_id:1}).then((d)=> {
+			let ids = [];
+			for (let i of d)
+				ids.push(i._id);
+			ddbb.update({user: {_id:_id}},{friends: {$each: ids}}, "$addToSet");
+		});
+		for (let f of data[0][0]){
+			for (let d of this.selectedFiles){
+				d = d.split("/").slice(-1);
+				origin = process.cwd() +'/'+this.currentPath+d;
+				dest = `${process.cwd()}/files/users/${f}/Compartido/${d}`
+				fs.symlink(origin, dest, (e) => (e) ?  console.error(e) : null);
+			}
+		};
+
+
+	};
+	this.searchUser = (data, socket) => {
+                /*
+                 * metodo encargado de buscar por los usuarios que coincidan con el patron que se pasa en data[0][0]
+                */
+                if (!data[0][0])
+                        return modules.communication.send([], data[1], data[2], socket);
+                let patern = `^${data[0][0]}`
+                reg = new RegExp(patern, 'i');
+                ddbb.query({user: {user: reg}}, {"_id": 0, "user": 1}).then((d) => {
+                        let toSend = [];
+                        let obj;
+                        for (let i of d){
+                                obj = {};
+                                obj.user = i.user;
+                                toSend.push(obj);
+                        }
+                        modules.communication.send(toSend, data[1], data[2], socket);
+                });
+        };
 
 	prepareToChangeName = (file) => {
 		/*

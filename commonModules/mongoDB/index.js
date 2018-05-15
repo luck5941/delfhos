@@ -52,15 +52,17 @@ function mongoDB(bbdd_name) {
 	this.aggregate = (collection, ...args) =>{		
 		return this.conn.collection(collection).aggregate(args).toArray();
 	};
-	this.update = (obj, field) => {
+	this.update = (obj, field, method ="$set") => {
 		/*
 		 *metodo encargado de actualizar un campo en una colección
 		 *Obj:Object ->  La condición que determina que documento se actualiza. Se organiza igual que en insert
 		 *field:Object-> Los campos ye el valor que que deben ser actualizados y deben tomar
 		*/
 		if (typeof(obj) === 'string') obj = JSON.parse(obj);
-		let collection = Object.keys(obj)[0];
-		this.conn.collection(collection).updateMany(obj[collection],{$set: field}, (err, res) => {if (err) return console.error(err);});
+		let collection = Object.keys(obj)[0],
+			toUpdate = {}
+		toUpdate[method] = field;
+		this.conn.collection(collection).updateMany(obj[collection],toUpdate, (err, res) => {if (err) return console.error(err);});
 		
 	}
 	this.exit = () => {

@@ -1,7 +1,3 @@
-/*comentario de prueba para que sea aquí donde pete*/
-/*const $ = require('jquery');
-const Whatch = require('watcher');
-var EventClient = require('localEvent').Client;*/
 /*Variables globales*/
 var propertiesScope = {};
 propertiesScope.body = $('modal');
@@ -19,7 +15,6 @@ propertiesScope.nameFile = "#{name}";
     	"others" : #{permission[2]}
 };*/
 external = {}
-// var propertiesScopeWatch = new Whatch (propertiesScope.permissionCode);
 
 /*funciones generales*/
 propertiesScope.updatePermissions = (toChange = "text") => {

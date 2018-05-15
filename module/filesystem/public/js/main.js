@@ -8,7 +8,8 @@ filesystemScope.contentMenuConstruct = {
 		"Borrar permanentemente": "filesystemScope.remove",
 		"Cortar": "filesystemScope.prepareToCut",
 		"Copiar": "filesystemScope.prepareToCopy",
-		"Propiedades": "filesystemScope.askForProperties"
+		"Propiedades": "filesystemScope.askForProperties",
+		"Compartir con": "filesystemScope.shareWidth" 
 	},
 	".file": {
 		"Enviar a la papelera de reciclaje": "filesystemScope.sentToTrush",
@@ -16,7 +17,8 @@ filesystemScope.contentMenuConstruct = {
 		"Borrar permanentemente": "filesystemScope.remove",
 		"Cortar": "filesystemScope.prepareToCut",
 		"Copiar": "filesystemScope.prepareToCopy",
-		"Propiedades": "filesystemScope.askForProperties"
+		"Propiedades": "filesystemScope.askForProperties",
+		"Compartir con": "filesystemScope.shareWidth" 
 	}
 };
 //ciclos de vida de la aplicación
@@ -162,7 +164,6 @@ filesystemScope.remove = () => {
 filesystemScope.askForProperties = () => {
 	let names = filesystemScope.getName(filesystemScope.selected)
 	comunication.send('event',names , 'filesystem','getProperties' , 'filesystemScope', null);
-	//comunication.send('getProperties', null, names)
 };
 filesystemScope.sendFiles = (file) => {
 	/*
@@ -199,6 +200,11 @@ filesystemScope.changeNameNewFolder = async (data) =>{
 			filesystemScope.selected["folder"].push(i);
 	}
 	filesystemScope.changeName()
+};
+
+filesystemScope.shareWidth =  () =>{
+	let names = filesystemScope.getName(filesystemScope.selected)
+	comunication.send('event',names , 'filesystem','prepareToShareFiles' , 'filesystemScope', null);
 };
 
 /*metodos locales llamados por eventos*/

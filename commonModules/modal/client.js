@@ -1,15 +1,14 @@
-let modalScope = {};
+var modalScope = {};
 modalScope.loaded = {};
 modalScope.generate = (data) => {
 	if (!modalScope.loaded[data[1][0]] || (modalScope.loaded[data[1][0]].indexOf(data[1][1]) === -1 && data[1].length >1)){ //no lo tiene
-		console.log("o puede que vuelva a etrar aquí");
 		try{
 			console.log(modalScope.loaded[data[1][0]].indexOf(data[1][1]));
 			console.log(modalScope.loaded[data[1][0]]);
 			console.log(data[1][1]);
 			console.log(data[1].length);
 			console.log((modalScope.loaded[data[1][0]].indexOf(data[1][1]) === -1 || data[1].length >1))
-		}catch(e) {console.log(e)}
+		}catch(e) {}
 		modalScope.loaded[data[1][0]] = [];
 		modalScope.loaded[data[1][0]].push(data[1][1])
 		$(data[1][0]).addClass("module").html(data[0]);
@@ -20,7 +19,6 @@ modalScope.generate = (data) => {
 		$('head').append('<link rel="stylesheet" type="text/css" href="/'+data[1][0]+'.css">');
 	}
 	else {
-		console.log("eyyyy que si que entra, no seas tonto")
 		if ($(data[1][0]).attr('class').search('minify') !== -1) {
 			$(data[1][0]).removeClass("minify");
 			if (window[`${data[1][0]}Scope`].isClosing)
@@ -36,6 +34,6 @@ modalScope.generate = (data) => {
 modalScope.closeAll = (moduleName) => {
 	for (let m of modalScope.loaded[moduleName]) {
 		window[`${moduleName}Scope`].vueData[m] =false;
-		console.log(m);
 	}
 };
+modalScope.onClose = () => modalScope.isClosing = true;

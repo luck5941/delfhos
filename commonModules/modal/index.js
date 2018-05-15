@@ -14,7 +14,7 @@ function modal() {
 	const fs = require('fs');
 	let sleep = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 	this.ready = 0;
-	this.content = '';
+	this.content = {};
 	this.openApps = (args, socket) => {
 		let id =socket.handshake.address.split(":").slice(-1)[0]+"_"+ modules.server.getCookieValue(socket.handshake.headers.cookie, '_id');
 		let l = new modules["LoadApp"](`${__dirname}/../../module/${args[0]}/`, args[0], [args[1]]);
@@ -29,7 +29,7 @@ function modal() {
 			if (customize) a = await  moduleInstance.customize(a, id);
 			session[id][`${args[0]}.css`] = a.css
 			session[id][`${args[0]}.js`] = a.js
-			a.html = `<header move="true"><span class="programName">${args[0]}</span><nav><li class="min"></li><li class="max"></li><li class="close"></li></nav></header>`+a.html;
+			a.html = this.getFrame(args[0], a.html);
 			socket.emit('modal', [a.html, args]); });
 
 	};
@@ -138,16 +138,25 @@ function modal() {
 			return file;
 		};
 	}
-	this.createModal = async function(obj, socket) {
-		let name ='';
+	this.getFrame = (name, str) => {
+		/*
+		 * metodo encargado de juntar crear un frame común para todas las subaplicacionen
+		 * name: String -> Nombre de la aplicación
+		 * str: String -> contenido html de la aplicación
+		 * devuelve un string con el frame más el contenido que se ha pasado por parametro
+		*/
+		return `<header move="true"><span class="programName">${name}</span><nav><li class="min"></li><li class="max"></li><li class="close"></li></nav></header>${str}`;
+
+	};
+	this.createModal = async function(obj, name, socket) {
 		while (this.ready<2){await sleep(5);}
 			let id =socket.handshake.address.split(":").slice(-1)[0]+"_"+ modules.server.getCookieValue(socket.handshake.headers.cookie, '_id');
 			this.content.content = this.replace(obj, this.content.content);
-			//c = this.searchResource(c);
 			session[id]["modal.css"] = this.content.css
 			session[id]["modal.js"] = this.content.js
 			this.ready = 0;
-			socket.emit('modal', [this.content.content, 'modal']);
+			let str = this.getFrame(name, this.content.content);
+			socket.emit('modal', [str, ['modal']]);
 	};
 };
 module.exports = modal;

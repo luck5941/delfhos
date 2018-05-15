@@ -1,13 +1,14 @@
 var users = {
 	id_users: 0,
+	user: "",
 	name: "",
+	lastName: "",
 	wallPaper: "",
 	profilePicture: "",
-	pwd:"",
-	groups: [0],
+	friends: [0],
 	lastpwd: "",
-	share_innodes: [0],
-	share_to_me: [0]
+	phoneNumber: 0,
+	
 };
 var chats ={
 	id_chats: 0,
@@ -18,16 +19,6 @@ var chats ={
 		time: new Date(),
 		message: ""
 	}]
-};
-var files = {
-
-};
-var groups = {
-	id_groups : 0;
-	name: "",
-	image: "",
-	chat: false
-
 };
 /*
 *apuntes mongodb

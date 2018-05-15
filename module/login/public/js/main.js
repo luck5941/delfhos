@@ -36,7 +36,7 @@ loginScope.sendForm = (e) => {
 	e.preventDefault();
 	let formObj = {};
 	for (let i of input)
-		if ($(i).attr('type') !== 'submit')
+		if ($(i).attr('type') !== 'submit' && $(i).attr('name') !== 'password2'&& $(i).val() !== '')
 			formObj[$(i).attr('name')] = $(i).val()
 	if (method === 'login') formObj.id = document.cookie;
 	if (loginScope.searchifEqual()){
@@ -56,7 +56,7 @@ loginScope.loginFunct = (data) =>{
 			return loginScope.vueData.message = "ups parece que ese usuario ya existe.";
 			break;
 		case 'register':
-			return loginScope.vueData.message = "Se ha regisstrado correctamente"
+			return loginScope.vueData.message = "Se ha registrado correctamente"
 			break;
 		default:
 			return loginScope.vueData.message = "Lo has conseguido. Has hecho algo que no hemos contemplado. Enhorabuena ;)\n has obtenido "+data.access
@@ -97,7 +97,7 @@ loginScope.searchifEqual = () => {
 		$('#newUser #password2').focus();
 		loginScope.vueData.message = 'Ups, parece que las contraseñas no coinciden';
 	}
-	return loginScope.areEqueal;
+	return loginScope.areEqual;
 };
 $('body')
 .on('submit', 'login form', loginScope.sendForm)
