@@ -1,0 +1,184 @@
+@import './vars.scss';
+#root.login{ background-color: $middleTone;}
+#root.info{ background-color: $lightTone;}
+#root.help{ background-color: $darkTone;}
+#root{
+	width: 100vw;
+	height: 100vh;
+	transition-property: background-color;
+	transition-duration: .75s;
+	header{
+		position: fixed;
+		width: 100%;
+		height: 20vh;
+		#logo {
+			font-size: 32pt;
+			color:$lightTone;
+		}
+		nav{
+			display:flex;
+			flex-direction: rown; 
+			li {
+				color: $darkTone;
+				font-weight: 900;
+				flex-grow:1;
+				text-align: center;
+			}
+			li.active{
+				color: $middleTone;
+			}
+		}
+	}
+	main {
+		float: left;
+		width: 100%;
+		height: 300vh;
+		display: grid;
+		grid-template-columns: 100%;
+		grid-template-rows: repeat(3, 1fr);
+		transition-property: margin-top;
+		transition-duration: 0s;
+		section {
+			grid-area: auto/1/span 1/span 1;
+			padding: 20vh 0;
+		}
+		section.active {
+			 grid-area: 1/auto/span 1/span 1;
+		}
+		section.next { 
+			grid-area: 2/auto/span 1/span 1;
+		}
+		#form, #info, #help {
+			display: flex;
+			align-items: center;
+			float: left;
+			margin:0 auto;
+			width: 60%;
+			max-width: 960px;
+		}
+		#form {
+			flex-direction: column;
+			overflow: hidden;
+			form {
+				width: 100%;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				flex-wrap: wrap;
+				height: 33vh;
+				transition-duration: .75s;
+				transition-property: margin-left;
+				span{
+					width:100%;
+					margin-top: 2em;
+					p{
+						font-weight: 600;
+						 margin-bottom: 1em;
+					}
+					input{
+						border: none;
+						outline: none;
+						display: block;
+					}
+					input:not(.send){
+						border-bottom: 3px solid $darkTone;
+						background-color: inherit;
+						outline: none;
+						margin: 0 15%;;
+						width: 40%;
+					}
+					input.send {
+						background-color: $darkTone;
+						color: $lightTone;
+						width: 20%;
+						margin: 0 auto;
+						padding: 2% 0;
+						font-weight: 600;
+					}
+				}
+			}
+			#buttons {
+				width: 60%;
+				margin:auto;
+				padding-left: 30%;
+				div {
+					width: 12%;
+					display: inline-block;
+					float:left;
+					svg {
+						width: 100%;
+						path{
+							stroke: $darkTone;
+							stroke-width: 2px;
+						}
+					}
+					svg:hover{
+						path{
+							fill: $lightTone;
+							stroke: none;
+						}
+					}
+				}
+				div.invisible {
+					opacity: 0.3;
+					pointer-events: none;
+				}
+			}
+		}
+		#info, 	#help {
+			flex-direction: rown;
+			align-items: baseline;
+			article{
+				text-align: justify;
+			}
+			article:not(.main){
+				margin-left: 2%;
+				font-size:12pt;
+				p{
+					line-height: 16pt;
+					margin-bottom: 8pt;
+				}
+			}
+			.main {
+				font-size: 17pt;
+				font-weight: 900;
+			}
+		}
+		#help {article:not(.main){
+			color: $lightTone;
+			width: 48%;
+			margin-left: 52%;
+		}}
+	}
+}
+#root.info{
+	header {
+		#logo {
+			color: $darkTone;
+		}
+		nav{
+			li{
+				color:$middleTone;
+			}
+			li.active {
+				color: $lightTone;
+			}
+		}
+	}
+	
+}
+#root.help{
+	header {
+		#logo {
+			color: $lightTone;
+		}
+		nav {
+			li{
+				color:$lightTone;
+			}
+			li.active {
+				color: $middleTone;
+			}
+		}
+	}
+}

@@ -1,10 +1,25 @@
-$light_blue: #63ccff;
+/*$light_blue: #63ccff;
 $color2: #039be5;
 $color3: #006db3;
 $green: #A0F58B;
+*/
+$middleTone: #E32819;
+$lightTone:#F3EBD8; 
+$darkTone: #080A09;
 $font: sans-serif;
 $shadow: 5px 5px 5px;
 $menuHeight: 5%;
 $selected_color: lightblue;
 $footerHeight: 10%;
+/*functions*/
+@mixin propertie ($styles: ()) {
+	@each $p, $v in $styles{
+		#{$p}: $v;
+		--webkit-#{$p}: $v;
+		--moz-#{$p}: $v;
+		--ms-#{$p}: $v;
+		--o-#{$p}: $v;
+		
+	}
+}
 *{margin:0;padding:0}

@@ -2,6 +2,7 @@
 /*Importación de módulos */
 function FILESYSTEM(id) {
 	const fs = require('fs');	
+	const archiver= require('archiver');	
 	var sleep = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms)) 
 	this.id = id;
 	/*Variables globales*/
@@ -44,7 +45,6 @@ function FILESYSTEM(id) {
 		});
 		archive.pipe(output);
 		for (let i of files){
-			i = this.homeDir+i;
 			if (fs.lstatSync(i).isFile())
 				archive.file(i, {name: i.split("/").slice(-1)[0]})
 			else if (fs.lstatSync(i).isDirectory())
@@ -357,11 +357,11 @@ function FILESYSTEM(id) {
 		*/
 
 		let id = socket.handshake.address.split(":").slice(-1)[0] + "_"+modules.server.getCookieValue(socket.handshake.headers.cookie, '_id'),
-			filesToDownload = files[0][0];
-			let file = ''
-		if (filesToDownload.length<=1 && fs.lstatSync(this.homeDir + filesToDownload[0]).isFile()){
+			filesToDownload = files[0][0].map((a) => fs.realpathSync(this.homeDir+a));
+			let file = '';
+		if (filesToDownload.length<=1 && fs.lstatSync(filesToDownload[0]).isFile()){
 			file = filesToDownload[0].split("/").slice(-1)[0];
-			fs.createReadStream(this.homeDir + filesToDownload[0]).pipe(fs.createWriteStream(`tmp/${id}`));
+			fs.createReadStream(filesToDownload[0]).pipe(fs.createWriteStream(`tmp/${id}`));
 			modules.communication.send(file.split("/").slice(-1), files[1], files[2], socket);
 		}
 		else {

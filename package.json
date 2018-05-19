@@ -8,11 +8,13 @@
     "build": "sass --watch scss/style.scss:public/css/style.css",
     "build_desktop": "sass --watch scss/desktop.scss:module/desktop/public/css/desktop.css",
     "build_filesystem": "sass --watch scss/filesystem.scss:module/filesystem/public/css/filesystem.css",
-    "build_chat": "sass --watch scss/chat.scss:module/chat/public/css/chat.css"
+    "build_chat": "sass --watch scss/chat.scss:module/chat/public/css/chat.css",
+    "build_login": "sass --watch scss/login.scss:module/login/public/css/login.css --style compressed"
   },
   "author": "lucaselvira96@gmail.com",
   "license": "ISC",
   "dependencies": {
+    "archiver": "^2.1.1",
     "mongodb": "^3.0.5",
     "socket.io": "^2.1.0"
   }

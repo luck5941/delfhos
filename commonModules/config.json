@@ -68,7 +68,7 @@
     },
     "login": {
         "pluggins": [],
-        "style": [],
+        "style": ["css/login.css", "../../../public/css/style.css"],
         "script": ["js/main.js"]
     },
     "chat": {

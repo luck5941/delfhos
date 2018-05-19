@@ -6,7 +6,7 @@ loginScope.vueData = {}
 loginScope.vueMethods = {}
 //declaración de las variables necesarias para las acciones realizadas con vue
 loginScope.vueData.message = "";
-loginScope.vueData.newUser = [
+loginScope.vueData.form = {newUser:[
 	{name: "user", placeholder:"El nick con el que quieres que te conozca", type: "text", required: "true"}, 
 	{name: "name", placeholder:"tu nombre", type: "text"}, 
 	{name: "lastname", placeholder:"tus apellidos", type: "text"}, 
@@ -16,17 +16,50 @@ loginScope.vueData.newUser = [
 	{name: "phoneNumber", placeholder:"numero de telefono", type: "text" , pattern:"\\d{9}"}, 
 	{name: "password", placeholder:"tu contraseña", type: "password", required: "true"}, 
 	{name: "password2", placeholder:"Vuelva a escribir la contraseña", type: "password", required: "true"}, 
-	{type: "submit", value:"Enviar"}
-];
-loginScope.vueData.login = [
-	{name:"user", placeholder:"Tu nombre de usuario o dirección de correo", type: "text"},
+	{type: "submit", value:"Enviar", class:"send"}
+],login:[
+	{name:"user", placeholder:"nick or mail", type: "text"},
 	{name:"password", placeholder:"Tu contraseña", type: "password"},
-	{type: "submit", value:"Enviar"}
-];
+	{type: "submit", value:"Enviar", class:"send"}
+]};
+loginScope.vueData.changeForm = {login: ["No tienes cuenta aún? puedes crear una ahora mismo! solo clicka en", " crear cuenta"], newUser: ["Ya tienes cuenta??", " vamos a entrar!"]}
+loginScope.vueData.title = {login: "login", newUser:"Registro"};
 loginScope.vueData.action = 'login';
 loginScope.vueData.passwordSecurity = '';
+loginScope.vueData.moduleClass = '';
+loginScope.vueData.options = ['LOGIN', 'INFO', 'AYUDA'];
+loginScope.vueData.marginForms = 0;
+loginScope.vueData.totalScreen = parseInt(loginScope.vueData.form.newUser.length/3);
+loginScope.vueData.styleObjectForm = {"margin-left": 0};
+loginScope.vueData.mainStyle = {};
+loginScope.vueData.current = 0;
+loginScope.vueData.next = 1;
+
 //declaración de los metodos necesarias para las acciones realizadas con vue
 loginScope.vueMethods.changeAction = () => loginScope.vueData.action = loginScope.vueData.action==='login' ? 'newUser' : 'login';
+loginScope.vueMethods.goToSection =async (ind) => {
+	/*
+	 *metodo encargado de cambir de sección simulando un scroll infinito
+	*/
+	loginScope.vueData.next = ind;
+	loginScope.vueData.mainStyle = {"transition-duration":".75s", "margin-top": "-50%"};
+	await sleep(750);
+	loginScope.vueData.mainStyle = {};
+	loginScope.vueData.current = ind;
+	loginScope.vueData.next = ind+1;
+	
+	/*
+	console.log(ind)
+	loginScope.vueData.current = ind;
+	loginScope.vueData.next = ind+1;
+	*/
+};
+loginScope.vueMethods.goTo = (dir) => {
+	if ((loginScope.vueData.marginForms == 0&& dir) || (loginScope.vueData.marginForms ==  loginScope.vueData.totalScreen && !dir)) return;
+	loginScope.vueData.marginForms =(dir) ? loginScope.vueData.marginForms -1:loginScope.vueData.marginForms +1;
+	loginScope.vueData.styleObjectForm["margin-left"] = -loginScope.vueData.marginForms *200 + "%";
+};
+
 
 loginScope.vue = new Vue({el: '#root', data: loginScope.vueData, methods: loginScope.vueMethods});
 //declaración de los metodos propios
