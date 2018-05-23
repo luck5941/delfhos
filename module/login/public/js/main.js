@@ -18,8 +18,8 @@ loginScope.vueData.form = {newUser:[
 	{name: "password2", placeholder:"Vuelva a escribir la contraseña", type: "password", required: "true"}, 
 	{type: "submit", value:"Enviar", class:"send"}
 ],login:[
-	{name:"user", placeholder:"nick or mail", type: "text"},
-	{name:"password", placeholder:"Tu contraseña", type: "password"},
+	{name:"user", placeholder:"nick or mail", type: "text", required: "true"},
+	{name:"password", placeholder:"Tu contraseña", type: "password", required: "true"},
 	{type: "submit", value:"Enviar", class:"send"}
 ]};
 loginScope.vueData.changeForm = {login: ["No tienes cuenta aún? puedes crear una ahora mismo! solo clicka en", " crear cuenta"], newUser: ["Ya tienes cuenta??", " vamos a entrar!"]}
@@ -47,14 +47,11 @@ loginScope.vueMethods.goToSection =async (ind) => {
 	loginScope.vueData.mainStyle = {};
 	loginScope.vueData.current = ind;
 	loginScope.vueData.next = ind+1;
-	
-	/*
-	console.log(ind)
-	loginScope.vueData.current = ind;
-	loginScope.vueData.next = ind+1;
-	*/
 };
 loginScope.vueMethods.goTo = (dir) => {
+	/*
+	 *metodo encargado de cambiar de sección entre el login, info y ayuda
+	*/
 	if ((loginScope.vueData.marginForms == 0&& dir) || (loginScope.vueData.marginForms ==  loginScope.vueData.totalScreen && !dir)) return;
 	loginScope.vueData.marginForms =(dir) ? loginScope.vueData.marginForms -1:loginScope.vueData.marginForms +1;
 	loginScope.vueData.styleObjectForm["margin-left"] = -loginScope.vueData.marginForms *200 + "%";

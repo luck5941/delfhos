@@ -5,6 +5,22 @@ function FORM() {
 	const fs = require('fs');
 	const crypto = require('crypto');
 	this.newUser = (data, socket) => {
+		/*
+		 *Metodo encargado de responder a las peticiones de creación de un nuevo usuario
+		 *Establece unos valores minimos como pueda ser la img de fondo, de perfil, la creación de elementos asociados al usuario.. etc.
+		 *En caso de no tener los elementos mínimos para crearse, se sale de la función, es decir:
+		 *[user, birthday,mail,password]
+		 *y no puede incluir elementos distintos a:
+		 *[user,name,lastname,birthday,mail,secondMail,phoneNumber,password]
+		*/
+		let base = ["user","name","lastname","birthday","mail","secondMail","phoneNumber","password"],
+			req = ["user", "birthday","mail","password"],
+			r =0;
+		for (let o of Object.keys(data[0])){
+			if(req.indexOf(o) !==-1)r++;
+			if (base.indexOf(o) === -1) return modules.communication.send({access: 'missingValue'}, data[1], data[2], socket);
+		}
+		if (r!== req.length) return modules.communication.send({access: 'excessOfData'}, data[1], data[2], socket);
 		data[0].wallPaper = 'common/images/fsociety.jpg';
 		data[0].profilePicture = 'common/images/newUser.png';
 		data[0].friends = [];
@@ -29,16 +45,10 @@ function FORM() {
 			}
 		});
 	};
-	this.getSession = (ip) => {
-		/*
-		 * metodo encargado de determinar que variable de session debe tener asignada en función de la cookie y la ip en el momento del login
-		 *ip: string
-		 *cokie: string
-		*/
-		
-	};
 	this.login = (data, socket) => {
-		let obj = {};
+		let obj = {},
+			keys = Object.keys(data[0]).sort().join(' ');
+		if (keys !== 'id password user') return console.log(keys)
 		for (let o in data[0])
 			if (o !== 'id')
 				obj[o] = data[0][o];
@@ -46,7 +56,7 @@ function FORM() {
 		let id = modules.server.getCookieValue(data[0].id, "_id");
 		let ip = socket.handshake.address.split(":").slice(-1)[0];		
 		response.then((res) => {
-			if (res.length < 1){ 
+			if (res.length !== 1){ 
 				session[ip+"_"+id].register  = false;
 				modules.communication.send({access: false}, data[1], data[2], socket);
 			}

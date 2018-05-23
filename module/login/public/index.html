@@ -8,7 +8,7 @@
 <main v-bind:style="mainStyle">
 <section id="form" v-bind:class="{active: current===0,next: next===0 }">
 	<h1>{{title[action]}}</h1>
-<form action="someplace" method="post" id="newUser" :style="styleObjectForm">
+<form action="someplace" method="post" :id="action" :style="styleObjectForm">
 	<span v-for="input in form[action]">
 		<p>{{input.placeholder}}</p>
 		<input  :name="input.name" :id="input.name" :type="input.type" :pattern="input.pattern" :required="input.required" :value="input.value" :class="input.class">
@@ -27,13 +27,13 @@
 		Delfhos consiste en una aplicación que pretende crear una comunidad de personas con un nexo en común, los estudios. Delfhos intenta reunir a estudiantes y trabajadores de temprana edad en un entorno donde resulte sencillo crear un espacio de trabajo productivo.
 	</article>
 	<article>
-		<p>Desde la llegada de internet y, en concreto, de la web 2.0 el proceso de compartir información entre los distintos usuarios que circulan por el universo casi <i>matrixiano</i> de internet se ha ido volviendo más y más sencillo. No tardó en aparecer "La nube" un espacio que "¿Dónde está?", "¿Quién lo gestiona?", "¿Qué ocurre con nuestros archivos?" Sólo sabemos que los "subimos" y los podemos descargar en cualquier punto. </p>
+		<p>Desde la llegada de internet y, en concreto, de la web 2.0 el proceso de compartir información entre los distintos usuarios que circulan por el universo casi <i>matrixiano</i> de internet se ha ido volviendo más y más sencillo. No tardó en aparecer "La nube" un espacio que "¿Dónde está?", "¿Quién lo gestiona?", "¿Qué ocurre con nuestros archivos?" Sólo sabemos que los "subimos" y se pueden descargar en cualquier otro lugar y momeno. </p>
 		<p>Las politicas de transparencia impuestas a las empresas que ofrecen estos servicio han ido facilitando saber que ocurre con nuestros datos al usar dichos entornos de trabajo, generando una nueva pregunta "¿Y si no me interesa vender tan barata mi privacidad?"</p>
-<p>Delfhos se crea como una alternativa más, completamente transparente, dejando a los usuairos ver que ocurre dentro de la aplicación, que pasa con sus datos e incluso proponer cosas o ¡integrarlas directamente!</p>
+<p>Delfhos se crea como una alternativa más, completamente transparente, dejando a los usuarios ver que ocurre dentro de la aplicación, que pasa con sus datos e incluso proponer cosas o ¡integrarlas directamente!</p>
 	</article>
 </section>
 <section id="help" v-bind:class="{active:current==2, next:next==2}">
-	<article> <p>Dado el caracter comunitario de la aplicación, y que toma como modelo la comunidad que se genera con el movimeitno "Gnu linux", se plantean varias formas de colaborar siguiendo el modelo que dicha comunidad mantiene<p> <p>Si te gusta el desarrollo y te sientes cómodo programando, puedes resolver "<i>issues</i>" o añadir alguna subaplicación al resto. Te animamos a reunir a un equipo y  desarrollar algún programa más, que andamos un poco escasos 😉</p> <p>En caso de no ser un poco "friki" y que no te mole eso de pasarte sentado en una silla horas picando códigos sin sentido...😴  siempre puedes proponer ideas, y decir fallos y/o mejoras que te gustarian como usuario.</p> <p>Ya para acabar, siempre puedes donar algo de dinero para el mantenimiento del sitio. Recueda que no comercializamos con tus datos ni mostramos publicicad. Nuestra principal fuente de ingresos sois vosotros 😅 </p>
+	<article> <p>Dado el caracter comunitario de la aplicación, y que toma como modelo la comunidad que se genera con el movimietno del software libre, se plantean varias formas de colaborar siguiendo el modelo que dicha comunidad mantiene<p> <p>Si te gusta el desarrollo y te sientes cómodo programando, puedes resolver "<i>issues</i>" o añadir alguna subaplicación al resto. Te animamos a reunir a un equipo y  desarrollar algún programa más, que andamos un poco escasos 😉</p> <p>En caso de no ser taaaan "friki" y que no te mole eso de pasarte sentado en una silla horas picando códigos sin sentido...😴  siempre puedes proponer ideas, y decir fallos y/o mejoras que veas como usuario.</p> <p>Ya para acabar, siempre puedes donar algo de dinero para el mantenimiento del sitio. Recueda que no comercializamos con tus datos ni mostramos publicicad. Nuestra principal fuente de ingresos son vosotras donaciones 😅 </p>
 	</article>
 </section>
 </main>
