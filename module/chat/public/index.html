@@ -1,0 +1,31 @@
+<div class="header">
+	<div id="user">
+	    <img src="%profilePicture%">
+	    <p>{{userName}}</p>
+	</div>
+	<div id="search">
+	    <input type="text" id="search" placeholder="userNick" v-model="nick" @keyup="searchUser">
+	    <nav>
+	        <li v-for="chat in searchChats" @click="openChat(chat.user)">
+	            <img class="profilePhoto" :src="'profile/'+chat.user" :alt="chat.user+' photo'">
+	            <span>{{chat.user}}</span>
+	        </li>
+	    </nav>
+	</div>
+</div>
+<nav id="chats">
+	<li v-for="chat in chats" @click="openChat(chat.user)">
+		<img class="profilePhoto" :src="'profile/'+chat.user">
+		<span>{{chat.user}}</span>
+	</li>
+</nav>
+<main v-if=chat>
+	<div id="chatArea">
+		<div v-for="message in messages" :class="{own : message.own}">
+			<span class="message">
+			<span class="time">{{new Date(message.time).getHours()}}:{{new Date(message.time).getMinutes()}}</span>
+			{{message.text}}</span>
+		</div>
+	</div>
+	<input type="text" id="message" v-model="message" @keyup="sendMessage">
+</main>

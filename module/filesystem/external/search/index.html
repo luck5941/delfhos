@@ -1,0 +1,24 @@
+<link rel="stylesheet" href="./css/style.css">
+<div id="search">
+<div class="header">
+	<input class="serch" @keyup="searchUser" v-model="searchName">
+	<nav class="match">
+		<li v-for="f in match" @click="selectUser(f.user)">
+			<div class="img">
+	            		<img class="profilePhoto" :src="'profile/'+f.user" :alt="f.user+' photo'">
+			</div>
+			<div class="name">{{f.user}}</div>
+		</li>
+	</nav>
+</div>
+<main>
+	<nav class="friends">
+		<li v-for="f in friends" @click="selectUser(f)">
+			<div class="img"><img :src="'profile/'+f" :alt="f +' photo'"></div>
+			<div>{{f}}</div>
+		</li>
+	</nav>
+	<button @click="acept">Aceptar</button>
+</main>	
+</div>
+<script type="text/javascript" src="./js/main.js"></script> 

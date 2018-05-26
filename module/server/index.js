@@ -96,11 +96,10 @@ function SERVER(modules) {
 		}
 		else if (path.search(/^(\/?\w*)*\.\w*$/) !== -1){
 			let toAdd = /^\/common/.test(path) ? "" : "/users/"+session[id].user
-			path = __dirname+"/../../files"+toAdd+path;
+			path = process.cwd() +"/files"+toAdd+path;
 			let ext = path.split('.').slice(-1)[0];
 			fs.readFile(path, (e, d) => e ? this.forbiddenFunct(res, id) : this._sendFile(res, d, ["200", contentType(ext)]));
 		}
-
 		else this.forbiddenFunct(res, id);
 
 	}

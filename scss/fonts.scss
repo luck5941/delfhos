@@ -1,0 +1,72 @@
+@font-face {font-family: metropolisBoldItalic; src: url(common/fonts/metropolis/Metropolis_BoldItalic.otf);}
+@font-face {font-family: metropolisRegularItalic; src: url(common/fonts/metropolis/Metropolis_RegularItalic.otf);}
+@font-face {font-family: metropolisExtraLight; src: url(common/fonts/metropolis/Metropolis_ExtraLight.otf);}
+@font-face {font-family: metropolisLightItalic; src: url(common/fonts/metropolis/Metropolis_LightItalic.otf);}
+@font-face {font-family: metropolisExtraLightItalic; src: url(common/fonts/metropolis/Metropolis_ExtraLightItalic.otf);}
+@font-face {font-family: metropolisBlackItalic; src: url(common/fonts/metropolis/Metropolis_BlackItalic.otf);}
+@font-face {font-family: metropolisBlack; src: url(common/fonts/metropolis/Metropolis_Black.otf);}
+@font-face {font-family: metropolisThin; src: url(common/fonts/metropolis/Metropolis_Thin.otf);}
+@font-face {font-family: metropolisBold; src: url(common/fonts/metropolis/Metropolis_Bold.otf);}
+@font-face {font-family: metropolisRegular; src: url(common/fonts/metropolis/Metropolis_Regular.otf);}
+@font-face {font-family: metropolisThinItalic; src: url(common/fonts/metropolis/Metropolis_ThinItalic.otf);}
+@font-face {font-family: metropolisMedium; src: url(common/fonts/metropolis/Metropolis_Medium.otf);}
+@font-face {font-family: metropolisExtraBold; src: url(common/fonts/metropolis/Metropolis_ExtraBold.otf);}
+@font-face {font-family: metropolisLight; src: url(common/fonts/metropolis/Metropolis_Light.otf);}
+@font-face {font-family: metropolisExtraBoldItalic; src: url(common/fonts/metropolis/Metropolis_ExtraBoldItalic.otf);}
+@font-face {font-family: metropolisMediumItalic; src: url(common/fonts/metropolis/Metropolis_MediumItalic.otf);}
+@font-face {font-family: metropolisSemiBoldItalic; src: url(common/fonts/metropolis/Metropolis_SemiBoldItalic.otf);}
+@font-face {font-family: metropolisSemiBold; src: url(common/fonts/metropolis/Metropolis_SemiBold.otf);}
+@font-face {font-family: montserratExtraBold; src: url(common/fonts/montserrat/Montserrat_ExtraBold.ttf);}
+@font-face {font-family: montserratBlackItalic; src: url(common/fonts/montserrat/Montserrat_BlackItalic.ttf);}
+@font-face {font-family: montserratExtraLightItalic; src: url(common/fonts/montserrat/Montserrat_ExtraLightItalic.ttf);}
+@font-face {font-family: montserratBoldItalic; src: url(common/fonts/montserrat/Montserrat_BoldItalic.ttf);}
+@font-face {font-family: montserratLightItalic; src: url(common/fonts/montserrat/Montserrat_LightItalic.ttf);}
+@font-face {font-family: montserratSemiBold; src: url(common/fonts/montserrat/Montserrat_SemiBold.ttf);}
+@font-face {font-family: montserratBold; src: url(common/fonts/montserrat/Montserrat_Bold.ttf);}
+@font-face {font-family: montserratThinItalic; src: url(common/fonts/montserrat/Montserrat_ThinItalic.ttf);}
+@font-face {font-family: montserratItalic; src: url(common/fonts/montserrat/Montserrat_Italic.ttf);}
+@font-face {font-family: montserratSemiBoldItalic; src: url(common/fonts/montserrat/Montserrat_SemiBoldItalic.ttf);}
+@font-face {font-family: montserratRegular; src: url(common/fonts/montserrat/Montserrat_Regular.ttf);}
+@font-face {font-family: montserratExtraBoldItalic; src: url(common/fonts/montserrat/Montserrat_ExtraBoldItalic.ttf);}
+@font-face {font-family: montserratLight; src: url(common/fonts/montserrat/Montserrat_Light.ttf);}
+@font-face {font-family: montserratBlack; src: url(common/fonts/montserrat/Montserrat_Black.ttf);}
+@font-face {font-family: montserratExtraLight; src: url(common/fonts/montserrat/Montserrat_ExtraLight.ttf);}
+@font-face {font-family: montserratMediumItalic; src: url(common/fonts/montserrat/Montserrat_MediumItalic.ttf);}
+@font-face {font-family: montserratMedium; src: url(common/fonts/montserrat/Montserrat_Medium.ttf);}
+@font-face {font-family: montserratThin; src: url(common/fonts/montserrat/Montserrat_Thin.ttf);}
+$metropolisBoldItalic: metropolisBoldItalic;
+$metropolisRegularItalic: metropolisRegularItalic;
+$metropolisExtraLight: metropolisExtraLight;
+$metropolisLightItalic: metropolisLightItalic;
+$metropolisExtraLightItalic: metropolisExtraLightItalic;
+$metropolisBlackItalic: metropolisBlackItalic;
+$metropolisBlack: metropolisBlack;
+$metropolisThin: metropolisThin;
+$metropolisBold: metropolisBold;
+$metropolisRegular: metropolisRegular;
+$metropolisThinItalic: metropolisThinItalic;
+$metropolisMedium: metropolisMedium;
+$metropolisExtraBold: metropolisExtraBold;
+$metropolisLight: metropolisLight;
+$metropolisExtraBoldItalic: metropolisExtraBoldItalic;
+$metropolisMediumItalic: metropolisMediumItalic;
+$metropolisSemiBoldItalic: metropolisSemiBoldItalic;
+$metropolisSemiBold: metropolisSemiBold;
+$montserratExtraBold: montserratExtraBold;
+$montserratBlackItalic: montserratBlackItalic;
+$montserratExtraLightItalic: montserratExtraLightItalic;
+$montserratBoldItalic: montserratBoldItalic;
+$montserratLightItalic: montserratLightItalic;
+$montserratSemiBold: montserratSemiBold;
+$montserratBold: montserratBold;
+$montserratThinItalic: montserratThinItalic;
+$montserratItalic: montserratItalic;
+$montserratSemiBoldItalic: montserratSemiBoldItalic;
+$montserratRegular: montserratRegular;
+$montserratExtraBoldItalic: montserratExtraBoldItalic;
+$montserratLight: montserratLight;
+$montserratBlack: montserratBlack;
+$montserratExtraLight: montserratExtraLight;
+$montserratMediumItalic: montserratMediumItalic;
+$montserratMedium: montserratMedium;
+$montserratThin: montserratThin;

@@ -1,31 +1,35 @@
 'use strict'
 var desktopScope = {};
 /*variables globales*/
-desktopScope.programs = $('desktop #downBar li');
-desktopScope.home = $('desktop #home');
+desktopScope.programs = $();
 desktopScope.menu = $('desktop #menu');
 desktopScope.profileLaunch = desktopScope.menu.find('#settings li').eq(0);
 desktopScope.contentMenuConstruct = {"desktop": {"Cambiar la img": "desktopScope.changeImg"}}
-
-
-//desktopScope.contentMenu = new ContentMenu(desktopScope.contentMenuConstruct);
-/*modules externos*/
-var external = {}
-
-
-/*metodos locales*/
-/*metodos  llamados por eventos*/
+//variables de vue
+desktopScope.vueData = {};
+desktopScope.vueData.menuVisible =false;
+desktopScope.vueData.openPrograms =[];
+desktopScope.vueData.options =false;
+let t = new Date();
+desktopScope.vueData.hour =t.getHours().toString();
+desktopScope.vueData.minutes =t.getMinutes().toString();
+if (desktopScope.vueData.hour.length == 1) desktopScope.vueData.hour = '0'+desktopScope.vueData.hour;
+if (desktopScope.vueData.minutes.length == 1) desktopScope.vueData.minutes = '0'+desktopScope.vueData.minutes;
+//metodos de vue
+desktopScope.vueMethods = {};
+desktopScope.vueMethods.showOptions = () => desktopScope.vueData.options = !desktopScope.vueData.options;
+desktopScope.vueMethods.openMenu = () => {desktopScope.vueData.menuVisible = !desktopScope.vueData.menuVisible; desktopScope.vueData.options = false;}; 
 desktopScope.openModal = (e) => {
 	/*
 	 *Función encargada de mostrar el modal en la pantalla
 	*/
-	let txt = e.currentTarget.innerHTML.toLowerCase(),
+	let txt = e.currentTarget.getAttribute('id'),
 		args = [];
 	switch (txt){
 		case 'filesystem':
 			args = ['filesystem'];
 			break;
-		case 'perfil':
+		case 'profilePicture':
 			args = ['filesystem', 'selectfile']; 
 			desktopScope.why = (txt==='perfil') ? 'profilePicture':'';
 			break;
@@ -33,15 +37,29 @@ desktopScope.openModal = (e) => {
 			args = ['chat'];
 			break;
 		default:
-			console.info("something went bad");
+			return	console.info("something went bad");
 			break;
 	}
 	comunication.send('modal', args, 'openApps', 'changeImg','modal' );
 };
-desktopScope.openMenu = () => {
-	let method =(desktopScope.menu.attr('class')) ? (desktopScope.menu.attr('class').search('visible') === -1) ? 'addClass' : 'removeClass' : 'addClass';
-	desktopScope.menu[method]('visible');
+/*metodos locales*/
+desktopScope.updateTime = async () => {
+	let m =parseInt(desktopScope.vueData.minutes),
+		h =parseInt(desktopScope.vueData.hour);
+	while(true){
+		await sleep(60000);
+		if (++m ==60){
+			m = 0;
+			if (++h==24) h=0;
+		}
+		desktopScope.vueData.hour =h.toString();
+		desktopScope.vueData.minutes =m.toString();
+		if (desktopScope.vueData.hour.length == 1) desktopScope.vueData.hour = '0'+desktopScope.vueData.hour;
+		if (desktopScope.vueData.minutes.length == 1) desktopScope.vueData.minutes = '0'+desktopScope.vueData.minutes;
+	}
 };
+
+/*metodos  llamados por eventos*/
 desktopScope.changeImg = () => {
 	/*
 	 *Función encargada de mostrar llamar al filesystem con la intención de poder cambiar la img de fondo
@@ -66,7 +84,9 @@ desktopScope.updateImg = (uri) => {
 	interaction.specialAction(['filesystem', 'close']);
 }
 /*control de eventos*/
-desktopScope.programs.on('click',desktopScope.openModal);
-desktopScope.home.on('click',desktopScope.openMenu);
-desktopScope.profileLaunch.on('click', desktopScope.openModal);
+$('body')
+.on('click', '#menu #programsList li', desktopScope.openModal)
+.on('click', '#menu #options #profilePicture', desktopScope.openModal);
 contextMenu.updateMenu(desktopScope.contentMenuConstruct);
+desktopScope.updateTime();
+desktopScope.vue = new Vue({'el': 'desktop', data: desktopScope.vueData, methods: desktopScope.vueMethods});

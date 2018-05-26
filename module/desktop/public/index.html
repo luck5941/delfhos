@@ -1,32 +1,47 @@
-<nav id="sideBar" class="bar">
-	<nav class="slide">
-		<li>file1</li>
-		<li>file2</li>
-		<li>file3</li>
-		<li>file4</li>
-		<li>file5</li>
-		<li>file6</li>
-		<li>file7</li>
-	</nav>
-</nav>
-<div id="menu">
-	<div id="options">
-		<div id="profilePicture"></div>
-		<div id="settings">
-			<nav>
-				<li>perfil</li>
-				<li>apariencia</li>
-				<li>apagar</li>
-			</nav>
+<div id="clock"><p>{{hour}}</p><p>··</p><p>{{minutes}}</p></div>
+<div id="overflow" v-bind:class="{invisible:!menuVisible}"></div>
+<div id="menu" v-bind:class="{invisible: !menuVisible}" @click="openMenu">
+		<div id="taskBar"> <svg @click.stop="showOptions" id="optionsBottom" viewBox="0 0 100 100"> <path d="M10 10 L 90 10 L50 90 Z"> </svg> </div>
+		<div id="options" v-if="options">
+			<div id="profilePicture"></div>
+			<div id="settings">
+				<nav>
+					<li>Apariencia</li>
+					<li>Apagar</li>
+				</nav>
+			</div>
 		</div>
-	</div>
+	<nav id="programsList">
+		<li id="filesystem">
+			<svg viewBox="0 0 2000 2000">
+				<circle r="1000" cx="1000" cy="1000" class="light" />
+		                <polyline class="dark" points="1677.8,584.1 1100.6,1583.9 437.3,1583.1 436.8,332.7 700.9,333.7 844.9,583.1"/>
+               			<text transform="matrix(0.7243 -1.2545 0.866 0.5 1114.6731 1543.0304)" class="light" font-size="100">FILE SYSTEM</text>
+		                <polygon class="light" points="313,402.3 436.8,332.7 436.9,403"/> 
+               			<polyline class="light" points="977.1,1652.7 1100.9,1582.7 979,1582 977.5,1652.5"/>
+		                <polygon class="light" points="1549,658.7 1547,655.3 1674,584.1 1677.8,584.1 1676.8,586"/>
+               			<polyline class="middle" points="1554.9,652.7 977.8,1652.4 313.5,1652.7 313.5,652.7 313,402.3 678,402.3 822,652.3"/>
+			</svg>
+		</li>
+		<li id="chat">
+			<svg viewBox="0 0 2000 2000">
+				<circle r="1000" cx="1000" cy="1000" class="light" />
+			        <circle class="dark" cx="439.1" cy="1013.1" r="298"/>
+			        <polygon class="middle" points="584.1,937.4 1858.9,595.6 1392,1404.4 584.1,1186.1"/>
+			        <text transform="matrix(0.7243 -1.2545 0.866 0.5 1474.6017 1208.9078)" class="light" font-size="125">CHAT</text
+			</svg>
+
+		</li>
+	</nav>
 </div>
 <nav id="downBar">
 	<nav class="slide">
-	<div id="home">
-		<p>home</home>
-	</div>
-		<li>fileSystem</li>
-		<li>chat</li>
+		<li id="home" @click="openMenu">
+			<svg viewBox="0 0 100 100">
+				<polygon class="dark" points="55.6,4.1 99.5,42.9 44.4,95.9 0.5,57.1"/>
+				<polygon class="middle" points="50.6,21.7 71.2,41.6 50,78.7 29.2,59"/>
+			</svg>
+		</li>
+		<li v-for="open in openPrograms"><img :src="open"></li>
 	</nav>
 </nav>
