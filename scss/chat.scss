@@ -1,24 +1,25 @@
 @import './vars.scss';
 chat.module{
 	position: absolute;
-	bottom: 2vh;
+	bottom: 5vh;
 	right: 0;
 	left:inherit;
 	top:inherit;
 	width: 25%;
 	height: 40vh;
-	background-color:rgba(135,135,135,.5);
 	box-shadow: 0 0;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
 	.header{
 		float: left;
-		top: 25px;
+		top: 50px;
 		left: 0;
 		width: 100%;
-		display: flex;
-		align-items: center;
 		z-index: 3;
 		height: 20%;
-		#user {
+		position: absolute;
+		/*#user {
 			flex-grow: 1;
 			flex-basis: 0;
 			display: flex;
@@ -29,67 +30,184 @@ chat.module{
 			p {
 				display: inline-block;
 			}
+		}*/
+		#search {
+			float: right;
+			margin: 1%;
+			height: 80%;
+			display: flex;
+			align-items: center;
+			flex-direction: row-reverse;
+			#button {
+				height: 100%;
+				float: right;
+				z-index:1;
+				svg {
+					height: 100%;
+					.contorn {fill: $middleTone;}
+					.loupe { fill: none; stroke: $lightTone; stroke-width: 3;}
+				}
+			}
+			input {
+				background-color: $middleTone;
+				border: none;
+				border-top-left-radius: 10% 50%;
+				border-bottom-left-radius: 10% 50%;
+				color: $lightTone;
+				height: 100%;
+				transition-duration: .75s;
+				transition-property: width;
+				width: 100%;
+				margin-right: -14%;
+				z-index:0;
+				text-align: center;
+				font-family: $metropolisBold;
+			}
+			input.close{width: 0%;}
 		}
-		#search { flex-grow: 1; flex-basis: 0; }
+		#listSearchUser{
+			float:right;
+			width: 50%;
+			margin-right: 4%;
+			li{border-top: 3px solid $middleTone;}
+		}
 	}
 	#chats {
+		position: absolute;
 		float: left;
+		height: 74%;
+		width: 107%;
 		display: flex;
-		top: 20%;
+		top: 81px;
+		left: 4%;
 		flex-direction: column;
-		li {
-			list-style: none;
+		background-color: $lightTone;
+		transition-property: left;
+		transition-duration: .75s;
+		li{
+			margin-left: 10%;
+			width: 
+			30%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			img, p{
+				flex: 1 1;
+				text-align: center;
+			}
 			img {
-				width: 50px;
-				heigth: 50px;
-				border-radius:50%;
+				width: 33.3%;
+			}
+
+		}
+		#sideMenu{
+			top: 0;
+			right: 0;
+			position: absolute;
+			width: 7%;
+			height: 100%;
+			display: flex;
+			justify-conent: center;
+			align-intems: center;
+			svg{
+				width: 100%;
+				path{
+					fill: none;
+					stroke: $middleTone;
+					stroke-width:3;
+				}
 			}
 		}
 	}
+	#chats.hidden{left: -100%;}
 	main {
-		position: absolute;
-		bottom:0;
 		display: flex;
 		height: 80%;
 		width: 100%;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
+		margin-top: 7%;
+		.chatData{
+			align-self: flex-start;
+			margin-left: 10%;
+			padding-bottom: 2%;
+		}
 		#chatArea {
 			flex-grow: 1;
-			background-color: #f3f3f3;
 			width: 80%;
 			overflow-y: auto;
 			overflow-x: hidden;
-			div {				
+			@include propertie(('background': linear-gradient(to left, $pastelTone 50% , $darkTone 50%)));
+			div {
 				float: left;
 				width: 100%;
+				color: $lightTone;
+				margin-top: 5px;
 				.message {
-					float: right;
-					max-width: 45%;
-					background-color: $light_blue;
-					padding: 2.5%;
-					margin: 2.5%;
-					border-radius: 15px 15px;
+					float: left;
+					max-width: 40%;
+					background-color: $pastelTone;
+					padding: 10px;
 				}
 				.time {
-					color: white;
 					font-size: 8pt;
 					margin-right: 5px;
 				}
 
 			}
 			div.own{
-				.message{
-					float: left;
-					background-color: $green;
-				}
+				.message{ float: right; background-color: $darkTone;}
 			}
 
 		}
-		input {
-			flex-basis: 0;
+		/*
+		#backgroundChat{
+			position: relative;
+			top: 0;
+			left: 0;
 			width: 80%;
+			margin: auto;
+			height: 100%;
+		}
+		#backgroundChat div{
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			top: 0;
+			left: 0;
+			width:50%;
+		}
+		#backgroundChat div:nth-child(1){
+			background-color: $darkTone;
+		}
+		#backgroundChat div:nth-child(2){
+			background-color:$pastelTone;
+			left: 50%;
+		}*/
+		input {
+			width: 80%;
+			height: 10%;
+			max-height: 100px;
+			background-color: $pastelTone;
+			color: $lightTone;
+			border: none;
+			margin: 1% 0 2% 0;
+			padding: 1%;
+		}
+	}
+	.chatData {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		img {
+			flex: 1 0 auto;
+			width: 20%;
+			max-width: 50px;
+		}
+		span {
+			flex: 1 1 auto;
+			color: $darkTone;
 		}
 	}
 }

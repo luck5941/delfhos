@@ -31,6 +31,7 @@ function Chat(id, socket) {
 				let obj = {};
 				obj.time = i.time;
 				obj.text = i.message;
+				obj.readder = i.readder;
 				obj.own = (i.from.toString() === this._id.toString())
 				msg[o].push(obj)
 			}
@@ -75,9 +76,7 @@ function Chat(id, socket) {
 			modules.communication.send(toSend, data[1], data[2], socket);
 		});
 	};
-	this.getMessage = (data) => {		
-		this.socket.emit('chat', data);
-	};
+	this.getMessage = (data) => this.socket.emit('chat', data);
 	this.customize = async (obj, id) => {
 		/*function encargada de determinar si hay que cambiar algo del
 		 *texto que se va a enviar al usuario
@@ -100,15 +99,14 @@ function Chat(id, socket) {
 		 *Primero busca a que socket debe enviar el mensaje, una vez que lo tenga,
 		 *genera la estructura que este debe enviar y actualiza en la base de datos
 		*/
-		
 		if(Object.keys(this.messages).indexOf(message.dst) !== -1){ //exite el valor
 			let id = this.messages[message.dst].id;
-			this.messages[message.dst].content.push({from: this._id, to: this.messages[message.dst].id_other, time: new Date(), message: message.text});
+			this.messages[message.dst].content.push({from: this._id, to: this.messages[message.dst].id_other, time: new Date(), message: message.text, readder: false});
 			ddbb.update({"chats": {"_id": id}}, {messages: this.messages[message.dst].content})
 		}
 		else {
 			ddbb.query({user: {user: message.dst}}).then((d)=> {
-				let obj = {from: this._id, to: d[0]._id, time: new Date(), message: message.text};
+				let obj = {from: this._id, to: d[0]._id, time: new Date(), message: message.text, readder: false};
 				this.messages[message.dst] = {id_other: d[0]._id, content: [obj]}
 		 		ddbb.insert({"chats": {members: [this._id, d[0]._id], messages: [obj]}}).then((d) => {
 		 			this.messages[message.dst].id = d._id;
@@ -126,7 +124,17 @@ function Chat(id, socket) {
 		if (Object.keys(instances).indexOf(send) !== -1)
 		instances[send].slice(-1)[0].getMessage(data);
 	}
-
+	this.setReadder = (data) => {
+		let read = data[0][0],
+			id = this.messages[read].id;
+			ddbb.query({user: {user: read}}).then((d)=> {
+				let to_id = d[0]._id;
+		 		ddbb.update({chats: {_id: id, "messages.from": to_id}}, {"messages.$.readder": true});
+			});
+		console.log("lo ponemos todo a true")
+		this.messages[read].content.forEach((d, i) => this.messages[read].content[i].readder = true);
+		
+	};
 	init();
 };
 

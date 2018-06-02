@@ -7,6 +7,7 @@ $green: #A0F58B;
 $middleTone: #E32819;
 $lightTone:#F3EBD8; 
 $darkTone: #080A09;
+$pastelTone: #F46C6C;
 $font: sans-serif;
 $shadow: 5px 5px 5px;
 $menuHeight: 5%;
@@ -24,6 +25,10 @@ $footerHeight: 10%;
 	}
 }
 *{margin:0;padding:0}
-.middle {fill: $middleTone; background-color: middleTone;}
-.dark {fill: $darkTone; background-color: darkTone;}
-.light {fill: $lightTone; background-color: lightTone;}
+svg {
+	.middle {fill: $middleTone;}
+	.dark {fill: $darkTone;}
+	.light {fill: $lightTone;}
+	.light_out {stroke: $lightTone;}
+}
+

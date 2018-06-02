@@ -7,7 +7,7 @@ function FILESYSTEM(id) {
 	this.id = id;
 	/*Variables globales*/
 	this.currentPath = '';
-	this.homeName = "Carpeta personal";
+	this.homeName = "homeDir";
 	this.homeDir;
 	this.trashPath = '';
 	this.modal;
@@ -224,7 +224,7 @@ function FILESYSTEM(id) {
 		let path = this.currentPath.split('/'),
 			arr;
 		this.currentPath = (name[0] !== this.homeName) ? path.slice(0, path.indexOf(name[0]) + 1).join("/") + '/' : this.homeDir;
-		arr = (name != this.homeName) ? path.slice(4, path.indexOf(name[0]) + 1) : [];
+		arr = (name != this.homeName) ? path.slice(3, path.indexOf(name[0]) + 1) : [];
 		modules.communication.send([loadFiles()[0], arr], name[1], name[2], socket);
 	};
 

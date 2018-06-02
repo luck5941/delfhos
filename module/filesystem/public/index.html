@@ -1,5 +1,7 @@
 <ul class="topBar">
-	<li class="track">Carpeta personal</li>
+	<li class="track"><svg viewBox="0 0 2000 2000"><polygon class="middle" points="1180.8,375 682.3,375 103.3,1374.5 602.8,1374"/>
+		<polygon class="middle" points="1771.8,1377 1896.8,1376 1319.8,376 1194.8,375"/>
+		<rect x="1063.8" y="1124" class="dark" width="250" height="501"/></svg></li>
 	<li v-for="location in currentPath" @click="goFolderTopBar(location)">{{location}}</li>
 </ul>
 <ul id="options" class="topBar">
@@ -25,11 +27,60 @@
 	</div>
 	<ul class="elements">
 		<li v-for="folder in dir" class="folder">
-			<img src="common/images/folder.jpg" alt="folder icon" draggable="true">
+			<svg viewBox="0 0 2000 2000" class="filesystem"> 
+		                <polyline class="dark" points="1677.8,584.1 1100.6,1583.9 437.3,1583.1 436.8,332.7 700.9,333.7 844.9,583.1"/>
+		                <polygon class="light" points="313,402.3 436.8,332.7 436.9,403"/> 
+               			<polyline class="light" points="977.1,1652.7 1100.9,1582.7 979,1582 977.5,1652.5"/>
+		                <polygon class="light" points="1549,658.7 1547,655.3 1674,584.1 1677.8,584.1 1676.8,586"/>
+               			<polyline class="middle" points="1554.9,652.7 977.8,1652.4 313.5,1652.7 313.5,652.7 313,402.3 678,402.3 822,652.3"/>
+			</svg>
 			<p>{{folder}}</p>
 		</li>
 		<li v-for="file in getPath" class="file">
-			<img :src="file.path" alt="file icon" draggable="true" >
+			<img :src="file.path" alt="file icon" draggable="true" v-if="file.ext==='availablesExt'">
+			<svg viewBox="0 0 2000 2000" v-else-if="file.ext==='img'" >
+		                <polygon class="dark" points="287.6,1625 1040.6,308 1907.1,299.5 1145.6,1616"/>
+               			<polygon class="middle" points="138.5,1692.8 891.5,375.8 1758,367.3 996.5,1683.8"/>
+		                <circle class="dark light_out" cx="1078.4" cy="993.8" r="248.8" stroke-width="35.6951" stroke-miterlimit="10"/>
+               			 <defs>
+		                        <circle id="SVGID_1_" cx="1078.4" cy="993.8" r="234.6"/>
+               			 </defs> 
+		                <clipPath id="SVGID_2_">
+               		        	<use xlink:href="#SVGID_1_"  style="overflow:visible;"/>
+		                </clipPath>
+				<g clip-path="url(#SVGID_2_)">
+		                        <path class="dark light_out" d="M1084,993c0,0-71.4-176.3-14-269.3c152.2,63.7,217.7,104.2,217.7,104.2S1171.5,794.4,1084,993z"/>
+		                        <path class="dark light_out" d="M1084,993c0,0-178-67-207.5-172.3c150-68.7,224.1-89.4,224.1-89.4S997.3,794,1084,993z
+					<path class="dark light_out" d="M1084,993c0,0-165.4,93.9-265.2,49.1C844,877,893.7,812.7,893.7,812.7S875.7,932.2,1084,993z"/>
+					<path class="dark light_out" d="M1084,993c0,0-40,186-139.7,230.7C806,1114,822.8,1015.2,822.8,1015.2S900,1108.1,1084,993z"/>
+					<path class="dark light_out" d="M1084,993c0,0,111.3,154.3,77.7,258.3c-174.1,29.2-236.2-49.4-236.2-49.4S1046.2,1206.7,1084,993z"/>
+					<path class="dark light_out" d="M1084,993c0,0,189.4,17.5,245.7,111.2c-92.4,150.4-192.5,145.5-192.5,145.5S1220.3,1161.9,1084,993z"/>
+					<path class="dark light_out" d="M1084,993c0,0,82.8-171.2,190.3-191.1c54.8,155.6,68.7,231.3,68.7,231.3S1290,924.7,1084,993z"/>
+		                </g>
+			</svg>
+			<svg viewBox="0 0 2000 2000" class="audio" v-else-if="file.ext==='audio'">
+				<polygon class="middle" points="1118.5,591 658.1,1398.2 502.5,1659 752.5,1659 881.2,1443.3 1369.5,591 1618.5,591 1763.5,341 1264.5,341"/>
+			        <circle class="middle" cx="414.5" cy="1404" r="178"/>
+			        <text transform="matrix(0.7243 -1.2545 0.866 0.5 856.6233 1448.3361)" class="light">AUDIO FILE</text>
+			</svg>
+			<svg viewBox="0 0 2000 2000" v-else-if="file.ext==='video'">
+				<polygon class="middle" points="161,1500 882,250 1133,250 411,1500"/>
+				<polygon class="middle" points="540,1500 1261,250 1512,250 790,1500"/>
+				<text transform="matrix(0.7243 -1.2545 0.866 0.5 860.6233 1352.3361)" class="light">VIDEO FILE</text>
+				<polygon class="middle" points="1403,648 1086.1,1197 1720,1197"/>
+			</svg>
+			<svg viewBox="0 0 2000 2000" class="textFile" v-else>
+      				<polygon class="middle" points="1880.5,337 880.5,337 119.5,1655 1115.5,1663"/>
+			        <text transform="matrix(0.7243 -1.2545 0.866 0.5 1289.6233 1352.3361)" class="light">TEXT FILE</text>
+			        <path class="dark" d="M899,582c15-3,680,0,680,0"/>
+			        <path class="dark" d="M969,454c15-3,680,0,680,0"/>
+			        <path class="dark" d="M809,718c15-3,680,0,680,0"/>
+			        <path class="dark" d="M750,831c15-3,680,0,680,0"/>
+			        <path class="dark" d="M679,953c15-3,680,0,680,0"/>
+			        <path class="dark" d="M610,1082c15-3,680,0,680,0"/>
+			        <path class="dark" d="M457,1332c15-3,680,0,680,0"/>
+			        <path class="dark" d="M529,1215c15-3,680,0,680,0"/>
+			</svg>
 			<p>{{file.name}}</p>
 		</li>
 	</ul>

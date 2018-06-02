@@ -40,6 +40,7 @@ filesystemScope.onInit = () => {
 	filesystemScope.vueData.isChangeName=false;
 	comunication.send('event', [''], 'filesystem', 'initialLoad', 'filesystemScope', 'drawFiles')
 };
+
 filesystemScope.onClose = () => {
 	filesystemScope.isClosing = true;
 	comunication.send('appCicle', 'close','filesystem');
@@ -54,13 +55,12 @@ filesystemScope.getUri = (path) => {
 
 filesystemScope.drawFiles = (args) => {
 	/*Lista los archivos y carpetas que hay en ese direcorio*/
-	//let str = args[0];
 	for (let p in args[0])
 		filesystemScope.vueData[p] = args[0][p]
 	/*Cambia el menú de navegación */
 	if (args.length >=2){
 		let path = args[1];
-		filesystemScope.vueData.currentPath = path;
+		filesystemScope.vueData.currentPath = path.filter((f)=>f);
 		filesystemScope.currentPath = path.join("/");
 		filesystemScope.currentPath = (filesystemScope.currentPath.search(/\/$/) !== -1) ? filesystemScope.currentPath : filesystemScope.currentPath +"/"; 
 	}
@@ -221,7 +221,7 @@ filesystemScope.goInto = (e)=> {
 		name = name[name.length-1].find("p").html();
 	}
 	filesystemScope.currentPath += name + "/";
-	filesystemScope.vueData.currentPath = filesystemScope.currentPath.split("/");
+	filesystemScope.vueData.currentPath = filesystemScope.currentPath.split("/").filter((f)=> f)
 	filesystemScope.selected = {"file": [], "folder": []};
 	comunication.send('event', [name], 'filesystem', 'loadFiles');
 };
@@ -233,7 +233,7 @@ filesystemScope.goFolderTopBar = (e)=>{
 	let name = '';
 	if (typeof e !== 'string'){
 		e.stopPropagation();
-		name = $(e.currentTarget).html();
+		name = $(e.currentTarget).index('.topBar li') >=1 ? name = $(e.currentTarget).html() : "homeDir";
 	}
 	else name = e;
 	comunication.send('event', name, 'filesystem', 'changeDir', 'filesystemScope', 'drawFiles');
@@ -436,16 +436,23 @@ filesystemScope.vue = new Vue({
 	data: filesystemScope.vueData,
 	computed:{
 		getPath: function(){
+			let ext = {};
+			ext.audio = ['wav', 'aiff', 'ape', 'flac', 'wma', 'aac', 'rm', 'mp3'];
+			ext.video = ['avi', 'mov', 'mpg', 'wmv', 'asf', 'mp4'];
+			ext.availablesExt = ['jpg', 'png', 'svg', 'jpeg', 'gif'];
+			ext.img = ['bpm', 'tiff', 'eps', 'ai', 'psd'];
+			ext.txt = ['txt', 'doc', 'docx', 'pdf', 'page', 'svg', 'odt', 'rtf', 'ps', 'indd'];
 			let availabesExt = ['jpg', 'png', 'svg', 'jpeg', 'gif'];
 			let arr = []
-			let ext = '';
+			let ext_str = '';
 			let toPush = ''
 			for (let f of this.fil){
-				arr.push({});
-				arr.slice(-1)[0].name = f;
-				ext = f.split(".").slice(-1)[0];
-				toPush = (availabesExt.indexOf(ext) === -1) ? "common/images/file.jpg" : `${this.currentPath.join("/")}${f}`;	
-				arr.slice(-1)[0].path = toPush;
+				toPush = {};
+				toPush.name = f;
+				ext_str = f.split(".").slice(-1)[0];
+				for (let o in ext) if (ext[o].indexOf(ext_str) !== -1) toPush.ext = o;
+				if (toPush.ext === 'availablesExt') toPush.path = `${this.currentPath.join("/")}/${f}`; 
+				arr.push(toPush)
 			}
 			return arr;
 		}

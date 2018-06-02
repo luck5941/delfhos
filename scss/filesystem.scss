@@ -1,27 +1,34 @@
 @import './vars.scss';
 filesystem{
 	ul.topBar {
-		width: 80%;
 		float: left;
-		border-bottom:2px solid $light_blue;
-		height: $menuHeight;
+		width: 80%;
+		background-color: $darkTone;
+		height: $menuHeight*3;
 		display: flex;
-		align-items: center;
+		li.track{svg{height: 100%;}}
 		li{
 			list-style: none;
-			font-weight: bold;
 			flex-basis: 1;
 			cursor: pointer;
+			background-color: $lightTone;
+			padding: 4%;
+			margin: 0 0.5%;
+			font-family: $metropolisExtraBold;
+			height: 80%;
+			margin-top: 10%;
+			display: flex;
+			align-items: center;
 		}
 		li:hover {
-			font-weight: lighter;
+			font-family: $metropolisLight;
 		}
 	}
 	ul.frecuentFile {
-		width: 20%;
+		width: 15%;
 		float: left;
-		border-right: 1px solid $light_blue;
-		height: 100 - $menuHeight;
+		border-right: 5px solid $middleTone;
+		height: 97 - $menuHeight*5;
 		li {
 			list-style: none;
 			width: 100%;
@@ -46,6 +53,8 @@ filesystem{
 				min-width: 80px;
 				list-style: none;
 				cursor: pointer;
+				svg, img {width: 100px;}
+				img { margin-top: 20px;}
 				p{
 					text-align: center;
 					width: 100%;
@@ -72,7 +81,7 @@ filesystem{
 			position: absolute;
 			svg {
 				margin-bottom: -20%;
-				path {fill: $color3;};
+				path {fill: $darkTone;};
 			}
 			input{margin-top: -50%;margin-left: 16%; width: 60%;height: 10px;}
 			
