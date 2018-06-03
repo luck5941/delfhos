@@ -3,7 +3,8 @@
 		<div id="button" @click="startSearch">
 			<svg viewBox="0 0 100 100">
 				<circle cx="50" cy="50" r="50" class="contorn" />
-				<circle cx="70" cy="30" r="10" class="loupe" />
+				<circle cx="60" cy="35" r="25" class="loupe" />
+				<path d="m10 65 L 60 35" class="loupe" />
 			</svg> 
 		</div>
 		<input type="text" placeholder="userNick" v-model="nick" @keyup="searchUser"  v-bind:class={close:!isSearching}>
@@ -20,7 +21,7 @@
 		<img class="profilePhoto" :src="'profile/'+chat.user">
 		<p>{{chat.user}}</p><span>{{chat.number}}</span>
 	</li>
-	<nav id="sideMenu" @click="showChats"><span>{{chatPending}}</span> <svg viewBox="0 0 100 100"> <path d="M10 40 L60 40 L60 10 L90 50 L60 90 L60 60 L3 60"> </svg> </nav>
+	<nav id="sideMenu" @click="showChats"><span>{{chatPending}}</span><svg viewBox="0 0 2000 2000"><polygon class="middle" points="614.5 898.5 575.82 941.55 967.61 770.95 966.82 596.45 1476.15 858.2 966.03 1119.95 965.25 945.45 291.5 1293.38 291.5 1357.5 934.5 983.5 935.5 1233.5 1584.5 858.5 936.5 483.5 937.5 733.5 614.5 898.5"/></svg> </nav>
 </nav>
 <main v-if=chat>
 	<div class="chatData">

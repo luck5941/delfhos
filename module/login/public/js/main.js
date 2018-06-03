@@ -27,7 +27,6 @@ loginScope.vueData.title = {login: "login", newUser:"Registro"};
 loginScope.vueData.action = 'login';
 loginScope.vueData.passwordSecurity = '';
 loginScope.vueData.moduleClass = '';
-loginScope.vueData.options = ['LOGIN', 'INFO', 'AYUDA'];
 loginScope.vueData.marginForms = 0;
 loginScope.vueData.totalScreen = parseInt(loginScope.vueData.form.newUser.length/3);
 loginScope.vueData.styleObjectForm = {"margin-left": 0};
