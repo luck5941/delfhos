@@ -19,15 +19,15 @@
 <section id="form" v-bind:class="{active: current===0,next: next===0 }">
 	<h1>{{title[action]}}</h1>
 <form action="someplace" method="post" :id="action" :style="styleObjectForm">
-	<span v-for="input in form[action]">
+	<span v-for="input, i in form[action]">
 		<p>{{input.placeholder}}</p>
-		<input  :name="input.name" :id="input.name" :type="input.type" :pattern="input.pattern" :required="input.required" :value="input.value" :class="input.class">
+		<input :name="input.name" :id="input.name" :type="input.type" :pattern="input.pattern" :required="input.required" :value="input.value" :class="input.class" v-model="input.val">
 	</span>
 	<p v-if="passwordSecurity.length>=1">La calidad de tu contraseña es: {{passwordSecurity}}</p>
 </form>
 <div id="buttons" v-if="action === 'newUser'">
 	<div @click="goTo(true)" v-bind:class="{invisible:marginForms<1}"><svg viewBox="0 0 100 100"><path d="M20 50 L60 90 L60 70 L90 70 " fill="none"/></svg></div>
-	<div @click="goTo(false)" v-bind:class="{invisible:totalScreen===marginForms}"><svg viewBox="0 0 100 100"><path d="M10 30 L40 30 L40 10 L 80 50 " fill="none"/></svg></div>
+	<div @click="goTo(false)" v-bind:class="{invisible:totalScreen-1===marginForms}"><svg viewBox="0 0 100 100"><path d="M10 30 L40 30 L40 10 L 80 50 " fill="none"/></svg></div>
 </div>
 <p>{{changeForm[action][0]}}<a href="#" @click="changeAction">{{changeForm[action][1]}}</a>
 <p>{{message}}</p>

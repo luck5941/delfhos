@@ -2,21 +2,21 @@
 
 //Declaración de la variables
 var loginScope = {};
+loginScope.keyPressed = {};
 loginScope.vueData = {}
 loginScope.vueMethods = {}
 //declaración de las variables necesarias para las acciones realizadas con vue
 loginScope.vueData.message = "";
 loginScope.vueData.form = {newUser:[
-	{name: "user", placeholder:"El nick con el que quieres que te conozca", type: "text", required: "true"}, 
-	{name: "name", placeholder:"tu nombre", type: "text"}, 
-	{name: "lastname", placeholder:"tus apellidos", type: "text"}, 
-	{name: "birthday", placeholder:"mm/dd/aaaa", type: "text", required: "true", pattern: "^([1-9]|1[0-2])\\/([1-9]|[12][0-9]|3[01])\\/(19[0-9]{2}|200[0-9]|201[0-8])$"}, 
-	{name: "mail", placeholder: "mail@example.es", type: "email", required: "true"}, 
-	{name: "secondMail", placeholder:"dirección de correo secundaria", type: "email",}, 
-	{name: "phoneNumber", placeholder:"numero de telefono", type: "text" , pattern:"\\d{9}"}, 
-	{name: "password", placeholder:"tu contraseña", type: "password", required: "true"}, 
-	{name: "password2", placeholder:"Vuelva a escribir la contraseña", type: "password", required: "true"}, 
-	{type: "submit", value:"Enviar", class:"send"}
+	{name: "user", placeholder:"El nick con el que quieres que te conozca", type: "text", required: "true", val:""}, 
+	{name: "name", placeholder:"tu nombre", type: "text", val:""}, 
+	{name: "birthday", placeholder:"mm/dd/aaaa", type: "text", required: "true", pattern: "^([1-9]|1[0-2])\\/([1-9]|[12][0-9]|3[01])\\/(19[0-9]{2}|200[0-9]|201[0-8])$", val:"" },
+	{name: "mail", placeholder: "mail@example.es", type: "email", required: "true", val:""}, 
+	{name: "secondMail", placeholder:"dirección de correo secundaria", type: "email", val:""}, 
+	{name: "phoneNumber", placeholder:"numero de telefono", type: "text" , pattern:"\\d{9}", val: ""}, 
+	{name: "password", placeholder:"tu contraseña", type: "password", required: "true", val: "", }, 
+	{name: "password2", placeholder:"Vuelva a escribir la contraseña", type: "password", required: "true", val: ""}, 
+	{type: "submit", value:"Enviar", class:"send", val: ""}
 ],login:[
 	{name:"user", placeholder:"nick or mail", type: "text", required: "true"},
 	{name:"password", placeholder:"Tu contraseña", type: "password", required: "true"},
@@ -51,7 +51,7 @@ loginScope.vueMethods.goTo = (dir) => {
 	/*
 	 *metodo encargado de cambiar de sección entre el login, info y ayuda
 	*/
-	if ((loginScope.vueData.marginForms == 0&& dir) || (loginScope.vueData.marginForms ==  loginScope.vueData.totalScreen && !dir)) return;
+	if ((loginScope.vueData.marginForms == 0&& dir) || (loginScope.vueData.marginForms ==  loginScope.vueData.totalScreen-1 && !dir)) return;
 	loginScope.vueData.marginForms =(dir) ? loginScope.vueData.marginForms -1:loginScope.vueData.marginForms +1;
 	loginScope.vueData.styleObjectForm["margin-left"] = -loginScope.vueData.marginForms *200 + "%";
 };
@@ -113,11 +113,27 @@ loginScope.psswordValidate = (e) =>{
 	else if (muybaja.test(val)) loginScope.vueData.passwordSecurity = 'muy baja'; 
 	else loginScope.vueData.passwordSecurity = 'revisa los criterios'; 
 };
-loginScope.dateFormate = (e) => {
-	if (e.currentTarget.value.length === 2 ||e.currentTarget.value.length === 5)
-		e.currentTarget.value += "/";
-
+//loginScope.dateFormate = (e) =>  (e.currentTarget.value.length === 2 ||e.currentTarget.value.length === 5) ?  e.currentTarget.value += "/" : null;
+loginScope.setPositon = (e) => {
+	/*
+	 *función encargada de determinar a que input debe moverse cuando se usa la navegación por tab
+	 *Solo se activa con las teclas tab(9) y shift (16) y con los inputs ultimo o primero de cada pantalla
+	 *ind es el valor del indice. Tiene que ser un valor que cumpla la condición (++ind%3 ===0) es decir, estar el útlimo o ind%3==0 (estar el primero)
+	 *Si está el último solo se activa con la tecla tabs, si está el primero, solo si es las teclas shif y tab, es decir, retrodecer
+	 *Para determinar que teclas estan presionadas se usa keyPressed, diccionario que establece su valor en true o false dependiendo si están pulsadas o no
+	 *y la función keyUp que salta cuando se levanta una tecla en estos inputs solo si es una de estas dos posibilidades.
+	*/
+	let ind = $(e.currentTarget).index('#newUser input');
+	if ((ind===0) || (e.keyCode !== 9 && e.keyCode !== 16) || (ind%3 !==0 && (ind+1)%3!==0)) return;
+	loginScope.keyPressed[e.keyCode] = true;
+	if (ind%3 ===0 && (loginScope.keyPressed['9'] && loginScope.keyPressed['16'])) {loginScope.vueMethods.goTo(true); e.preventDefault();}
+	else if (++ind%3 ===0 && (loginScope.keyPressed['9'] && !loginScope.keyPressed['16'])) {loginScope.vueMethods.goTo(false); e.preventDefault();}
 };
+loginScope.keyUp = (e) => {
+	if (e.keyCode !== 9 && e.keyCode !== 16) return;
+	loginScope.keyPressed[e.keyCode] = false;
+};
+
 loginScope.searchifEqual = () => {
 	if ($('#newUser #password2').val() === $('#newUser #password').val())
 		loginScope.areEqual = true;
@@ -132,4 +148,6 @@ $('body')
 .on('submit', 'login form', loginScope.sendForm)
 .on('keyup','#newUser #password', loginScope.psswordValidate)
 .on('blur','#newUser #password2', loginScope.searchifEqual)
-.on('keyup','#newUser #birthday', loginScope.dateFormate);
+//.on('keyup','#newUser #birthday', loginScope.dateFormate)
+.on('keydown', '#newUser span input',loginScope.setPositon)
+.on('keyup', '#newUser span input',loginScope.keyUp)
