@@ -5,7 +5,7 @@
 	<nav class="match">
 		<li v-for="f in match" @click="selectUser(f.user)">
 			<div class="img">
-	            		<img class="profilePhoto" :src="'profile/'+f.user" :alt="f.user+' photo'">
+	            		<img class="profilePhoto" :src="'profile/'+f.user" :alt="f.user+' photo'" class="mask">
 			</div>
 			<div class="name">{{f.user}}</div>
 		</li>
@@ -14,7 +14,7 @@
 <main>
 	<nav class="friends">
 		<li v-for="f in friends" @click="selectUser(f)">
-			<div class="img"><img :src="'profile/'+f" :alt="f +' photo'"></div>
+			<div class="img"><img :src="'profile/'+f" :alt="f +' photo'" class="mask"></div>
 			<div>{{f}}</div>
 		</li>
 	</nav>

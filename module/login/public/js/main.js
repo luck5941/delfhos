@@ -16,11 +16,11 @@ loginScope.vueData.form = {newUser:[
 	{name: "phoneNumber", placeholder:"numero de telefono", type: "text" , pattern:"\\d{9}", val: ""}, 
 	{name: "password", placeholder:"tu contraseña", type: "password", required: "true", val: "", }, 
 	{name: "password2", placeholder:"Vuelva a escribir la contraseña", type: "password", required: "true", val: ""}, 
-	{type: "submit", value:"Enviar", class:"send", val: ""}
+	{type: "submit", val:"Enviar", class:"send", val: ""}
 ],login:[
 	{name:"user", placeholder:"nick or mail", type: "text", required: "true"},
 	{name:"password", placeholder:"Tu contraseña", type: "password", required: "true"},
-	{type: "submit", value:"Enviar", class:"send"}
+	{type: "submit", val:"Enviar", class:"send"}
 ]};
 loginScope.vueData.changeForm = {login: ["No tienes cuenta aún? puedes crear una ahora mismo! solo clicka en", " crear cuenta"], newUser: ["Ya tienes cuenta??", " vamos a entrar!"]}
 loginScope.vueData.title = {login: "login", newUser:"Registro"};
@@ -99,19 +99,21 @@ loginScope.psswordValidate = (e) =>{
 	 * En dicha web se establecen tres niveles de seguridad. En esta función no se siguen al pie de la letra ya que no se terminan de adaptar
 	 * a la aplicación que se desarrolla. Este metodo será llamadado cuando el usuario ponga levante la tecla del input de la contraseña
 	*/ 
-	let val = e.currentTarget.value;
-	let muybaja = /^([A-z]){0,4}$/,
-		baja = /^(?=.*[a-z])(?=.*[A-Z])([^ ]){4,8}$/,
-		media = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\d)([^ ]){8,12}$/,
-		alta = regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&#*-+])([^ ]){12,16}$/,
+	let val = e.currentTarget.value,
+		str = 'la calidad de tu contraseña es ',
+		index = loginScope.vueData.form.newUser.findIndex((e)=> e.name==='password'),
+		muybaja = /^\w{0,4}$/,
+		baja = /^(?=.*[a-z])(?=.*[A-Z])([^ ]){4,}$/,
+		media = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\d)([^ ]){8,}$/,
+		alta = regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!*?&#*-+])([^ ]){12,}$/,
 		muyalta = regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&#*-+])([^ ]){16,}$/;
-	if (val.length ==0) loginScope.vueData.passwordSecurity = ''; 
-	else if (muyalta.test(val)) loginScope.vueData.passwordSecurity = 'muy alta'; 
-	else if (alta.test(val)) loginScope.vueData.passwordSecurity = 'alta'; 
-	else if (media.test(val)) loginScope.vueData.passwordSecurity = 'media'; 
-	else if (baja.test(val)) loginScope.vueData.passwordSecurity = 'baja'; 
-	else if (muybaja.test(val)) loginScope.vueData.passwordSecurity = 'muy baja'; 
-	else loginScope.vueData.passwordSecurity = 'revisa los criterios'; 
+	if (val.length ==0) loginScope.vueData.form.newUser[index].message = ''; 
+	else if (muyalta.test(val)) loginScope.vueData.form.newUser[index].message = str +'muy alta';
+	else if (alta.test(val)) loginScope.vueData.form.newUser[index].message = str+'alta'; 
+	else if (media.test(val)) loginScope.vueData.form.newUser[index].message = str+'media'; 
+	else if (baja.test(val)) loginScope.vueData.form.newUser[index].message = str+'baja'; 
+	else if (muybaja.test(val)) loginScope.vueData.form.newUser[index].message =str+'baja'; 
+	else loginScope.vueData.form.newUser[index].message = ''; 
 };
 //loginScope.dateFormate = (e) =>  (e.currentTarget.value.length === 2 ||e.currentTarget.value.length === 5) ?  e.currentTarget.value += "/" : null;
 loginScope.setPositon = (e) => {
@@ -135,13 +137,17 @@ loginScope.keyUp = (e) => {
 };
 
 loginScope.searchifEqual = () => {
-	if ($('#newUser #password2').val() === $('#newUser #password').val())
+	let index = loginScope.vueData.form.newUser.findIndex((d)=>d.name==='password2');
+	if ($('#newUser #password2').val() === $('#newUser #password').val()){
 		loginScope.areEqual = true;
+		loginScope.vueData.form.newUser[index].message = '';
+	}
 	else{
 		loginScope.areEqual =false;
 		$('#newUser #password2').focus();
-		loginScope.vueData.message = 'Ups, parece que las contraseñas no coinciden';
+		loginScope.vueData.form.newUser[index].message = 'Ups, parece que las contraseñas no coinciden';
 	}
+	loginScope.vue.$forceUpdate();
 	return loginScope.areEqual;
 };
 $('body')

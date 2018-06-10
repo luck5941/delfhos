@@ -6,22 +6,19 @@ filesystem{
 		background-color: $darkTone;
 		height: $menuHeight*3;
 		display: flex;
+		align-items: center;
 		li.track{svg{height: 100%;}}
 		li{
 			list-style: none;
 			flex-basis: 1;
 			cursor: pointer;
 			background-color: $lightTone;
-			padding: 4%;
+			padding: 0.5%;
 			margin: 0 0.5%;
 			font-family: $metropolisExtraBold;
 			height: 80%;
-			margin-top: 10%;
 			display: flex;
 			align-items: center;
-		}
-		li:hover {
-			font-family: $metropolisLight;
 		}
 	}
 	ul.frecuentFile {

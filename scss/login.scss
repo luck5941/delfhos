@@ -103,6 +103,9 @@
 						font-weight: 600;
 						 margin-bottom: 1em;
 					}
+					p.message{
+						font-size: 0.75em;
+					}
 					input{
 						border: none;
 						outline: none;
@@ -156,9 +159,8 @@
 		#info, 	#help {
 			flex-direction: rown;
 			align-items: baseline;
-			article{
-				text-align: justify;
-			}
+			article{ text-align: justify; }
+			//article::first-letter{font-size: 48pt;}
 			article:not(.main){
 				margin-left: 2%;
 				font-size:12pt;
@@ -166,6 +168,7 @@
 					line-height: 16pt;
 					margin-bottom: 8pt;
 				}
+				//p:first-child::first-letter{font-size:48pt;}
 			}
 			.main {
 				font-size: 17pt;

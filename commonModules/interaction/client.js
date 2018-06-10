@@ -33,7 +33,7 @@ interaction.unselect = (e) => {
 };
 interaction.canResize = (e) => {
 	/*
-	 *función encargada de redimensionar el tamaño de un "module" Lo primero que hace es calcular
+	 *función encargada de determinar si se puede redimensionar el tamaño de un "module" Lo primero que hace es calcular
 	 * la distancia entre el click y la pared más cercana. Los nombres que van a recivir las distnacias son:
 	 * l -> Distancia entre la pared izquierda y el click
 	 * t -> Distancia entre la pared superior y el click
@@ -62,19 +62,26 @@ interaction.canResize = (e) => {
 	interaction.obj.init_y = Ypos;
 };
 interaction.resize = (e) => {
+	/*
+	 *función encargada de redimensionar un modal gracias a lo que establece la función anterior,
+	 *es decir, en este punto se sabe que pared hay que mover
+	*/
 	let Xpos = (interaction.is_mobile) ? e.originalEvent.touches[0].pageX: e.pageX,
 		Ypos = (interaction.is_mobile) ? e.originalEvent.touches[0].pageY: e.pageY,
 		newWidth = 0,
 		newLeft = 0,
 		newHeight = 0,
 		newTop = 0,
-		val = 0;
+		val = 0
+		obj = {};
 	switch(interaction.direction){
 		case 'left':
 			val = (Xpos-interaction.obj.init_x)*(-1);
-			newWidth = val+interaction.obj.width;
 			newLeft = -val+interaction.obj.x
-			interaction.obj.selected.css({'width': newWidth+'px', 'left': newLeft});
+			obj.width = val+interaction.obj.width +'px';
+			if (interaction.obj.selected.css('right') !== '0px' && parseInt(obj.width) >= parseInt(interaction.obj.selected.css('min-width'))) obj.left =-val+interaction.obj.x;
+			console.log(parseInt(obj.width) >= parseInt(interaction.obj.selected.css('min-width')));
+			interaction.obj.selected.css(obj);
 			break;
 		case 'rigth':
 			newWidth = Xpos-interaction.obj.init_x+interaction.obj.width;

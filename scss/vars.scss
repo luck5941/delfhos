@@ -31,4 +31,4 @@ svg {
 	.light {fill: $lightTone;}
 	.light_out {stroke: $lightTone;}
 }
-
+img.mask { clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);}

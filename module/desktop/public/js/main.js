@@ -31,7 +31,7 @@ desktopScope.openModal = (e) => {
 			break;
 		case 'profilePicture':
 			args = ['filesystem', 'selectfile']; 
-			desktopScope.why = (txt==='perfil') ? 'profilePicture':'';
+			desktopScope.why = 'profilePicture';
 			break;
 		case 'chat':
 			args = ['chat'];

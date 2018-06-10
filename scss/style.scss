@@ -2,11 +2,13 @@
 * {margin: 0;padding: 0;}
 li {list-style-type: none;}
 img {width: 100%;}
+*{@include propertie((user-select: none));}
 body {
 	font-family: sans-serif;
 	overflow: hidden;
 	.module {
 		width: 60%;
+		min-width: 650px;
 		height: 40vh;
 		position: absolute;
 		top: 0;
@@ -35,6 +37,8 @@ body {
 				li {
 					margin: 0 1%;
 					list-style-type: none;
+					height: 60%;
+					svg {height: 100%}
 				}
 			}
 

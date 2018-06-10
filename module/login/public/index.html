@@ -7,7 +7,6 @@
 		</li>
 		<li @click="goToSection(1)" v-bind:class="{active: current==1}">
 			<svg viewBox="0 0 100 100"> <path class="dark" d="M44.15,9.07H68V93.44H44.15Z"/><path class="middle" d="M51.22,73v-1.1H63V73Z"/><path class="middle" d="M51.22,68.95v-1.1l10-7.57h-10v-1.1H63v1.1L53,67.85H63v1.1Z"/><path class="middle" d="M52.27,55.07h4.22V48.53h1.07v6.54H63v1.12H51.22V47.83h1Z"/><path class="middle" d="M57.12,46.29a6.05,6.05,0,1,1,6.13-6.06A6.17,6.17,0,0,1,57.12,46.29Zm0-11a4.93,4.93,0,1,0,5.09,4.92A5.06,5.06,0,0,0,57.12,35.31Z"/></svg>
-
 		</li>
 		<li @click="goToSection(2)" v-bind:class="{active: current==2}">
 			<svg viewBox="0 0 100 100">
@@ -20,8 +19,9 @@
 	<h1>{{title[action]}}</h1>
 <form action="someplace" method="post" :id="action" :style="styleObjectForm">
 	<span v-for="input, i in form[action]">
-		<p>{{input.placeholder}}</p>
+		<p v-if="input.placeholder">{{input.placeholder}}</p>
 		<input :name="input.name" :id="input.name" :type="input.type" :pattern="input.pattern" :required="input.required" :value="input.value" :class="input.class" v-model="input.val">
+		<p class="message" v-if="input.message">{{input.message}}</p>
 	</span>
 	<p v-if="passwordSecurity.length>=1">La calidad de tu contraseña es: {{passwordSecurity}}</p>
 </form>
