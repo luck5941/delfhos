@@ -3,7 +3,7 @@ logs/
 *.map
 node_modules/
 dev/
-files/
+files/user
 pruebas/
 tmp/
 public/css/
