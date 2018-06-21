@@ -69,6 +69,7 @@
 		section {
 			grid-area: auto/1/span 1/span 1;
 			padding: 20vh 0;
+			height:80vh;
 		}
 		section.active {
 			 grid-area: 1/auto/span 1/span 1;
@@ -111,7 +112,7 @@
 						outline: none;
 						display: block;
 					}
-					input:not(.send){
+					input{
 						border-bottom: 3px solid $darkTone;
 						background-color: inherit;
 						outline: none;
@@ -161,7 +162,7 @@
 			align-items: baseline;
 			article{ text-align: justify; }
 			//article::first-letter{font-size: 48pt;}
-			article:not(.main){
+			article{
 				margin-left: 2%;
 				font-size:12pt;
 				p{
@@ -175,7 +176,7 @@
 				font-weight: 900;
 			}
 		}
-		#help {article:not(.main){
+		#help {article{
 			color: $lightTone;
 			width: 48%;
 			margin-left: 52%;
@@ -209,6 +210,99 @@
 			}
 			li.active {
 				color: $middleTone;
+			}
+		}
+	}
+}
+/*dispositivos de 1200px de ancho maximo*/
+@media (max-width: 1200px) {
+	#root {
+		main{
+			#form, #info, #help {
+				width: 90%;
+			}
+			#info, #help {
+				.main { font-size: 1em; }
+				article { font-size:.9em; }
+			}
+			#help {
+				article{margin: 2%  auto;}
+			}
+
+			
+		}
+	}
+}
+/*dispositivos de 960px de ancho maximo*/
+@media (max-width: 960px) {
+	#root {
+		main{
+			#info, #help {
+				.main { font-size: .9em; }
+				article { font-size:.8em; }
+			}
+		}
+	}
+	
+}
+/*dispositivos de 640px de ancho maximo*/
+@media (max-width: 640px) {
+	#root{
+		header #logo{width: 30%}
+		main {
+			#form, #info, #help {
+				width: 90%;
+				flex-direction: column;
+			}
+			#form {
+				h1{ font-size: 1em}
+				form {
+					flex-grow: 1;
+					span{
+						margin-top:1em;
+						flex-grow: 1;
+						p{font-size: 0.7em}
+						input.send{width: 50%}
+						padding-left: 20%;
+					}
+					span:nth-child(3){padding-left:0}
+				}
+				p{margin-bottom: 5%; flex-grow: 1; font-size: 0.7em}
+			}
+			#info, #help {
+				article	{
+					font-size: .6em;
+					p{
+						line-height: 2em;;
+					}
+				}
+				.main{
+					font-size: .7em;
+					margin-bottom: 8pt;
+				}
+			}
+			#help {
+				article {width:auto;margin-left: 0;}
+			}
+		}
+	}
+}
+/*dispositivos de 460px de ancho maximo*/
+@media (max-width: 460px) {
+	#root {
+		header{
+			#logo{
+				height: 65%;
+			}
+			nav {
+				height: 75%
+			}
+		}
+		main {
+			section{
+				padding-top:15vh;
+				article.main{font-sise: .6em;}
+				article{font-size: .5em;}
 			}
 		}
 	}

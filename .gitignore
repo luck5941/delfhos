@@ -3,11 +3,13 @@ logs/
 *.map
 node_modules/
 dev/
-files/user
+files/users/
+files/profile/
 pruebas/
 tmp/
 public/css/
 module/*/public/css/*.css
+module/server/files/
 package-lock.json
 notas
 *.py
