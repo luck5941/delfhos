@@ -64,6 +64,7 @@ filesystemScope.drawFiles = (args) => {
 		filesystemScope.currentPath = path.join("/");
 		filesystemScope.currentPath = (filesystemScope.currentPath.search(/\/$/) !== -1) ? filesystemScope.currentPath : filesystemScope.currentPath +"/"; 
 	}
+	$('.selected').removeClass('selected');
 };
 filesystemScope.unselectOne = (name) => {
 	/*
@@ -184,7 +185,7 @@ filesystemScope.startDownload = (name) => {
 }
 filesystemScope.changeNameNewFolder = async (data) =>{
 	/*
-	 *metodo encargado de seleccionar la nueva carpeta, preparandola
+	 *metodo encargado de seleccionar la nueva carpeta,
 	 *preparandola para el cambio de nombre
 	 *data: [any]
 	 *data[0]: [string] -> Lista de elementos a renderizar
@@ -223,7 +224,7 @@ filesystemScope.goInto = (e)=> {
 	filesystemScope.currentPath += name + "/";
 	filesystemScope.vueData.currentPath = filesystemScope.currentPath.split("/").filter((f)=> f)
 	filesystemScope.selected = {"file": [], "folder": []};
-	comunication.send('event', [name], 'filesystem', 'loadFiles');
+	comunication.send('event', [name], 'filesystem', 'loadFiles', 'filesystemScope', 'drawFiles');
 };
 filesystemScope.goFolderTopBar = (e)=>{
 	/*
@@ -385,6 +386,7 @@ filesystemScope.requestFiles = (e) => {
 	let files = e.originalEvent.dataTransfer.files;	
 	for (let f of files)
 		filesystemScope.sendFiles(f);
+	console.log("es esta");
 };
 filesystemScope.newFolder = () =>{
 	/*

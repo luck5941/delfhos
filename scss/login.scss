@@ -237,6 +237,9 @@
 @media (max-width: 960px) {
 	#root {
 		main{
+			#forma{
+				form span{height: 9vh;}
+			}
 			#info, #help {
 				.main { font-size: .9em; }
 				article { font-size:.8em; }
@@ -265,8 +268,8 @@
 						input.send{width: 50%}
 						padding-left: 20%;
 					}
-					span:nth-child(3){padding-left:0}
 				}
+				form#login{span:nth-child(3){padding-left:0}}
 				p{margin-bottom: 5%; flex-grow: 1; font-size: 0.7em}
 			}
 			#info, #help {

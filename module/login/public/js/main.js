@@ -53,7 +53,7 @@ loginScope.vueMethods.goTo = (dir) => {
 	*/
 	if ((loginScope.vueData.marginForms == 0&& dir) || (loginScope.vueData.marginForms ==  loginScope.vueData.totalScreen-1 && !dir)) return;
 	loginScope.vueData.marginForms =(dir) ? loginScope.vueData.marginForms -1:loginScope.vueData.marginForms +1;
-	loginScope.vueData.styleObjectForm["margin-left"] = -loginScope.vueData.marginForms *200 + "%";
+	loginScope.vueData.styleObjectForm["margin-left"] = -loginScope.vueData.marginForms *100 + "vw";
 };
 
 

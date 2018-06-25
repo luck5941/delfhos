@@ -142,16 +142,15 @@ function FILESYSTEM(id) {
 		/*
 		 * Función encargada de borrar la lista de archivos que se ha indicado
 		 * files: [String] Lista con los nombres completos de los archivos que se desean borrar
-		 *
 		 */
 		for (let f of files) {
-			if (fs.lstatSync(this.currentPath + f).isFile())
-				fs.unlink(this.currentPath + f, (e) => (e) ? console.error(e) : null);
-			else if (fs.lstatSync(this.currentPath + f).isDirectory()) {
-				removeRecursive(fs.readdirSync(this.currentPath + f));
-				fs.rmdir(this.currentPath + f, (e) => {
+			if (fs.lstatSync(this.homeDir + f).isFile())
+				fs.unlink(this.homeDir + f, (e) => (e) ? console.error(e) : null);
+			else if (fs.lstatSync(this.homeDir + f).isDirectory()) {
+				removeRecursive(fs.readdirSync(this.homeDir + f).map(i => f+'/'+i));
+				fs.rmdir(this.homeDir + f, (e) => {
 					if (e)
-						return (e.errno === -39) ? removeRecursive([this.currentPath + f]) : console.error(e)
+						return (e.errno === -39) ? removeRecursive([this.homeDir + f]) : console.error(e)
 					else
 						return null;
 				});
@@ -232,11 +231,10 @@ function FILESYSTEM(id) {
 		let files = paths[0][0],
 			dst = (paths[0][1] !== 'trash') ? paths[0][1] : this.trashPath,
 			name = '';
-
-		dst = this.homeDir.slice(0, -1) + dst;
+		dst = this.homeDir.slice(0, -1) +"/"+ dst;
 		for (let i = 0; i < files.length; i++) {
 			name = renameOneFile(dst, files[i].split("/").slice(-1)[0]);
-			fs.rename(this.homeDir.slice(0, -1) + files[i], name, (err) => { if (err) console.error(err); });
+			fs.rename(this.homeDir.slice(0, -1)+'/' + files[i], name, (err) => { if (err) console.error(err); });
 		}
 		modules.communication.send([loadFiles()[0]], paths[1], paths[2], socket);
 	};
@@ -248,7 +246,7 @@ function FILESYSTEM(id) {
 			src_cp = files[0][0],
 			src = [];
 		for (let f of src_cp)
-			src.push(this.homeDir.slice(0, -1) + f);
+			src.push(this.homeDir.slice(0, -1) +"/" +f);
 		copyRecursive(src, this.currentPath, dst);
 	};
 	this.initialLoad = initialLoad = (option, socket) => {
@@ -286,7 +284,7 @@ function FILESYSTEM(id) {
 			names = [];
 		if (files.length === 1) {
 			name = renameOneFile(this.currentPath, name);
-			fs.rename(`${this.currentPath}/${files[0]}`, name, (err) => { if (err) console.error(err) });
+			fs.rename(`${this.currentPath}/${files[0]}`, name, (err) => (err) ? console.error(err) :modules.communication.send([loadFiles()[0]], fls[1], fls[2], socket));
 		}
 		else {
 			newName = separateName(name);
@@ -297,7 +295,6 @@ function FILESYSTEM(id) {
 				fs.rename(`${this.currentPath}/${files[i]}`, name, (err) => { if (err) console.error(err); })
 			}
 		}
-		modules.communication.send([loadFiles()[0]], fls[1], fls[2], socket);
 	};
 	this.getProperties = getProperties = (files, socket) => {
 		global.modules.modal.loadModal(`${__dirname}/external/properties/index.html`);
@@ -339,14 +336,15 @@ function FILESYSTEM(id) {
 					fs.mkdir(`${this.currentPath}${str}${ind}`, '0774', (e) => (e) ? console.error(e) : null);
 				}
 			modules.communication.send([loadFiles()[0], `${str}${ind}`], name[1], name[2], socket);
+			
 		});
 	}
 	this.getFiles = getFiles = (files, socket) => {
 		let f = files[0][0];
 		fs.writeFile(this.currentPath+f.name, f.data, 'binary', (e) => {
 			if (e) return e;
+			modules.communication.send([loadFiles()[0]], files[1], files[2], socket);
 		});
-		modules.communication.send([loadFiles()[0]], files[1], files[2], socket);
 	};
 
 	this.preparedDownload = preparedDownload = (files, socket) => {
