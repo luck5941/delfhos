@@ -13,6 +13,7 @@ chatScope.onInit = () => {
 	chatScope.vueData.chatPending = '';
 	chatScope.to = '';
 	chatScope.messages = {};
+	comunication.send('event', [''], 'chat', 'getInit', 'chatScope', 'init');
 };
 /*Vue mehthods*/
 chatScope.vueMethods = {};

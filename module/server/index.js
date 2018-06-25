@@ -22,7 +22,8 @@ function SERVER(modules) {
 		path = (q.pathname === '/') ? '/desktop' : q.pathname;
 		req_save['url'] = req.url;
 		req_save["date"] = `${d.getFullYear()}/${d.getMonth()}/${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
-		req_save["ip"] = req.connection.remoteAddress.split(":").slice(-1)[0];
+		req_save["ip"] = req.headers['x-forwarded-for'] || req.connection.remoteAddress.split(":").slice(-1)[0];
+		console.log(req_save['ip']);
 		str = `${req_save["ip"]};${req_save["date"]};${req_save['url']}`
 		//Obtención de la clave que se le impone por cookie
 		let id = req_save["ip"]+ "_"+this.getCookieValue(req.headers.cookie, '_id');

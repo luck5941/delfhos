@@ -35,10 +35,10 @@ function FORM() {
 				fs.mkdir(`files/users/${data[0].user}`, (e) => {
 					if (e) return console.error(e);
 					fs.mkdir(`files/users/${data[0].user}/.trash`, (e) => (e) ? console.error(e) : null);
-					fs.mkdir(`files/users/${data[0].user}/Compartido`, (e) => (e) ? console.error(e) : null);
-					fs.mkdir(`files/users/${data[0].user}/Documentos`, (e) => (e) ? console.error(e) : null);
-					fs.mkdir(`files/users/${data[0].user}/Música`, (e) => (e) ? console.error(e) : null);
-					fs.mkdir(`files/users/${data[0].user}/Imágenes`, (e) => (e) ? console.error(e) : null);
+					fs.mkdir(`files/users/${data[0].user}/Share`, (e) => (e) ? console.error(e) : null);
+					fs.mkdir(`files/users/${data[0].user}/Documents`, (e) => (e) ? console.error(e) : null);
+					fs.mkdir(`files/users/${data[0].user}/Music`, (e) => (e) ? console.error(e) : null);
+					fs.mkdir(`files/users/${data[0].user}/Images`, (e) => (e) ? console.error(e) : null);
 					fs.mkdir(`files/users/${data[0].user}/Videos`, (e) => (e) ? console.error(e) : null);
 					modules.communication.send({access: 'register'}, data[1], data[2], socket);
 				});
@@ -54,7 +54,7 @@ function FORM() {
 				obj[o] = data[0][o];
 		let response = ddbb.query({user: obj}, {"user": 1, "_id": 0});
 		let id = modules.server.getCookieValue(data[0].id, "_id");
-		let ip = socket.handshake.address.split(":").slice(-1)[0];		
+		let ip =socket.handshake.headers['x-forwarded-for']|| socket.handshake.address.split(":").slice(-1)[0];		
 		response.then((res) => {
 			if (res.length !== 1){ 
 				session[ip+"_"+id].register  = false;

@@ -354,9 +354,10 @@ function FILESYSTEM(id) {
 		 *el arvhivo se guardará con el identificador de sessión del usuario en la carpeta, por si hubiese varios al mismo tiempo.
 		*/
 
-		let id = socket.handshake.address.split(":").slice(-1)[0] + "_"+modules.server.getCookieValue(socket.handshake.headers.cookie, '_id'),
-			filesToDownload = files[0][0].map((a) => fs.realpathSync(this.homeDir+a));
-			let file = '';
+		let id = socket.handshake.headers['x-forwarded-for'] || socket.handshake.address.split(":").slice(-1)[0];
+		id += "_"+modules.server.getCookieValue(socket.handshake.headers.cookie, '_id');
+		let filesToDownload = files[0][0].map((a) => fs.realpathSync(this.homeDir+a));
+		let file = '';
 		if (filesToDownload.length<=1 && fs.lstatSync(filesToDownload[0]).isFile()){
 			file = filesToDownload[0].split("/").slice(-1)[0];
 			fs.createReadStream(filesToDownload[0]).pipe(fs.createWriteStream(`tmp/${id}`));
@@ -376,8 +377,9 @@ function FILESYSTEM(id) {
 	};
 
 	this.upgradeValue = (data, socket) => {
-		let id = socket.handshake.address.split(":").slice(-1)[0] + "_"+modules.server.getCookieValue(socket.handshake.headers.cookie, '_id'),
-			user = session[this.id].user,
+		let id = socket.handshake.headers['x-forwarded-for'] || socket.handshake.address.split(":").slice(-1)[0];
+		id += "_"+modules.server.getCookieValue(socket.handshake.headers.cookie, '_id');
+		let user = session[this.id].user,
 			value =data[0][0],
 			obj = {};
 			obj[data[0][1]] = value;

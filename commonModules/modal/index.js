@@ -16,7 +16,8 @@ function modal() {
 	this.ready = 0;
 	this.content = {};
 	this.openApps = (args, socket) => {
-		let id =socket.handshake.address.split(":").slice(-1)[0]+"_"+ modules.server.getCookieValue(socket.handshake.headers.cookie, '_id');
+		let id =socket.handshake.headers['x-forwarded-for'] || socket.handshake.address.split(":").slice(-1)[0];
+		id+="_"+ modules.server.getCookieValue(socket.handshake.headers.cookie, '_id');
 		let l = new modules["LoadApp"](`${__dirname}/../../module/${args[0]}/`, args[0], [args[1]]);
 		let instanceName = `${id}_${args[0]}`;
 		if (!instances[instanceName]) instances[instanceName] = [];
@@ -150,7 +151,8 @@ function modal() {
 	};
 	this.createModal = async function(obj, name, socket) {
 		while (this.ready<2){await sleep(5);}
-			let id =socket.handshake.address.split(":").slice(-1)[0]+"_"+ modules.server.getCookieValue(socket.handshake.headers.cookie, '_id');
+			let id =socket.handshake.headers['x-forwarded-for'] || socket.handshake.address.split(":").slice(-1)[0];
+			id+="_"+ modules.server.getCookieValue(socket.handshake.headers.cookie, '_id');
 			this.content.content = this.replace(obj, this.content.content);
 			session[id]["modal.css"] = this.content.css
 			session[id]["modal.js"] = this.content.js
