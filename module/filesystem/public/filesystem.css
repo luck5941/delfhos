@@ -1,0 +1,209 @@
+/*$light_blue: #63ccff;
+$color2: #039be5;
+$color3: #006db3;
+$green: #A0F58B;
+*/
+@font-face {
+  font-family: metropolisBoldItalic;
+  src: url(common/fonts/metropolis/Metropolis_BoldItalic.otf); }
+@font-face {
+  font-family: metropolisRegularItalic;
+  src: url(common/fonts/metropolis/Metropolis_RegularItalic.otf); }
+@font-face {
+  font-family: metropolisExtraLight;
+  src: url(common/fonts/metropolis/Metropolis_ExtraLight.otf); }
+@font-face {
+  font-family: metropolisLightItalic;
+  src: url(common/fonts/metropolis/Metropolis_LightItalic.otf); }
+@font-face {
+  font-family: metropolisExtraLightItalic;
+  src: url(common/fonts/metropolis/Metropolis_ExtraLightItalic.otf); }
+@font-face {
+  font-family: metropolisBlackItalic;
+  src: url(common/fonts/metropolis/Metropolis_BlackItalic.otf); }
+@font-face {
+  font-family: metropolisBlack;
+  src: url(common/fonts/metropolis/Metropolis_Black.otf); }
+@font-face {
+  font-family: metropolisThin;
+  src: url(common/fonts/metropolis/Metropolis_Thin.otf); }
+@font-face {
+  font-family: metropolisBold;
+  src: url(common/fonts/metropolis/Metropolis_Bold.otf); }
+@font-face {
+  font-family: metropolisRegular;
+  src: url(common/fonts/metropolis/Metropolis_Regular.otf); }
+@font-face {
+  font-family: metropolisThinItalic;
+  src: url(common/fonts/metropolis/Metropolis_ThinItalic.otf); }
+@font-face {
+  font-family: metropolisMedium;
+  src: url(common/fonts/metropolis/Metropolis_Medium.otf); }
+@font-face {
+  font-family: metropolisExtraBold;
+  src: url(common/fonts/metropolis/Metropolis_ExtraBold.otf); }
+@font-face {
+  font-family: metropolisLight;
+  src: url(common/fonts/metropolis/Metropolis_Light.otf); }
+@font-face {
+  font-family: metropolisExtraBoldItalic;
+  src: url(common/fonts/metropolis/Metropolis_ExtraBoldItalic.otf); }
+@font-face {
+  font-family: metropolisMediumItalic;
+  src: url(common/fonts/metropolis/Metropolis_MediumItalic.otf); }
+@font-face {
+  font-family: metropolisSemiBoldItalic;
+  src: url(common/fonts/metropolis/Metropolis_SemiBoldItalic.otf); }
+@font-face {
+  font-family: metropolisSemiBold;
+  src: url(common/fonts/metropolis/Metropolis_SemiBold.otf); }
+@font-face {
+  font-family: montserratExtraBold;
+  src: url(common/fonts/montserrat/Montserrat_ExtraBold.ttf); }
+@font-face {
+  font-family: montserratBlackItalic;
+  src: url(common/fonts/montserrat/Montserrat_BlackItalic.ttf); }
+@font-face {
+  font-family: montserratExtraLightItalic;
+  src: url(common/fonts/montserrat/Montserrat_ExtraLightItalic.ttf); }
+@font-face {
+  font-family: montserratBoldItalic;
+  src: url(common/fonts/montserrat/Montserrat_BoldItalic.ttf); }
+@font-face {
+  font-family: montserratLightItalic;
+  src: url(common/fonts/montserrat/Montserrat_LightItalic.ttf); }
+@font-face {
+  font-family: montserratSemiBold;
+  src: url(common/fonts/montserrat/Montserrat_SemiBold.ttf); }
+@font-face {
+  font-family: montserratBold;
+  src: url(common/fonts/montserrat/Montserrat_Bold.ttf); }
+@font-face {
+  font-family: montserratThinItalic;
+  src: url(common/fonts/montserrat/Montserrat_ThinItalic.ttf); }
+@font-face {
+  font-family: montserratItalic;
+  src: url(common/fonts/montserrat/Montserrat_Italic.ttf); }
+@font-face {
+  font-family: montserratSemiBoldItalic;
+  src: url(common/fonts/montserrat/Montserrat_SemiBoldItalic.ttf); }
+@font-face {
+  font-family: montserratRegular;
+  src: url(common/fonts/montserrat/Montserrat_Regular.ttf); }
+@font-face {
+  font-family: montserratExtraBoldItalic;
+  src: url(common/fonts/montserrat/Montserrat_ExtraBoldItalic.ttf); }
+@font-face {
+  font-family: montserratLight;
+  src: url(common/fonts/montserrat/Montserrat_Light.ttf); }
+@font-face {
+  font-family: montserratBlack;
+  src: url(common/fonts/montserrat/Montserrat_Black.ttf); }
+@font-face {
+  font-family: montserratExtraLight;
+  src: url(common/fonts/montserrat/Montserrat_ExtraLight.ttf); }
+@font-face {
+  font-family: montserratMediumItalic;
+  src: url(common/fonts/montserrat/Montserrat_MediumItalic.ttf); }
+@font-face {
+  font-family: montserratMedium;
+  src: url(common/fonts/montserrat/Montserrat_Medium.ttf); }
+@font-face {
+  font-family: montserratThin;
+  src: url(common/fonts/montserrat/Montserrat_Thin.ttf); }
+/*functions*/
+* {
+  margin: 0;
+  padding: 0; }
+
+svg .middle {
+  fill: #E32819; }
+svg .dark {
+  fill: #080A09; }
+svg .light {
+  fill: #F3EBD8; }
+svg .light_out {
+  stroke: #F3EBD8; }
+
+img.mask {
+  clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%); }
+
+filesystem ul.topBar {
+  float: left;
+  width: 80%;
+  background-color: #080A09;
+  height: 15%;
+  display: flex;
+  align-items: center; }
+  filesystem ul.topBar li.track svg {
+    height: 100%; }
+  filesystem ul.topBar li {
+    list-style: none;
+    flex-basis: 1;
+    cursor: pointer;
+    background-color: #F3EBD8;
+    padding: 0.5%;
+    margin: 0 0.5%;
+    font-family: metropolisExtraBold;
+    height: 80%;
+    display: flex;
+    align-items: center; }
+filesystem ul.frecuentFile {
+  width: 15%;
+  float: left;
+  border-right: 5px solid #E32819;
+  height: 72%; }
+  filesystem ul.frecuentFile li {
+    list-style: none;
+    width: 100%; }
+filesystem ul#options {
+  width: 20%; }
+  filesystem ul#options li {
+    font-weight: initial; }
+filesystem main {
+  float: left;
+  width: 79.85%;
+  display: inline-block;
+  height: 95%; }
+  filesystem main ul.elements {
+    width: 100%;
+    height: 100%; }
+    filesystem main ul.elements li {
+      float: left;
+      width: 16%;
+      max-width: 150px;
+      min-width: 80px;
+      list-style: none;
+      cursor: pointer; }
+      filesystem main ul.elements li svg, filesystem main ul.elements li img {
+        width: 100px; }
+      filesystem main ul.elements li img {
+        margin-top: 20px; }
+      filesystem main ul.elements li p {
+        text-align: center;
+        width: 100%; }
+      filesystem main ul.elements li p.ellipsis {
+        width: 80%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-left: 10%; }
+    filesystem main ul.elements li.moving {
+      position: absolute; }
+    filesystem main ul.elements li.selected {
+      background-color: lightblue; }
+  filesystem main #changeName {
+    width: 20%;
+    max-width: 150px;
+    position: absolute; }
+    filesystem main #changeName svg {
+      margin-bottom: -20%; }
+      filesystem main #changeName svg path {
+        fill: #080A09; }
+    filesystem main #changeName input {
+      margin-top: -50%;
+      margin-left: 16%;
+      width: 60%;
+      height: 10px; }
+
+/*# sourceMappingURL=filesystem.css.map */
